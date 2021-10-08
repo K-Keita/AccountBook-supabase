@@ -4,28 +4,32 @@ import { Title } from "src/components/titleList";
 import { subtitle } from "src/pages/title";
 
 type Props = {
-  subtitles: subtitle[];
+  items: subtitle[];
   title: Title;
   uuid: string;
-  getSubtitleList: VoidFunction;
+  getItemList: VoidFunction;
 };
 
 export const SubtitleList = (props: Props) => {
+  console.log(props.items)
+
   return (
     <div className="grid grid-cols-3 gap-2 m-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8">
       <AddSubtitle
         title={props.title}
         uuid={props.uuid}
-        getSubtitleList={props.getSubtitleList}
+        getItemList={props.getItemList}
       />
-      {props.subtitles.map((subtitle) => {
+      {props.items.map((subtitle) => {
+        console.log(subtitle.created_at)
         return (
           <div key={subtitle.id}>
             <SubtitleCard
               subtitle={subtitle}
               title={props.title}
+              created_at={subtitle.created_at}
               uuid={props.uuid}
-              getSubtitleList={props.getSubtitleList}
+              getItemList={props.getItemList}
             />
           </div>
         );
