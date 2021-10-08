@@ -2,6 +2,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Button, IconPlus, IconX } from "@supabase/ui";
 import { Fragment, useCallback, useState, VFC } from "react";
 import { client } from "src/libs/supabase";
+
 type props = {
   uuid: string;
   getTitleList: VoidFunction;
@@ -9,7 +10,7 @@ type props = {
 
 export const AddTitle: VFC<props> = (props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [title, setTitle] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
   const [author, setAuthor] = useState<string>("");
 
   // ダイアログを開く
@@ -19,21 +20,21 @@ export const AddTitle: VFC<props> = (props) => {
 
   // ダイアログを閉じる
   const closeModal = useCallback(() => {
-    setTitle("");
+    setCategory("");
     setAuthor("");
     setIsOpen(false);
   }, []);
 
-  // 漫画タイトルの追加
+  // カテゴリーの追加
   const handleAdd = useCallback(
     async (uuid: string) => {
-      if (title == "") {
-        alert("Input title.");
+      if (category == "") {
+        alert("カテゴリー名が空です");
         return;
       }
       const { data, error } = await client
         .from("users")
-        .insert([{ user_id: uuid, category: title, user_name: author }]);
+        .insert([{ user_id: uuid, category: category, user_name: author }]);
 
       if (error) {
         alert(error);
@@ -44,7 +45,7 @@ export const AddTitle: VFC<props> = (props) => {
         }
       }
     },
-    [title, author, props, closeModal]
+    [category, author, props, closeModal]
   );
 
   return (
@@ -83,20 +84,20 @@ export const AddTitle: VFC<props> = (props) => {
                   as="h3"
                   className="text-2xl font-medium leading-6 text-center text-gray-900"
                 >
-                  Add Title
+                  Add category
                 </Dialog.Title>
                 <div className="grid grid-cols-4 gap-2 mt-4">
-                  <div className="col-span-1 text-xl text-center">Title</div>
+                  <div className="col-span-1 text-xl text-center">category</div>
                   <input
                     className="w-full h-10 col-span-3 p-2 bg-white border border-gray-300 rounded shadow appearance-none hover:border-gray-700"
-                    value={title}
+                    value={category}
                     onChange={(e) => {
-                      return setTitle(e.target.value);
+                      return setCategory(e.target.value);
                     }}
                   />
                 </div>
                 <div className="grid grid-cols-4 gap-2 mt-4">
-                  <div className="col-span-1 text-xl text-center">Author</div>
+                  <div className="col-span-1 text-xl text-center">user_name</div>
                   <input
                     className="w-full h-10 col-span-3 p-2 bg-white border border-gray-300 rounded shadow appearance-none hover:border-gray-700"
                     value={author}
