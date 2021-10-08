@@ -41,8 +41,8 @@ export const AddSubtitle = (props: Props) => {
     const { data, error } = await client.from("purchasedItem").insert([
       {
         user_id: props.uuid,
-        price: Number(price),
-        categories_id: Number(categories_id),
+        category_id: categories_id,
+        price: price,
         description: description,
       },
     ]);
