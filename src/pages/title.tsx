@@ -6,13 +6,13 @@ import React, { useCallback, useEffect, useState } from "react";
 import { EditTitle } from "src/components/editTitle";
 import { LayoutWrapper } from "src/components/layoutWrapper";
 import { SubtitleList } from "src/components/subtitleList";
-import type { Title as TitleType } from "src/components/titleList";
+import type { Data as TitleType } from "src/components/titleList";
 import { client } from "src/libs/supabase";
 
-export type subtitle = {
+export type UserData = {
   id: number;
   user_id: string;
-  title_id: number;
+  userData_id: number;
   created_at: string;
   volume: number;
   isbn: number;
@@ -25,40 +25,40 @@ const getItems = async (user_id: string) => {
   let { data, error } = await client.from("users").select("*").eq("user_id", user_id);
 
   if (!error && data) {
-    const title = data[0];
+    const userData = data[0];
     ({ data, error } = await client
       .from("purchasedItem")
       .select("*")
       .eq("user_id", user_id));
 
     if (!error && data) {
-      return { title: title, items: data };
+      return { userData: userData, items: data };
     } else {
-      return { title: title, items: null };
+      return { userData: userData, items: null };
     }
   }
-  return { title: null, items: null };
+  return { userData: null, items: null };
 };
 
 const Title: VFC = () => {
   const Container = () => {
     const { user } = Auth.useUser();
 
-    console.log(user)
 
-    const [items, setItems] = useState<subtitle[]>([]);
-    const [title, setTitle] = useState<TitleType>();
+    const [items, setItems] = useState<UserData[]>([]);
+    const [userData, setTitle] = useState<TitleType>();
 
     const router = useRouter();
 
+    console.log(userData)
     const { id } = router.query;
 
     //IDと同じカテゴリーの商品を取得
     const getItemList = useCallback(async () => {
       if (user) {
-        const { title, items } = await getItems(user.id.toString());
-        if (title) {
-          setTitle(title);
+        const { userData, items } = await getItems(user.id.toString());
+        if (userData) {
+          setTitle(userData);
         } else {
           router.push("/");
         }
@@ -68,7 +68,7 @@ const Title: VFC = () => {
       }
     }, [id, router]);
 
-    console.log(title, items);
+    console.log(userData, items);
     useEffect(() => {
       // if (!id) {
       //   router.push("/");
@@ -81,9 +81,9 @@ const Title: VFC = () => {
       return (
         <div>
           <div className="flex gap-2 justify-end my-2 mr-2">
-            {title && (
+            {userData && (
               <div className="w-24">
-                <EditTitle title={title} getItemList={getItemList} />
+                <EditTitle userData={userData} getItemList={getItemList} />
               </div>
             )}
             <div className="w-24">
@@ -94,20 +94,20 @@ const Title: VFC = () => {
               </Link>
             </div>
           </div>
-          {title && (
+          {userData && (
             <>
               <h2 className="pb-4 text-4xl font-bold text-center">
-                {title.category}
+                {userData.category}
               </h2>
               <p className="pb-4 text-2xl font-semibold text-center">
-                {title.user_name}
+                {userData.user_name}
               </p>
             </>
           )}
-          {title && (
+          {userData && (
             <SubtitleList
               items={items}
-              title={title}
+              userData={userData}
               uuid={user.id}
               getItemList={getItemList}
             />
