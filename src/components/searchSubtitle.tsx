@@ -1,15 +1,13 @@
 import { Disclosure } from "@headlessui/react";
-import { SearchIcon } from "@heroicons/react/outline";
 import { ChevronUpIcon } from "@heroicons/react/solid";
-import { Dispatch, SetStateAction, useCallback, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { RingLoader } from "react-spinners";
 import { BookList } from "src/components/bookList";
 import { Title } from "src/components/titleList";
-// import { bookData } from "src/pages/api/rakuten";
 
 type Props = {
   title: Title;
-  setIsbn: Dispatch<SetStateAction<string>>;
+  setDescription: Dispatch<SetStateAction<string>>;
 };
 
 export const SearchSubtitle = (props: Props) => {
@@ -17,20 +15,6 @@ export const SearchSubtitle = (props: Props) => {
   const [text, setText] = useState<string>(props.title.title);
   const [bookList, setBookList] = useState<any>([]);
   const buttonRef = useRef<HTMLButtonElement>(null);
-
-  const handleSearch = useCallback(async () => {
-    setIsLoading(true);
-    const res = await fetch("/api/rakuten?title=" + text);
-    const bookList = await res.json();
-    if (bookList) {
-      if (bookList.size == 0) {
-        alert("Not found the books.");
-      } else {
-        setBookList(bookList.data);
-      }
-      setIsLoading(false);
-    }
-  }, [text]);
 
   return (
     <div className="mt-4 ml-4">
@@ -58,12 +42,6 @@ export const SearchSubtitle = (props: Props) => {
                       return setText(e.target.value);
                     }}
                   />
-                  <div className="w-10 h-10 col-span-1">
-                    <SearchIcon
-                      className="cursor-pointer"
-                      onClick={handleSearch}
-                    />
-                  </div>
                 </div>
                 {isLoading ? (
                   <div>
@@ -75,7 +53,7 @@ export const SearchSubtitle = (props: Props) => {
                 ) : (
                   <BookList
                     bookList={bookList}
-                    setIsbn={props.setIsbn}
+                    setDescription={props.setDescription}
                     close={buttonRef}
                   />
                 )}
