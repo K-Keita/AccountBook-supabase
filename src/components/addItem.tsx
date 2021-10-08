@@ -2,11 +2,11 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Button, IconPlus, IconX } from "@supabase/ui";
 import { Fragment, useCallback, useState } from "react";
 import { SearchSubtitle } from "src/components/searchSubtitle";
-import type { Title } from "src/components/titleList";
+import type { Data } from "src/components/titleList";
 import { client } from "src/libs/supabase";
 
 type Props = {
-  title: Title;
+  userData: Data;
   uuid: string;
   getItemList: VoidFunction;
 };
@@ -120,7 +120,7 @@ export const AddSubtitle = (props: Props) => {
                 </div>
                 <div className="grid grid-cols-4 gap-2 mt-4">
                   <div className="col-span-1 pt-1 text-xl text-center">
-                  カテゴリー名
+                    カテゴリー名
                   </div>
                   <input
                     className="col-span-3 p-2 w-full h-10 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
@@ -130,10 +130,10 @@ export const AddSubtitle = (props: Props) => {
                     }}
                   />
                 </div>
-                <SearchSubtitle
-                  title={props.title}
+                {/* <SearchSubtitle
+                  title={props.userData}
                   setDescription={setDescription}
-                />
+                /> */}
                 <div className="grid grid-cols-5 gap-2 mt-4">
                   <div className="col-span-2 pt-1 text-xl text-center">
                     Possession

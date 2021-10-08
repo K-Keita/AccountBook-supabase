@@ -2,7 +2,7 @@ import { Auth, Button, IconLogOut } from "@supabase/ui";
 import type { ReactNode} from "react";
 import React, { useCallback, useEffect, useState } from "react";
 import { LayoutWrapper } from "src/components/layoutWrapper";
-import type { Title} from "src/components/titleList";
+import type { Data } from "src/components/titleList";
 import { TitleList } from "src/components/titleList";
 import { client } from "src/libs/supabase";
 
@@ -10,7 +10,7 @@ type Props = {
   children: ReactNode;
 };
 
-const getTitles = async () => {
+const getMainData = async () => {
   const { data, error } = await client.from("users").select("*");
   if (!error && data) {
     return data;
@@ -22,11 +22,11 @@ const Container = (props: Props) => {
   const { user } = Auth.useUser();
 
   const [text, setText] = useState<string>("");
-  const [titles, setTitles] = useState<Title[]>([]);
+  const [userData, setUserData] = useState<Data[]>([]);
 
   const getTitleList = useCallback(async () => {
-    const data = await getTitles();
-    setTitles(data);
+    const data = await getMainData();
+    setUserData(data);
   }, []);
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const Container = (props: Props) => {
           />
         </div>
         <TitleList
-          titles={titles}
+          userData={userData}
           uuid={user.id}
           getTitleList={getTitleList}
           filterText={text}

@@ -2,13 +2,13 @@ import { Dialog, Disclosure, Transition } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/solid";
 import { Button, IconSave, IconTrash2, IconX } from "@supabase/ui";
 import { Fragment, useCallback, useState } from "react";
-import type { Title } from "src/components/titleList";
+import type { Data } from "src/components/titleList";
 import { client } from "src/libs/supabase";
-import { subtitle } from "src/pages/title";
+// import { item } from "src/pages/title";
 
 type Props = {
-  subtitle: any;
-  title: Title;
+  item: any;
+  userData: Data;
   uuid: string;
   created_at: string;
   getItemList: VoidFunction;
@@ -16,13 +16,9 @@ type Props = {
 
 export const SubtitleCard = (props: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [volume, setVolume] = useState<string>(props.subtitle.price.toString());
-  const [isbn, setIsbn] = useState<string>(
-    props.subtitle.description.toString()
-  );
-  const [possession, setPossession] = useState<boolean>(
-    props.subtitle.possession
-  );
+  const [volume, setVolume] = useState<string>(props.item.price.toString());
+  const [isbn, setIsbn] = useState<string>(props.item.description.toString());
+  const [possession, setPossession] = useState<boolean>(props.item.possession);
 
   const openModal = useCallback(() => {
     setIsOpen(true);
@@ -33,13 +29,13 @@ export const SubtitleCard = (props: Props) => {
   }, []);
 
   let color = "grayscale";
-  if (props.subtitle.possession) {
+  if (props.item.possession) {
     color = "grayscale-0";
   }
 
   const handleSetThumbnail = useCallback(async () => {
-    const title = props.title;
-    title.image_url = props.subtitle.image_url;
+    const title = props.userData;
+    title.image_url = props.item.image_url;
     const { error } = await client.from("manga_title").upsert(title);
     if (error) {
       alert(error);
@@ -49,9 +45,9 @@ export const SubtitleCard = (props: Props) => {
 
   const handleRemove = useCallback(async () => {
     const { error } = await client
-      .from("sub-categories")
+      .from("purchasedItem")
       .delete()
-      .eq("id", props.subtitle.id);
+      .eq("id", props.item.id);
     if (error) {
       alert(error);
     }
@@ -70,10 +66,10 @@ export const SubtitleCard = (props: Props) => {
       return;
     }
 
-    const { error } = await client.from("sub-categories").upsert({
-      id: props.subtitle.id,
-      user_id: props.subtitle.user_id,
-      category_id: props.subtitle.category_id,
+    const { error } = await client.from("purchasedItem").upsert({
+      id: props.item.id,
+      user_id: props.item.user_id,
+      category_id: props.item.category_id,
       price: Number(volume),
       description: isbn,
     });
@@ -97,12 +93,12 @@ export const SubtitleCard = (props: Props) => {
         <div className={color}>
           <div className="flex justify-center">
             <div className="w-32 h-60 bg-blue-400">
-              <p>{props.subtitle.price}</p>
+              <p>{props.item.price}</p>
               <p>{createdAt}</p>
             </div>
           </div>
         </div>
-        <div className="mt-2 text-center">({props.subtitle.description})</div>
+        <div className="mt-2 text-center">({props.item.description})</div>
       </div>
 
       <Transition appear show={isOpen} as={Fragment}>
@@ -167,7 +163,9 @@ export const SubtitleCard = (props: Props) => {
                       type="checkbox"
                       className="scale-150"
                       checked={possession}
-                      onChange={() => {return setPossession(!possession)}}
+                      onChange={() => {
+                        return setPossession(!possession);
+                      }}
                     />
                   </div>
                 </div>
@@ -178,27 +176,29 @@ export const SubtitleCard = (props: Props) => {
                 </div>
                 <div className="mx-4 mt-4 bg-blue-50">
                   <Disclosure>
-                    {({ open }) => {return (
-                      <>
-                        <Disclosure.Button className="flex justify-between py-2 px-4 w-full text-sm font-medium text-left text-blue-500 bg-blue-100 hover:bg-blue-200 rounded-lg focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 focus:outline-none">
-                          <span>REMOVE THIS</span>
-                          <ChevronUpIcon
-                            className={`${
-                              open ? "transform rotate-180" : ""
-                            } w-5 h-5 text-blue-500`}
-                          />
-                        </Disclosure.Button>
-                        <Disclosure.Panel className="p-4 text-gray-500 text-md">
-                          <Button
-                            block
-                            onClick={handleRemove}
-                            icon={<IconTrash2 />}
-                          >
-                            REMOVE
-                          </Button>
-                        </Disclosure.Panel>
-                      </>
-                    )}}
+                    {({ open }) => {
+                      return (
+                        <>
+                          <Disclosure.Button className="flex justify-between py-2 px-4 w-full text-sm font-medium text-left text-blue-500 bg-blue-100 hover:bg-blue-200 rounded-lg focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 focus:outline-none">
+                            <span>REMOVE THIS</span>
+                            <ChevronUpIcon
+                              className={`${
+                                open ? "transform rotate-180" : ""
+                              } w-5 h-5 text-blue-500`}
+                            />
+                          </Disclosure.Button>
+                          <Disclosure.Panel className="p-4 text-gray-500 text-md">
+                            <Button
+                              block
+                              onClick={handleRemove}
+                              icon={<IconTrash2 />}
+                            >
+                              REMOVE
+                            </Button>
+                          </Disclosure.Panel>
+                        </>
+                      );
+                    }}
                   </Disclosure>
                 </div>
                 <div className="flex justify-center mt-4">

@@ -3,18 +3,18 @@ import { ChevronUpIcon } from "@heroicons/react/solid";
 import { Button, IconEdit, IconSave, IconTrash2, IconX } from "@supabase/ui";
 import { useRouter } from "next/router";
 import { Fragment, useCallback, useState } from "react";
-import type { Title } from "src/components/titleList";
+import type { Data } from "src/components/titleList";
 import { client } from "src/libs/supabase";
 
 type Props = {
-  title: Title;
+  userData: Data;
   getItemList: VoidFunction;
 };
 
 export const EditTitle = (props: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [title, setTitle] = useState<string>(props.title.category);
-  const [author, setAuthor] = useState<string>(props.title.user_name);
+  const [title, setTitle] = useState<string>(props.userData.category);
+  const [author, setAuthor] = useState<string>(props.userData.user_name);
 
   const router = useRouter();
 
@@ -33,8 +33,8 @@ export const EditTitle = (props: Props) => {
     }
     const { error } = await client.from("users").upsert([
       {
-        id: props.title.id,
-        user_id: props.title.user_id,
+        id: props.userData.id,
+        user_id: props.userData.user_id,
         category: title,
         user_name: author,
       },
@@ -49,13 +49,16 @@ export const EditTitle = (props: Props) => {
 
   const handleRemove = useCallback(async () => {
     let { error } = await client
-      .from("sub-categories")
+      .from("purchasedItem")
       .delete()
-      .eq("title_id", props.title.id);
+      .eq("title_id", props.userData.id);
     if (error) {
       alert(error);
     }
-    ({ error } = await client.from("users").delete().eq("id", props.title.id));
+    ({ error } = await client
+      .from("users")
+      .delete()
+      .eq("id", props.userData.id));
     if (error) {
       alert(error);
     }
@@ -119,27 +122,29 @@ export const EditTitle = (props: Props) => {
                 </div>
                 <div className="mx-4 mt-4 bg-blue-50">
                   <Disclosure>
-                    {({ open }) => {return (
-                      <>
-                        <Disclosure.Button className="flex justify-between py-2 px-4 w-full text-sm font-medium text-left text-blue-500 bg-blue-100 hover:bg-blue-200 rounded-lg focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 focus:outline-none">
-                          <span>REMOVE THIS</span>
-                          <ChevronUpIcon
-                            className={`${
-                              open ? "transform rotate-180" : ""
-                            } w-5 h-5 text-blue-500`}
-                          />
-                        </Disclosure.Button>
-                        <Disclosure.Panel className="p-4 text-gray-500 text-md">
-                          <Button
-                            block
-                            onClick={handleRemove}
-                            icon={<IconTrash2 />}
-                          >
-                            REMOVE
-                          </Button>
-                        </Disclosure.Panel>
-                      </>
-                    )}}
+                    {({ open }) => {
+                      return (
+                        <>
+                          <Disclosure.Button className="flex justify-between py-2 px-4 w-full text-sm font-medium text-left text-blue-500 bg-blue-100 hover:bg-blue-200 rounded-lg focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 focus:outline-none">
+                            <span>REMOVE THIS</span>
+                            <ChevronUpIcon
+                              className={`${
+                                open ? "transform rotate-180" : ""
+                              } w-5 h-5 text-blue-500`}
+                            />
+                          </Disclosure.Button>
+                          <Disclosure.Panel className="p-4 text-gray-500 text-md">
+                            <Button
+                              block
+                              onClick={handleRemove}
+                              icon={<IconTrash2 />}
+                            >
+                              REMOVE
+                            </Button>
+                          </Disclosure.Panel>
+                        </>
+                      );
+                    }}
                   </Disclosure>
                 </div>
 
