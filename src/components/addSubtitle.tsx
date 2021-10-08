@@ -8,74 +8,59 @@ import { client } from "src/libs/supabase";
 type Props = {
   title: Title;
   uuid: string;
-  getSubtitleList: VoidFunction;
+  getItemList: VoidFunction;
 };
 
 export const AddSubtitle = (props: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [volume, setVolume] = useState<string>("");
-  const [isbn, setIsbn] = useState<string>("");
+  const [price, setPrice] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
   const [possession, setPossession] = useState<boolean>(false);
 
+  //モーダルを開く
   const openModal = useCallback(() => {
     setIsOpen(true);
   }, []);
 
+  //モーダルを閉める
   const closeModal = useCallback(() => {
-    setVolume("");
-    setIsbn("");
+    setPrice("");
+    setDescription("");
     setPossession(false);
     setIsOpen(false);
   }, []);
 
+  //商品の追加
   const handleAdd = useCallback(async () => {
-    if (volume == "" || Number(volume) == NaN) {
-      alert("Input volume as an integer.");
+    if (price === "") {
+      alert("Priceが空です");
       return;
     }
-    // if (Number(volume) < 0 || Number(volume) % 1 != 0) {
-    //   alert("Input volume as an integer.");
-    //   return;
-    // }
-    if (isbn == "") {
-      alert("Input ISBN number.");
-      return;
-    }
-    // const res = await fetch("https://api.openbd.jp/v1/get?isbn=" + isbn);
-    // const openbd = await res.json();
-    // if (openbd[0] == null) {
-    //   alert("Invalid ISBN number. Please check.");
-    //   return;
-    // }
-    // const imageUrl = "https://cover.openbd.jp/" + isbn + ".jpg";
 
     const { data, error } = await client.from("sub-categories").insert([
       {
         user_id: props.uuid,
         category_id: props.title.id,
-        price: volume,
-        description: isbn,
-        // image_url: imageUrl,
-        // possession: possession,
+        price: price,
+        description: description,
       },
     ]);
     if (error) {
       alert(error);
     } else {
       if (data) {
-        props.getSubtitleList();
+        props.getItemList();
         closeModal();
       }
     }
-  }, [props, volume, isbn, possession, closeModal]);
+  }, [props, price, description, possession, closeModal]);
 
-  console.log("aa", props.title.id)
 
   return (
     <>
       <div className="p-2 border cursor-pointer" onClick={openModal}>
         <div className="flex justify-center">
-          <div className="w-32 h-60 bg-yellow-300">追加</div>
+          <div className="w-32 h-60 bg-yellow-300">登録</div>
         </div>
         <div className="mt-2 text-center">ADD NEW</div>
       </div>
@@ -115,9 +100,9 @@ export const AddSubtitle = (props: Props) => {
                   </div>
                   <input
                     className="w-full h-10 col-span-3 p-2 bg-white border border-gray-300 rounded shadow appearance-none hover:border-gray-700"
-                    value={volume}
+                    value={price}
                     onChange={(e) => {
-                      return setVolume(e.target.value);
+                      return setPrice(e.target.value);
                     }}
                   />
                 </div>
@@ -127,13 +112,16 @@ export const AddSubtitle = (props: Props) => {
                   </div>
                   <input
                     className="w-full h-10 col-span-3 p-2 bg-white border border-gray-300 rounded shadow appearance-none hover:border-gray-700"
-                    value={isbn}
+                    value={description}
                     onChange={(e) => {
-                      return setIsbn(e.target.value);
+                      return setDescription(e.target.value);
                     }}
                   />
                 </div>
-                <SearchSubtitle title={props.title} setIsbn={setIsbn} />
+                <SearchSubtitle
+                  title={props.title}
+                  setDescription={setDescription}
+                />
                 <div className="grid grid-cols-5 gap-2 mt-4">
                   <div className="col-span-2 pt-1 text-xl text-center">
                     Possession
