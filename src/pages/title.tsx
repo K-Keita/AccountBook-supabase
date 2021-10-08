@@ -21,15 +21,15 @@ export type subtitle = {
 };
 
 // データベースからカテゴリーごとの商品の取得
-const getItems = async (id: string) => {
-  let { data, error } = await client.from("users").select("*").eq("id", id);
+const getItems = async (user_id: string) => {
+  let { data, error } = await client.from("users").select("*").eq("user_id", user_id);
 
   if (!error && data) {
     const title = data[0];
     ({ data, error } = await client
-      .from("sub-categories")
+      .from("purchasedItem")
       .select("*")
-      .eq("category_id", id));
+      .eq("user_id", user_id));
 
     if (!error && data) {
       return { title: title, items: data };
@@ -44,9 +44,10 @@ const Title: VFC = () => {
   const Container = () => {
     const { user } = Auth.useUser();
 
+    console.log(user)
+
     const [items, setItems] = useState<subtitle[]>([]);
     const [title, setTitle] = useState<TitleType>();
-
 
     const router = useRouter();
 
@@ -54,8 +55,8 @@ const Title: VFC = () => {
 
     //IDと同じカテゴリーの商品を取得
     const getItemList = useCallback(async () => {
-      if (id) {
-        const { title, items } = await getItems(id.toString());
+      if (user) {
+        const { title, items } = await getItems(user.id.toString());
         if (title) {
           setTitle(title);
         } else {
