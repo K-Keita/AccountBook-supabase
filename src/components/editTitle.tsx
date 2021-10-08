@@ -8,7 +8,7 @@ import { client } from "src/libs/supabase";
 
 type Props = {
   title: Title;
-  getSubtitleList: VoidFunction;
+  getItemList: VoidFunction;
 };
 
 export const EditTitle = (props: Props) => {
@@ -42,7 +42,7 @@ export const EditTitle = (props: Props) => {
     if (error) {
       alert(error);
     } else {
-      props.getSubtitleList();
+      props.getItemList();
       closeModal();
     }
   }, [title, props, author, closeModal]);
@@ -55,10 +55,7 @@ export const EditTitle = (props: Props) => {
     if (error) {
       alert(error);
     }
-    ({ error } = await client
-      .from("users")
-      .delete()
-      .eq("id", props.title.id));
+    ({ error } = await client.from("users").delete().eq("id", props.title.id));
     if (error) {
       alert(error);
     }
