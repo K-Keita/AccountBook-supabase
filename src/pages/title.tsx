@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useState, VFC } from "react";
 import { EditTitle } from "src/components/editTitle";
 import { LayoutWrapper } from "src/components/layoutWrapper";
-import {SubtitleList} from 'src/components/subTitleList';
+import { SubtitleList } from "src/components/subtitleList";
 import { Title as TitleType } from "src/components/titleList";
 import { client } from "src/libs/supabase";
 
@@ -12,69 +12,64 @@ export type subtitle = {
   id: number;
   user_id: string;
   title_id: number;
+  created_at: string;
   volume: number;
   isbn: number;
   image_url: string;
   possession: boolean;
 };
 
-const getSubtitles = async (id: string) => {
-  let { data, error } = await client
-    .from("users")
-    .select("*")
-    .eq("id", id);
+const getItems = async (id: string) => {
+  let { data, error } = await client.from("users").select("*").eq("id", id);
 
   if (!error && data) {
     const title = data[0];
     ({ data, error } = await client
       .from("sub-categories")
       .select("*")
-      // .order("volume", { ascending: true })
       .eq("category_id", id));
 
     if (!error && data) {
-      return { title: title, subtitles: data };
+      return { title: title, items: data };
     } else {
-      return { title: title, subtitles: null };
+      return { title: title, items: null };
     }
   }
-  return { title: null, subtitles: null };
+  return { title: null, items: null };
 };
 
 const Title: VFC = () => {
   const Container = () => {
     const { user } = Auth.useUser();
 
-    const [subtitles, setSubtitles] = useState<subtitle[]>([]);
+    const [items, setItems] = useState<subtitle[]>([]);
     const [title, setTitle] = useState<TitleType>();
 
     const router = useRouter();
 
     let { id } = router.query;
 
-    const getSubtitleList = useCallback(async () => {
+    const getItemList = useCallback(async () => {
       if (id) {
-        const { title, subtitles } = await getSubtitles(id.toString());
+        const { title, items } = await getItems(id.toString());
         if (title) {
           setTitle(title);
         } else {
           router.push("/");
         }
-        if (subtitles) {
-          setSubtitles(subtitles);
+        if (items) {
+          setItems(items);
         }
       }
     }, [id, router]);
 
     useEffect(() => {
-      if (!id) {
-        router.push("/");
-      }
+      // if (!id) {
+      //   router.push("/");
+      // }
 
-      getSubtitleList();
-    }, [user, getSubtitleList, id, router]);
-    console.log("ok", title);
-    console.log(subtitles);
+      getItemList();
+    }, [user, getItemList, id, router]);
 
     if (user) {
       return (
@@ -82,7 +77,7 @@ const Title: VFC = () => {
           <div className="flex justify-end gap-2 my-2 mr-2">
             {title && (
               <div className="w-24">
-                <EditTitle title={title} getSubtitleList={getSubtitleList} />
+                <EditTitle title={title} getItemList={getItemList} />
               </div>
             )}
             <div className="w-24">
@@ -105,10 +100,10 @@ const Title: VFC = () => {
           )}
           {title && (
             <SubtitleList
-              subtitles={subtitles}
+              items={items}
               title={title}
               uuid={user.id}
-              getSubtitleList={getSubtitleList}
+              getItemList={getItemList}
             />
           )}
         </div>
