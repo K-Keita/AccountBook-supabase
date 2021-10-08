@@ -6,13 +6,20 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "format": "prettier --write './src/**/*.{ts*, module.scss}'",
+    "eslint": "eslint 'src/**/*'",
+    "fix:lint": "next lint --fix --dir src"
   },
   "dependencies": {
     "@headlessui/react": "^1.4.1",
     "@heroicons/react": "^1.0.4",
     "@supabase/supabase-js": "^1.24.0",
     "@supabase/ui": "^0.35.0",
+    "@typescript-eslint/eslint-plugin": "^4.33.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import-access": "^1.0.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "eslint-plugin-tailwindcss": "^1.17.0",
     "next": "11.1.2",
     "prettier": "^2.4.1",
     "react": "17.0.2",
