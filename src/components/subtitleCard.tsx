@@ -10,15 +10,16 @@ type Props = {
   subtitle: any;
   title: Title;
   uuid: string;
-  getSubtitleList: VoidFunction;
+  created_at: string;
+  getItemList: VoidFunction;
 };
 
 export const SubtitleCard = (props: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [volume, setVolume] = useState<string>(
-    props.subtitle.price.toString()
+  const [volume, setVolume] = useState<string>(props.subtitle.price.toString());
+  const [isbn, setIsbn] = useState<string>(
+    props.subtitle.description.toString()
   );
-  const [isbn, setIsbn] = useState<string>(props.subtitle.description.toString());
   const [possession, setPossession] = useState<boolean>(
     props.subtitle.possession
   );
@@ -54,10 +55,9 @@ export const SubtitleCard = (props: Props) => {
     if (error) {
       alert(error);
     }
-    props.getSubtitleList();
+    props.getItemList();
     closeModal();
   }, [props, closeModal]);
-
 
   const handleSave = useCallback(async () => {
     if (volume == "" || Number(volume) == NaN) {
@@ -80,17 +80,26 @@ export const SubtitleCard = (props: Props) => {
     if (error) {
       alert(error);
     }
-    props.getSubtitleList();
+    props.getItemList();
     closeModal();
   }, [props, volume, isbn, possession, closeModal]);
+
+  const d = new Date(props.created_at);
+  const month = d.getMonth() + 1;
+  const date = d.getDate();
+  const h = d.getHours();
+  const minutes = d.getMinutes();
+  const createdAt = `${month}/${date}/${h}:${minutes}`;
 
   return (
     <>
       <div className="p-2 border cursor-pointer" onClick={openModal}>
         <div className={color}>
           <div className="flex justify-center">
-
-              <div className="w-32 h-60 bg-blue-400">{props.subtitle.price}</div>
+            <div className="w-32 h-60 bg-blue-400">
+              <p>{props.subtitle.price}</p>
+              <p>{createdAt}</p>
+            </div>
           </div>
         </div>
         <div className="mt-2 text-center">({props.subtitle.description})</div>
