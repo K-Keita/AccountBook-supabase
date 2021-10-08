@@ -2,7 +2,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Button, IconPlus, IconX } from "@supabase/ui";
 import { Fragment, useCallback, useState } from "react";
 import { SearchSubtitle } from "src/components/searchSubtitle";
-import { Title } from "src/components/titleList";
+import type { Title } from "src/components/titleList";
 import { client } from "src/libs/supabase";
 
 type Props = {
@@ -55,7 +55,6 @@ export const AddSubtitle = (props: Props) => {
     }
   }, [props, price, description, possession, closeModal]);
 
-
   return (
     <>
       <div className="p-2 border cursor-pointer" onClick={openModal}>
@@ -68,10 +67,10 @@ export const AddSubtitle = (props: Props) => {
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
-          className="fixed inset-0 z-10 overflow-y-auto"
+          className="overflow-y-auto fixed inset-0 z-10"
           onClose={closeModal}
         >
-          <div className="min-h-screen px-4 text-center border-2">
+          <div className="px-4 min-h-screen text-center border-2">
             <span
               className="inline-block h-screen align-middle"
               aria-hidden="true"
@@ -87,7 +86,7 @@ export const AddSubtitle = (props: Props) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform border border-gray-300 shadow-xl bg-gray-50 rounded-xl">
+              <div className="inline-block overflow-hidden p-6 my-8 w-full max-w-md text-left align-middle bg-gray-50 rounded-xl border border-gray-300 shadow-xl transition-all transform">
                 <Dialog.Title
                   as="h3"
                   className="text-2xl font-medium leading-6 text-center text-gray-900"
@@ -99,7 +98,7 @@ export const AddSubtitle = (props: Props) => {
                     価格
                   </div>
                   <input
-                    className="w-full h-10 col-span-3 p-2 bg-white border border-gray-300 rounded shadow appearance-none hover:border-gray-700"
+                    className="col-span-3 p-2 w-full h-10 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
                     value={price}
                     onChange={(e) => {
                       return setPrice(e.target.value);
@@ -111,7 +110,7 @@ export const AddSubtitle = (props: Props) => {
                     説明
                   </div>
                   <input
-                    className="w-full h-10 col-span-3 p-2 bg-white border border-gray-300 rounded shadow appearance-none hover:border-gray-700"
+                    className="col-span-3 p-2 w-full h-10 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
                     value={description}
                     onChange={(e) => {
                       return setDescription(e.target.value);
@@ -131,12 +130,12 @@ export const AddSubtitle = (props: Props) => {
                       type="checkbox"
                       className="scale-150"
                       checked={possession}
-                      onChange={() => setPossession(!possession)}
+                      onChange={() => {return setPossession(!possession)}}
                     />
                   </div>
                 </div>
                 <div className="flex justify-center mt-4">
-                  <div className="w-32 p-2">
+                  <div className="p-2 w-32">
                     <Button
                       block
                       type="default"
@@ -147,12 +146,12 @@ export const AddSubtitle = (props: Props) => {
                       Cancel
                     </Button>
                   </div>
-                  <div className="w-32 p-2">
+                  <div className="p-2 w-32">
                     <Button
                       block
                       size="large"
                       icon={<IconPlus />}
-                      onClick={() => handleAdd()}
+                      onClick={() => {return handleAdd()}}
                     >
                       Add
                     </Button>

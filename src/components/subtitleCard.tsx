@@ -2,7 +2,7 @@ import { Dialog, Disclosure, Transition } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/solid";
 import { Button, IconSave, IconTrash2, IconX } from "@supabase/ui";
 import { Fragment, useCallback, useState } from "react";
-import { Title } from "src/components/titleList";
+import type { Title } from "src/components/titleList";
 import { client } from "src/libs/supabase";
 import { subtitle } from "src/pages/title";
 
@@ -38,7 +38,7 @@ export const SubtitleCard = (props: Props) => {
   }
 
   const handleSetThumbnail = useCallback(async () => {
-    let title = props.title;
+    const title = props.title;
     title.image_url = props.subtitle.image_url;
     const { error } = await client.from("manga_title").upsert(title);
     if (error) {
@@ -108,10 +108,10 @@ export const SubtitleCard = (props: Props) => {
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
-          className="fixed inset-0 z-10 overflow-y-auto"
+          className="overflow-y-auto fixed inset-0 z-10"
           onClose={closeModal}
         >
-          <div className="min-h-screen px-4 text-center border-2">
+          <div className="px-4 min-h-screen text-center border-2">
             <span
               className="inline-block h-screen align-middle"
               aria-hidden="true"
@@ -127,7 +127,7 @@ export const SubtitleCard = (props: Props) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform border border-gray-300 shadow-xl bg-gray-50 rounded-xl">
+              <div className="inline-block overflow-hidden p-6 my-8 w-full max-w-md text-left align-middle bg-gray-50 rounded-xl border border-gray-300 shadow-xl transition-all transform">
                 <Dialog.Title
                   as="h3"
                   className="text-2xl font-medium leading-6 text-center text-gray-900"
@@ -139,7 +139,7 @@ export const SubtitleCard = (props: Props) => {
                     価格
                   </div>
                   <input
-                    className="w-full h-10 col-span-3 p-2 bg-white border border-gray-300 rounded shadow appearance-none hover:border-gray-700"
+                    className="col-span-3 p-2 w-full h-10 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
                     value={volume}
                     onChange={(e) => {
                       return setVolume(e.target.value);
@@ -151,7 +151,7 @@ export const SubtitleCard = (props: Props) => {
                     説明
                   </div>
                   <input
-                    className="w-full h-10 col-span-3 p-2 bg-white border border-gray-300 rounded shadow appearance-none hover:border-gray-700"
+                    className="col-span-3 p-2 w-full h-10 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
                     value={isbn}
                     onChange={(e) => {
                       return setIsbn(e.target.value);
@@ -167,7 +167,7 @@ export const SubtitleCard = (props: Props) => {
                       type="checkbox"
                       className="scale-150"
                       checked={possession}
-                      onChange={() => setPossession(!possession)}
+                      onChange={() => {return setPossession(!possession)}}
                     />
                   </div>
                 </div>
@@ -178,9 +178,9 @@ export const SubtitleCard = (props: Props) => {
                 </div>
                 <div className="mx-4 mt-4 bg-blue-50">
                   <Disclosure>
-                    {({ open }) => (
+                    {({ open }) => {return (
                       <>
-                        <Disclosure.Button className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-blue-500 bg-blue-100 rounded-lg hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75">
+                        <Disclosure.Button className="flex justify-between py-2 px-4 w-full text-sm font-medium text-left text-blue-500 bg-blue-100 hover:bg-blue-200 rounded-lg focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 focus:outline-none">
                           <span>REMOVE THIS</span>
                           <ChevronUpIcon
                             className={`${
@@ -198,11 +198,11 @@ export const SubtitleCard = (props: Props) => {
                           </Button>
                         </Disclosure.Panel>
                       </>
-                    )}
+                    )}}
                   </Disclosure>
                 </div>
                 <div className="flex justify-center mt-4">
-                  <div className="w-32 p-2">
+                  <div className="p-2 w-32">
                     <Button
                       block
                       type="default"
@@ -213,7 +213,7 @@ export const SubtitleCard = (props: Props) => {
                       Cancel
                     </Button>
                   </div>
-                  <div className="w-32 p-2">
+                  <div className="p-2 w-32">
                     <Button
                       block
                       size="large"

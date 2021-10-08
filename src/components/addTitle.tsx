@@ -1,6 +1,7 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Button, IconPlus, IconX } from "@supabase/ui";
-import { Fragment, useCallback, useState, VFC } from "react";
+import type { VFC } from "react";
+import { Fragment, useCallback, useState } from "react";
 import { client } from "src/libs/supabase";
 
 type props = {
@@ -52,17 +53,17 @@ export const AddTitle: VFC<props> = (props) => {
     <>
       <div className="p-2 border cursor-pointer" onClick={openModal}>
         <div className="flex justify-center">
-          <div className="bg-blue-300 w-36 h-48">追加</div>
+          <div className="w-36 h-48 bg-blue-300">追加</div>
         </div>
         <div className="mt-2 text-center">ADD NEW</div>
       </div>
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
-          className="fixed inset-0 z-10 overflow-y-auto"
+          className="overflow-y-auto fixed inset-0 z-10"
           onClose={closeModal}
         >
-          <div className="min-h-screen px-4 text-center border-2">
+          <div className="px-4 min-h-screen text-center border-2">
             <span
               className="inline-block h-screen align-middle"
               aria-hidden="true"
@@ -78,7 +79,7 @@ export const AddTitle: VFC<props> = (props) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden order-gray-300 shadow-xl bg-gray-50 rounded-xl">
+              <div className="inline-block overflow-hidden p-6 my-8 w-full max-w-md bg-gray-50 rounded-xl shadow-xl order-gray-300">
                 text-left align-middle transition-all transform border b›
                 <Dialog.Title
                   as="h3"
@@ -89,7 +90,7 @@ export const AddTitle: VFC<props> = (props) => {
                 <div className="grid grid-cols-4 gap-2 mt-4">
                   <div className="col-span-1 text-xl text-center">category</div>
                   <input
-                    className="w-full h-10 col-span-3 p-2 bg-white border border-gray-300 rounded shadow appearance-none hover:border-gray-700"
+                    className="col-span-3 p-2 w-full h-10 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
                     value={category}
                     onChange={(e) => {
                       return setCategory(e.target.value);
@@ -97,9 +98,11 @@ export const AddTitle: VFC<props> = (props) => {
                   />
                 </div>
                 <div className="grid grid-cols-4 gap-2 mt-4">
-                  <div className="col-span-1 text-xl text-center">user_name</div>
+                  <div className="col-span-1 text-xl text-center">
+                    user_name
+                  </div>
                   <input
-                    className="w-full h-10 col-span-3 p-2 bg-white border border-gray-300 rounded shadow appearance-none hover:border-gray-700"
+                    className="col-span-3 p-2 w-full h-10 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
                     value={author}
                     onChange={(e) => {
                       return setAuthor(e.target.value);
@@ -107,7 +110,7 @@ export const AddTitle: VFC<props> = (props) => {
                   />
                 </div>
                 <div className="flex justify-center mt-4">
-                  <div className="w-32 p-2">
+                  <div className="p-2 w-32">
                     <Button
                       block
                       type="default"
@@ -118,12 +121,12 @@ export const AddTitle: VFC<props> = (props) => {
                       Cancel
                     </Button>
                   </div>
-                  <div className="w-32 p-2">
+                  <div className="p-2 w-32">
                     <Button
                       block
                       size="large"
                       icon={<IconPlus />}
-                      onClick={() => handleAdd(props.uuid)}
+                      onClick={() => {return handleAdd(props.uuid)}}
                     >
                       Add
                     </Button>

@@ -1,17 +1,17 @@
 import Image from "next/image";
-import { Dispatch, RefObject, SetStateAction, useCallback } from "react";
-// import { bookData } from "src/pages/api/rakuten";
+import type { Dispatch, RefObject, SetStateAction} from "react";
+import { useCallback } from "react";
 
 type Props = {
   bookList: any;
-  setIsbn: Dispatch<SetStateAction<string>>;
+  setDescription: Dispatch<SetStateAction<string>>;
   close: RefObject<HTMLButtonElement>;
 };
 
 export const BookList = (props: Props) => {
   const handleClick = useCallback(
     (isbn: string) => {
-      props.setIsbn(isbn);
+      props.setDescription(isbn);
       props.close.current?.click();
     },
     [props]
@@ -24,7 +24,7 @@ export const BookList = (props: Props) => {
           <div
             key={index}
             className="p-2 border cursor-pointer"
-            onClick={() => handleClick(book.isbn)}
+            onClick={() => {return handleClick(book.isbn)}}
           >
             <div className="flex justify-center">
               <Image

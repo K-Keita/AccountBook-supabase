@@ -1,7 +1,9 @@
 import { Auth, Button, IconLogOut } from "@supabase/ui";
-import React, { ReactNode, useCallback, useEffect, useState } from "react";
+import type { ReactNode} from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { LayoutWrapper } from "src/components/layoutWrapper";
-import { Title, TitleList } from "src/components/titleList";
+import type { Title} from "src/components/titleList";
+import { TitleList } from "src/components/titleList";
 import { client } from "src/libs/supabase";
 
 type Props = {
@@ -9,9 +11,7 @@ type Props = {
 };
 
 const getTitles = async () => {
-  const { data, error } = await client
-    .from("users")
-    .select("*");
+  const { data, error } = await client.from("users").select("*");
   if (!error && data) {
     return data;
   }
@@ -24,12 +24,10 @@ const Container = (props: Props) => {
   const [text, setText] = useState<string>("");
   const [titles, setTitles] = useState<Title[]>([]);
 
-
   const getTitleList = useCallback(async () => {
     const data = await getTitles();
     setTitles(data);
   }, []);
-
 
   useEffect(() => {
     getTitleList();
@@ -38,12 +36,12 @@ const Container = (props: Props) => {
   if (user) {
     return (
       <div>
-        <div className="flex justify-center gap-2 p-4">
+        <div className="flex gap-2 justify-center p-4">
           <input
-            className="w-full h-12 px-4 bg-white border border-gray-300 rounded shadow appearance-none hover:border-gray-700"
+            className="px-4 w-full h-12 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
             placeholder="Filtering text"
             value={text}
-            onChange={(e) => setText(e.target.value)}
+            onChange={(e) => {return setText(e.target.value)}}
           />
         </div>
         <TitleList
@@ -52,11 +50,11 @@ const Container = (props: Props) => {
           getTitleList={getTitleList}
           filterText={text}
         />
-        <div className="flex justify-end mx-2 my-4">
+        <div className="flex justify-end my-4 mx-2">
           <Button
             size="medium"
             icon={<IconLogOut />}
-            onClick={() => client.auth.signOut()}
+            onClick={() => {return client.auth.signOut()}}
           >
             Sign out
           </Button>
@@ -66,8 +64,6 @@ const Container = (props: Props) => {
   }
   return <>{props.children}</>;
 };
-
-
 
 const Home = () => {
   return (

@@ -18,8 +18,6 @@ type TitlesProps = {
   filterText: string;
 };
 export const TitleList = (props: TitlesProps) => {
-
-
   return (
     <div className="grid grid-cols-3 gap-2 m-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8">
       <AddTitle uuid={props.uuid} getTitleList={props.getTitleList} />

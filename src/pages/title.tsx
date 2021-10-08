@@ -1,11 +1,12 @@
 import { Auth, Button, IconCornerDownLeft } from "@supabase/ui";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useCallback, useEffect, useState, VFC } from "react";
+import type { VFC } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { EditTitle } from "src/components/editTitle";
 import { LayoutWrapper } from "src/components/layoutWrapper";
 import { SubtitleList } from "src/components/subtitleList";
-import { Title as TitleType } from "src/components/titleList";
+import type { Title as TitleType } from "src/components/titleList";
 import { client } from "src/libs/supabase";
 
 export type subtitle = {
@@ -19,6 +20,7 @@ export type subtitle = {
   possession: boolean;
 };
 
+// データベースからカテゴリーごとの商品の取得
 const getItems = async (id: string) => {
   let { data, error } = await client.from("users").select("*").eq("id", id);
 
@@ -45,10 +47,12 @@ const Title: VFC = () => {
     const [items, setItems] = useState<subtitle[]>([]);
     const [title, setTitle] = useState<TitleType>();
 
+
     const router = useRouter();
 
-    let { id } = router.query;
+    const { id } = router.query;
 
+    //IDと同じカテゴリーの商品を取得
     const getItemList = useCallback(async () => {
       if (id) {
         const { title, items } = await getItems(id.toString());
@@ -63,6 +67,7 @@ const Title: VFC = () => {
       }
     }, [id, router]);
 
+    console.log(title, items);
     useEffect(() => {
       // if (!id) {
       //   router.push("/");
@@ -74,7 +79,7 @@ const Title: VFC = () => {
     if (user) {
       return (
         <div>
-          <div className="flex justify-end gap-2 my-2 mr-2">
+          <div className="flex gap-2 justify-end my-2 mr-2">
             {title && (
               <div className="w-24">
                 <EditTitle title={title} getItemList={getItemList} />

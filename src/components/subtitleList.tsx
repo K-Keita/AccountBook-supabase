@@ -1,7 +1,7 @@
 import { AddSubtitle } from "src/components/addSubtitle";
 import { SubtitleCard } from "src/components/subtitleCard";
-import { Title } from "src/components/titleList";
-import { subtitle } from "src/pages/title";
+import type { Title } from "src/components/titleList";
+import type { subtitle } from "src/pages/title";
 
 type Props = {
   items: subtitle[];
@@ -11,7 +11,6 @@ type Props = {
 };
 
 export const SubtitleList = (props: Props) => {
-  console.log(props.items)
 
   return (
     <div className="grid grid-cols-3 gap-2 m-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8">
@@ -21,7 +20,6 @@ export const SubtitleList = (props: Props) => {
         getItemList={props.getItemList}
       />
       {props.items.map((subtitle) => {
-        console.log(subtitle.created_at)
         return (
           <div key={subtitle.id}>
             <SubtitleCard
