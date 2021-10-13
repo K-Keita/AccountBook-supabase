@@ -1,12 +1,10 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Button, IconPlus, IconX } from "@supabase/ui";
+import { Button, IconPlus, IconX, Select } from "@supabase/ui";
 import { Fragment, useCallback, useState } from "react";
-import { SearchSubtitle } from "src/components/searchSubtitle";
-import type { Data } from "src/components/titleList";
 import { client } from "src/libs/supabase";
 
 type Props = {
-  userData: Data;
+  userData: any;
   uuid: string;
   getItemList: VoidFunction;
 };
@@ -15,8 +13,10 @@ export const AddSubtitle = (props: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [price, setPrice] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [categories_id, setCategories_id] = useState<string>("");
-  const [possession, setPossession] = useState<boolean>(false);
+  const [value, setValue] = useState("");
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setValue(e.target.value);
+  };
 
   //モーダルを開く
   const openModal = useCallback(() => {
@@ -27,40 +27,49 @@ export const AddSubtitle = (props: Props) => {
   const closeModal = useCallback(() => {
     setPrice("");
     setDescription("");
-    setPossession(false);
     setIsOpen(false);
   }, []);
 
   //商品の追加
-  const handleAdd = useCallback(async () => {
-    if (price === "") {
-      alert("Priceが空です");
-      return;
-    }
-
-    const { data, error } = await client.from("purchasedItem").insert([
-      {
-        user_id: props.uuid,
-        category_id: categories_id,
-        price: price,
-        description: description,
-      },
-    ]);
-    if (error) {
-      alert(error);
-    } else {
-      if (data) {
-        props.getItemList();
-        closeModal();
+  const handleAdd = useCallback(
+    async (value) => {
+      if (price === "") {
+        alert("Priceが空です");
+        return;
       }
-    }
-  }, [props, price, description, categories_id, possession, closeModal]);
+
+      if (value === "") {
+        alert("カテゴリーを選択してください");
+        return;
+      }
+
+      const { data, error } = await client.from("purchasedItem").insert([
+        {
+          user_id: props.uuid,
+          category_id: value,
+          price: price,
+          description: description,
+        },
+      ]);
+      if (error) {
+        alert(error);
+      } else {
+        if (data) {
+          props.getItemList();
+          closeModal();
+        }
+      }
+    },
+    [props, price, description, closeModal]
+  );
 
   return (
     <>
-      <div className="p-2 border cursor-pointer" onClick={openModal}>
+      <div className="p-2 border" onClick={openModal}>
         <div className="flex justify-center">
-          <div className="w-32 h-60 bg-yellow-300">登録</div>
+          <div className="w-32 h-12 text-center bg-yellow-300  cursor-pointer">
+            登録
+          </div>
         </div>
         <div className="mt-2 text-center">ADD NEW</div>
       </div>
@@ -101,6 +110,9 @@ export const AddSubtitle = (props: Props) => {
                   <input
                     className="col-span-3 p-2 w-full h-10 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
                     value={price}
+                    type="number"
+                    autoFocus
+                    min={1}
                     onChange={(e) => {
                       return setPrice(e.target.value);
                     }}
@@ -118,37 +130,15 @@ export const AddSubtitle = (props: Props) => {
                     }}
                   />
                 </div>
-                <div className="grid grid-cols-4 gap-2 mt-4">
-                  <div className="col-span-1 pt-1 text-xl text-center">
-                    カテゴリー名
-                  </div>
-                  <input
-                    className="col-span-3 p-2 w-full h-10 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
-                    value={categories_id}
-                    onChange={(e) => {
-                      return setCategories_id(e.target.value);
-                    }}
-                  />
-                </div>
-                {/* <SearchSubtitle
-                  title={props.userData}
-                  setDescription={setDescription}
-                /> */}
-                <div className="grid grid-cols-5 gap-2 mt-4">
-                  <div className="col-span-2 pt-1 text-xl text-center">
-                    Possession
-                  </div>
-                  <div className="col-span-3 pt-2 pl-2">
-                    <input
-                      type="checkbox"
-                      className="scale-150"
-                      checked={possession}
-                      onChange={() => {
-                        return setPossession(!possession);
-                      }}
-                    />
-                  </div>
-                </div>
+                <Select label="Select label" onChange={handleChange}>
+                  {props.userData?.categories_list?.map((value) => {
+                    return (
+                      <Select.Option value={value} key={value}>
+                        {value}
+                      </Select.Option>
+                    );
+                  })}
+                </Select>
                 <div className="flex justify-center mt-4">
                   <div className="p-2 w-32">
                     <Button
@@ -167,7 +157,7 @@ export const AddSubtitle = (props: Props) => {
                       size="large"
                       icon={<IconPlus />}
                       onClick={() => {
-                        return handleAdd();
+                        return handleAdd(value);
                       }}
                     >
                       Add
