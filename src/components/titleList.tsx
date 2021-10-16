@@ -9,7 +9,9 @@ export type Data = {
   category: string;
   title: string;
   user_name: string;
+  categories_list: string[];
   image_url: string;
+  targetAmount: number;
 };
 
 type TitlesProps = {

@@ -1,24 +1,35 @@
 import { Dialog, Disclosure, Transition } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/solid";
-import { Button, IconSave, IconTrash2, IconX } from "@supabase/ui";
+import { Button, IconSave, IconTrash2, IconX, Select } from "@supabase/ui";
 import { Fragment, useCallback, useState } from "react";
 import type { Data } from "src/components/titleList";
 import { client } from "src/libs/supabase";
-// import { item } from "src/pages/title";
+import { UserData } from "src/pages/title";
 
 type Props = {
   item: any;
-  userData: Data;
+  userData: any;
   uuid: string;
   created_at: string;
   getItemList: VoidFunction;
 };
 
+const colors = ["red", "blue", "green", "orange", "gray", "pink", "yellow"]
+
 export const SubtitleCard = (props: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [volume, setVolume] = useState<string>(props.item.price.toString());
-  const [isbn, setIsbn] = useState<string>(props.item.description.toString());
+  const [price, setPrice] = useState<string>(props.item.price.toString());
+  const [description, setDescription] = useState<string>(
+    props.item.description.toString()
+  );
   const [possession, setPossession] = useState<boolean>(props.item.possession);
+  const [category_id, setCategory_id] = useState<string>(
+    props.item.category_id
+  );
+  const [value, setValue] = useState(props.item.category_id);
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setValue(e.target.value);
+  };
 
   const openModal = useCallback(() => {
     setIsOpen(true);
@@ -28,22 +39,15 @@ export const SubtitleCard = (props: Props) => {
     setIsOpen(false);
   }, []);
 
-  let color = "grayscale";
-  if (props.item.possession) {
-    color = "grayscale-0";
-  }
-
-  const handleSetThumbnail = useCallback(async () => {
-    const title = props.userData;
-    title.image_url = props.item.image_url;
-    const { error } = await client.from("manga_title").upsert(title);
-    if (error) {
-      alert(error);
-    }
-    closeModal();
-  }, [props, closeModal]);
+  // let color = "grayscale";
+  // if (props.item.possession) {
+  //   color = "grayscale-0";
+  // }
 
   const handleRemove = useCallback(async () => {
+    if (!confirm("削除しますか？")) {
+      return false;
+    }
     const { error } = await client
       .from("purchasedItem")
       .delete()
@@ -55,50 +59,61 @@ export const SubtitleCard = (props: Props) => {
     closeModal();
   }, [props, closeModal]);
 
-  const handleSave = useCallback(async () => {
-    if (volume == "" || Number(volume) == NaN) {
-      alert("Input volume as an integer.");
-      return;
-    }
+  const handleSave = useCallback(
+    async (value) => {
+      if (price == "" || Number(price) == NaN) {
+        alert("Input price as an integer.");
+        return;
+      }
 
-    if (isbn == "") {
-      alert("Input ISBN number.");
-      return;
-    }
+      if (description == "") {
+        alert("Input ISBN number.");
+        return;
+      }
 
-    const { error } = await client.from("purchasedItem").upsert({
-      id: props.item.id,
-      user_id: props.item.user_id,
-      category_id: props.item.category_id,
-      price: Number(volume),
-      description: isbn,
-    });
-    if (error) {
-      alert(error);
-    }
-    props.getItemList();
-    closeModal();
-  }, [props, volume, isbn, possession, closeModal]);
+      const { error } = await client.from("purchasedItem").upsert({
+        id: props.item.id,
+        user_id: props.item.user_id,
+        category_id: Number(value),
+        price: Number(price),
+        description: description,
+      });
+
+      if (error) {
+        alert(error);
+      }
+      props.getItemList();
+      closeModal();
+    },
+    [props, price, description, possession, closeModal]
+  );
 
   const d = new Date(props.created_at);
   const month = d.getMonth() + 1;
   const date = d.getDate();
   const h = d.getHours();
   const minutes = d.getMinutes();
-  const createdAt = `${month}/${date}/${h}:${minutes}`;
+  const createdAt = `${month}/${date}.${h}:${minutes}`;
+
+  const color = colors[props.userData.categories_list.indexOf(props.item.category_id)];
+
+  console.log(color);
 
   return (
     <>
-      <div className="p-2 border cursor-pointer" onClick={openModal}>
-        <div className={color}>
-          <div className="flex justify-center">
-            <div className="w-32 h-60 bg-blue-400">
-              <p>{props.item.price}</p>
-              <p>{createdAt}</p>
-            </div>
-          </div>
+      <div className="p-2 border cursor-pointer">
+        <div className="flex" style={{border: `solid 3px ${color}`}}>
+          <p className="bg-green-200">{createdAt}</p>
+          <p>{props.item.price}</p>
+          <p>カテゴリー：{props.item.category_id}</p>
+          <div className="text-center">({props.item.description})</div>
+          <button className="bg-green-200" onClick={openModal}>
+            編集
+          </button>
+          <button onClick={handleRemove}>
+            <IconTrash2 />
+          </button>
         </div>
-        <div className="mt-2 text-center">({props.item.description})</div>
       </div>
 
       <Transition appear show={isOpen} as={Fragment}>
@@ -136,9 +151,9 @@ export const SubtitleCard = (props: Props) => {
                   </div>
                   <input
                     className="col-span-3 p-2 w-full h-10 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
-                    value={volume}
+                    value={price}
                     onChange={(e) => {
-                      return setVolume(e.target.value);
+                      return setPrice(e.target.value);
                     }}
                   />
                 </div>
@@ -148,12 +163,25 @@ export const SubtitleCard = (props: Props) => {
                   </div>
                   <input
                     className="col-span-3 p-2 w-full h-10 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
-                    value={isbn}
+                    value={description}
                     onChange={(e) => {
-                      return setIsbn(e.target.value);
+                      return setDescription(e.target.value);
                     }}
                   />
                 </div>
+                <Select
+                  label="Select label"
+                  defaultValue={props.item.category_id}
+                  onChange={handleChange}
+                >
+                  {props.userData.categories_list.map((value: any) => {
+                    return (
+                      <Select.Option value={value} key={value}>
+                        {value}
+                      </Select.Option>
+                    );
+                  })}
+                </Select>
                 <div className="grid grid-cols-5 gap-2 mt-4">
                   <div className="col-span-2 pt-1 text-xl text-center">
                     Possession
@@ -168,11 +196,6 @@ export const SubtitleCard = (props: Props) => {
                       }}
                     />
                   </div>
-                </div>
-                <div className="pt-4 mx-4">
-                  <Button block size="medium" onClick={handleSetThumbnail}>
-                    SET TO THUMBNAIL
-                  </Button>
                 </div>
                 <div className="mx-4 mt-4 bg-blue-50">
                   <Disclosure>
@@ -218,7 +241,9 @@ export const SubtitleCard = (props: Props) => {
                       block
                       size="large"
                       icon={<IconSave />}
-                      onClick={handleSave}
+                      onClick={() => {
+                        return handleSave(value);
+                      }}
                     >
                       Save
                     </Button>
