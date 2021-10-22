@@ -10,7 +10,7 @@ type Props = {
   item: any;
   userData: any;
   uuid: string;
-  created_at: string;
+  buyDate: string;
   getItemList: VoidFunction;
 };
 
@@ -61,7 +61,7 @@ export const SubtitleCard = (props: Props) => {
 
   const handleSave = useCallback(
     async (value) => {
-      if (price == "" || Number(price) == NaN) {
+      if (price == "") {
         alert("Input price as an integer.");
         return;
       }
@@ -88,22 +88,14 @@ export const SubtitleCard = (props: Props) => {
     [props, price, description, possession, closeModal]
   );
 
-  const d = new Date(props.created_at);
-  const month = d.getMonth() + 1;
-  const date = d.getDate();
-  const h = d.getHours();
-  const minutes = d.getMinutes();
-  const createdAt = `${month}/${date}.${h}:${minutes}`;
+  const date = props.item.buyDate.join("/")
 
   const color = colors[props.userData.categories_list.indexOf(props.item.category_id)];
-
-  console.log(color);
-
   return (
     <>
       <div className="p-2 border cursor-pointer">
         <div className="flex" style={{border: `solid 3px ${color}`}}>
-          <p className="bg-green-200">{createdAt}</p>
+          <p className="bg-green-200">{date}</p>
           <p>{props.item.price}</p>
           <p>カテゴリー：{props.item.category_id}</p>
           <div className="text-center">({props.item.description})</div>
