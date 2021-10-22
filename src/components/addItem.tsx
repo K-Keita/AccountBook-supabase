@@ -130,6 +130,18 @@ export const AddSubtitle = (props: Props) => {
                     }}
                   />
                 </div>
+                <div className="grid grid-cols-4 gap-2 mt-4">
+                  <div className="col-span-1 pt-1 text-xl text-center">
+                    日付
+                  </div>
+                  <input
+                    className="col-span-3 p-2 w-full h-10 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
+                    value={description}
+                    onChange={(e) => {
+                      return setDescription(e.target.value);
+                    }}
+                  />
+                </div>
                 <Select label="Select label" onChange={handleChange}>
                   {props.userData?.categories_list?.map((value) => {
                     return (
