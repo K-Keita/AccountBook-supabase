@@ -1,8 +1,4 @@
-import {
-  Auth,
-  Button,
-  IconLogOut,
-} from "@supabase/ui";
+import { Auth, Button, IconLogOut } from "@supabase/ui";
 import { useRouter } from "next/router";
 import type { ReactNode } from "react";
 import { useCallback, useEffect, useState } from "react";
@@ -17,6 +13,10 @@ type Props = {
   children: ReactNode;
 };
 
+const d = new Date();
+const year = d.getFullYear();
+const month = d.getMonth() + 1;
+
 const getItems = async (user_id: string) => {
   let { data, error } = await client
     .from("users")
@@ -28,9 +28,12 @@ const getItems = async (user_id: string) => {
     ({ data, error } = await client
       .from("purchasedItem")
       .select("*")
+      .contains("buyDate", [year, month])
       .eq("user_id", user_id));
 
-    const newData = data?.reduce((sum, element) => {return sum + element.price}, 0);
+    const newData = data?.reduce((sum, element) => {
+      return sum + element.price;
+    }, 0);
 
     if (!error && data) {
       return { userData: userData, items: data, totalPrice: newData };
@@ -53,7 +56,6 @@ const Container = (props: Props) => {
   const router = useRouter();
   const { id } = router.query;
 
-
   const getItemList = useCallback(async () => {
     if (user) {
       const { userData, items, totalPrice } = await getItems(
@@ -74,7 +76,6 @@ const Container = (props: Props) => {
   useEffect(() => {
     getItemList();
   }, [user, getItemList, id, router]);
-
 
   //カテゴリーの追加
   const addCategory = async (text: string) => {
@@ -107,8 +108,8 @@ const Container = (props: Props) => {
 
   //timestampの型定義がわからない(後で確認)
   const sortData = (data: any) => {
-    const arr = data.slice().sort((a: any, b: any) => {
-      if (a.created_at < b.created_at) {
+    const arr = data.sort((a: any, b: any) => {
+      if (Number(a.buyDate[2]) < Number(b.buyDate[2])) {
         return 1;
       } else {
         return -1;
@@ -119,22 +120,21 @@ const Container = (props: Props) => {
 
   const data = sortData(items);
 
- const getLastDate = (year, month) => {
+  console.log(data);
+
+  const getLastDate = (year, month) => {
     return new Date(year, month, 0).getDate();
-  }
-  const d = new Date();
+  };
 
-
-  const count = getLastDate(d.getFullYear(), d.getMonth() + 1);
-
+  const count = getLastDate(year, month);
 
   const targetAverage = userData ? userData.targetAmount / count : null;
-  const nowAverage = total ?  total / d.getDate() : null;
-
+  const nowAverage = total ? total / d.getDate() : null;
 
   if (user) {
     return (
       <div>
+        <h2 className="text-xl">{month}月</h2>
         <div className="flex gap-2 justify-center p-4">
           <input
             className="px-4 w-full h-12 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
