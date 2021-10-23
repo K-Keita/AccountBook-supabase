@@ -9,7 +9,7 @@ type Props = {
   getItemList: VoidFunction;
 };
 
-export const AddSubtitle = (props: Props) => {
+export const AddItem = (props: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [price, setPrice] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -30,6 +30,13 @@ export const AddSubtitle = (props: Props) => {
     setIsOpen(false);
   }, []);
 
+  const d = new Date();
+
+  const year = d.getFullYear();
+  const month = d.getMonth() + 1;
+  const day = d.getDate();
+  const hours = d.getHours();
+
   //商品の追加
   const handleAdd = useCallback(
     async (value) => {
@@ -43,12 +50,20 @@ export const AddSubtitle = (props: Props) => {
         return;
       }
 
+      const date = [
+        year.toString(),
+        month.toString(),
+        day.toString(),
+        hours.toString(),
+      ];
+
       const { data, error } = await client.from("purchasedItem").insert([
         {
           user_id: props.uuid,
           category_id: value,
           price: price,
           description: description,
+          buyDate: date,
         },
       ]);
       if (error) {
@@ -65,14 +80,14 @@ export const AddSubtitle = (props: Props) => {
 
   return (
     <>
-      <div className="p-2 border" onClick={openModal}>
+      <button className="p-2 border" onClick={openModal}>
         <div className="flex justify-center">
-          <div className="w-32 h-12 text-center bg-yellow-300  cursor-pointer">
+          <div className="w-32 h-12 text-center bg-yellow-300 cursor-pointer">
             登録
           </div>
         </div>
         <div className="mt-2 text-center">ADD NEW</div>
-      </div>
+      </button>
 
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog

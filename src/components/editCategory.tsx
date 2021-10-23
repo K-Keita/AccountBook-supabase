@@ -9,6 +9,7 @@ type Props = {
   category: string;
   getItemList: VoidFunction;
   userData: any;
+  num: number;
 };
 
 export const EditCategory = (props: Props) => {
@@ -46,6 +47,8 @@ export const EditCategory = (props: Props) => {
   const closeModal = useCallback(() => {
     setIsOpen(false);
   }, []);
+
+  console.log(props.num);
 
   const handleRemove = useCallback(
     async (category_id, user_id) => {
@@ -116,8 +119,8 @@ export const EditCategory = (props: Props) => {
 
   return (
     <div>
-      <Link href={`/title?id=${props.category}`} passHref>
-        <p className="text-3xl cursor-pointer">{props.category}</p>
+      <Link href={`/category?id=${props.num}`} passHref>
+        <p className="text-xl cursor-pointer">{props.category}</p>
       </Link>
       <button className="cursor-pointer" onClick={openModal}>
         編集

@@ -1,7 +1,5 @@
-import { AddSubtitle } from "src/components/addItem";
-import { SubtitleCard } from "src/components/subtitleCard";
-import type { Data } from "src/components/titleList";
-import type { UserData } from "src/pages/title";
+import { ItemCard } from "src/components/itemCard";
+import type { UserData } from "src/pages/category";
 
 type Props = {
   items: UserData[];
@@ -10,16 +8,15 @@ type Props = {
   getItemList: VoidFunction;
 };
 
-export const SubtitleList = (props: Props) => {
+export const ItemList = (props: Props) => {
   return (
-    <div className="">
+    <div>
       {props.items.map((item) => {
         return (
           <div key={item.id}>
-            <SubtitleCard
+            <ItemCard
               item={item}
               userData={props.userData}
-              created_at={item.created_at}
               uuid={props.uuid}
               getItemList={props.getItemList}
             />

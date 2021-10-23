@@ -1,22 +1,29 @@
 import { Dialog, Disclosure, Transition } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/solid";
-import { Button, IconEdit, IconSave, IconTrash2, IconX } from "@supabase/ui";
-import { useRouter } from "next/router";
+import { Button, IconSave, IconTrash2, IconX, Select } from "@supabase/ui";
 import { Fragment, useCallback, useState } from "react";
-import type { Data } from "src/components/titleList";
 import { client } from "src/libs/supabase";
 
 type Props = {
-  userData: Data;
+  item: any;
+  userData: any;
+  uuid: string;
   getItemList: VoidFunction;
 };
 
-export const EditTitle = (props: Props) => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [title, setTitle] = useState<string>(props.userData.category);
-  const [author, setAuthor] = useState<string>(props.userData.user_name);
+const colors = ["red", "blue", "green", "orange", "gray", "pink", "yellow"];
 
-  const router = useRouter();
+export const ItemCard = (props: Props) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [price, setPrice] = useState<string>(props.item.price.toString());
+  const [description, setDescription] = useState<string>(
+    props.item.description.toString()
+  );
+  const [possession, setPossession] = useState<boolean>(props.item.possession);
+  const [value, setValue] = useState(props.item.category_id);
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setValue(e.target.value);
+  };
 
   const openModal = useCallback(() => {
     setIsOpen(true);
@@ -26,52 +33,73 @@ export const EditTitle = (props: Props) => {
     setIsOpen(false);
   }, []);
 
-  const handleSave = useCallback(async () => {
-    if (title == "") {
-      alert("Input title.");
-      return;
-    }
-    const { error } = await client.from("users").upsert([
-      {
-        id: props.userData.id,
-        user_id: props.userData.user_id,
-        category: title,
-        user_name: author,
-      },
-    ]);
-    if (error) {
-      alert(error);
-    } else {
-      props.getItemList();
-      closeModal();
-    }
-  }, [title, props, author, closeModal]);
-
   const handleRemove = useCallback(async () => {
-    let { error } = await client
+    if (!confirm("削除しますか？")) {
+      return false;
+    }
+    const { error } = await client
       .from("purchasedItem")
       .delete()
-      .eq("title_id", props.userData.id);
+      .eq("id", props.item.id);
     if (error) {
       alert(error);
     }
-    ({ error } = await client
-      .from("users")
-      .delete()
-      .eq("id", props.userData.id));
-    if (error) {
-      alert(error);
-    }
-    router.push("/");
-  }, [props, router]);
+    props.getItemList();
+    closeModal();
+  }, [props, closeModal]);
 
+  const handleSave = useCallback(
+    async (value) => {
+      if (price == "") {
+        alert("Input price as an integer.");
+        return;
+      }
+
+      if (description == "") {
+        alert("Input ISBN number.");
+        return;
+      }
+
+      const { error } = await client.from("purchasedItem").upsert({
+        id: props.item.id,
+        user_id: props.item.user_id,
+        buyDate: props.item.buyDate,
+        category_id: value,
+        price: Number(price),
+        description: description,
+      });
+
+      if (error) {
+        alert(error);
+      }
+      props.getItemList();
+      closeModal();
+    },
+    [props, price, description, possession, closeModal]
+  );
+
+  const date = `${props.item.buyDate[0]}.${props.item.buyDate[1]}/${props.item.buyDate[2]}`;
+
+  const color =
+    colors[props.userData.categories_list.indexOf(props.item.category_id)];
   return (
     <>
-      <Button block size="medium" icon={<IconEdit />} onClick={openModal}>
-        EDIT
-      </Button>
+      <div className="p-2 border cursor-pointer">
+        <div className="flex" style={{ border: `solid 3px ${color}` }}>
+          <p className="bg-green-200">{date}</p>
+          <p>{props.item.price}</p>
+          <p>カテゴリー：{props.item.category_id}</p>
+          <div className="text-center">({props.item.description})</div>
+          <button className="bg-green-200" onClick={openModal}>
+            編集
+          </button>
+          <button onClick={handleRemove}>
+            <IconTrash2 />
+          </button>
+        </div>
+      </div>
 
-      <Transition appear show={isOpen} as={Fragment}>
+      <Transition  appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
           className="overflow-y-auto fixed inset-0 z-10"
@@ -98,27 +126,59 @@ export const EditTitle = (props: Props) => {
                   as="h3"
                   className="text-2xl font-medium leading-6 text-center text-gray-900"
                 >
-                  Add Title
+                  Add Subtitle
                 </Dialog.Title>
                 <div className="grid grid-cols-4 gap-2 mt-4">
-                  <div className="col-span-1 text-xl text-center">Title</div>
+                  <div className="col-span-1 pt-1 text-xl text-center">
+                    価格
+                  </div>
                   <input
                     className="col-span-3 p-2 w-full h-10 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
-                    value={title}
+                    value={price}
                     onChange={(e) => {
-                      return setTitle(e.target.value);
+                      return setPrice(e.target.value);
                     }}
                   />
                 </div>
                 <div className="grid grid-cols-4 gap-2 mt-4">
-                  <div className="col-span-1 text-xl text-center">Author</div>
+                  <div className="col-span-1 pt-1 text-xl text-center">
+                    説明
+                  </div>
                   <input
                     className="col-span-3 p-2 w-full h-10 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
-                    value={author}
+                    value={description}
                     onChange={(e) => {
-                      return setAuthor(e.target.value);
+                      return setDescription(e.target.value);
                     }}
                   />
+                </div>
+                <Select
+                  label="Select label"
+                  defaultValue={props.item.category_id}
+                  onChange={handleChange}
+                >
+                  {props.userData.categories_list.map((value, index) => {
+                    return (
+                      <Select.Option value={value} key={index}>
+                        {value}
+                      </Select.Option>
+                    );
+                  })}
+                </Select>
+                <div className="grid grid-cols-5 gap-2 mt-4">
+                  <div className="col-span-2 pt-1 text-xl text-center">
+                    Possession
+                  </div>
+                  <div className="col-span-3 pt-2 pl-2">
+                    <input
+                      type="checkbox"
+                      className="scale-150"
+                      checked={possession}
+                      onChange={() => {
+                        return setPossession(!possession);
+                      }}
+                    />
+                  </div>
                 </div>
                 <div className="mx-4 mt-4 bg-blue-50">
                   <Disclosure>
@@ -147,7 +207,6 @@ export const EditTitle = (props: Props) => {
                     }}
                   </Disclosure>
                 </div>
-
                 <div className="flex justify-center mt-4">
                   <div className="p-2 w-32">
                     <Button
@@ -165,7 +224,9 @@ export const EditTitle = (props: Props) => {
                       block
                       size="large"
                       icon={<IconSave />}
-                      onClick={handleSave}
+                      onClick={() => {
+                        return handleSave(value);
+                      }}
                     >
                       Save
                     </Button>
