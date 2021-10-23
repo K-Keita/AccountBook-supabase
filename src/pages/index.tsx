@@ -1,69 +1,210 @@
 import { Auth, Button, IconLogOut } from "@supabase/ui";
-import type { ReactNode} from "react";
+import { useRouter } from "next/router";
+import type { ReactNode } from "react";
 import { useCallback, useEffect, useState } from "react";
-import { LayoutWrapper } from "src/components/layoutWrapper";
-import type { Data } from "src/components/titleList";
-import { TitleList } from "src/components/titleList";
+import { AddItem } from "src/components/addItem";
+import { EditCategory } from "src/components/editCategory";
+import { ItemList } from "src/components/itemList";
+import type { Data } from "src/interface/type";
+import { LayoutWrapper } from "src/layouts/layoutWrapper";
 import { client } from "src/libs/supabase";
 
 type Props = {
   children: ReactNode;
 };
 
-const getMainData = async () => {
-  const { data, error } = await client.from("users").select("*");
+const d = new Date();
+const year = d.getFullYear();
+const month = d.getMonth() + 1;
+
+const getItems = async (user_id: string) => {
+  let { data, error } = await client
+    .from("users")
+    .select("*")
+    .eq("user_id", user_id);
+
   if (!error && data) {
-    return data;
+    const userData = data[0];
+    ({ data, error } = await client
+      .from("purchasedItem")
+      .select("*")
+      .contains("buyDate", [year, month])
+      .eq("user_id", user_id));
+
+    const newData = data?.reduce((sum, element) => {
+      return sum + element.price;
+    }, 0);
+
+    if (!error && data) {
+      return { userData: userData, items: data, totalPrice: newData };
+    } else {
+      return { userData: userData, items: null, totalPrice: null };
+    }
   }
-  return [];
+
+  return { userData: null, items: null, totalPrice: null };
 };
 
 const Container = (props: Props) => {
   const { user } = Auth.useUser();
 
   const [text, setText] = useState<string>("");
-  const [userData, setUserData] = useState<Data[]>([]);
+  const [userData, setUserData] = useState<Data>();
+  const [total, setTotal] = useState<number>();
+  const [items, setItems] = useState<any>([]);
 
-  const getTitleList = useCallback(async () => {
-    const data = await getMainData();
-    setUserData(data);
-  }, []);
+  const router = useRouter();
+  const { id } = router.query;
+
+  const getItemList = useCallback(async () => {
+    if (user) {
+      const { userData, items, totalPrice } = await getItems(
+        user.id.toString()
+      );
+      if (userData) {
+        setUserData(userData);
+      } else {
+        router.push("/");
+      }
+      if (items) {
+        setItems(items);
+        setTotal(totalPrice);
+      }
+    }
+  }, [id, router, user]);
 
   useEffect(() => {
-    getTitleList();
-  }, [user, getTitleList]);
+    getItemList();
+  }, [user, getItemList, id, router]);
+
+  //カテゴリーの追加
+  const addCategory = async (text: string) => {
+    if (text === "") {
+      return false;
+    }
+
+    if (userData) {
+      const arr = userData.categories_list;
+      if (arr.indexOf(text) !== -1) {
+        alert("すでに同じカテゴリー名があります");
+        return false;
+      }
+      const newArr = [...arr, text];
+
+      const { error } = await client.from("users").upsert({
+        id: userData.id,
+        user_id: userData.user_id,
+        categories_list: newArr,
+      });
+
+      if (error) {
+        alert(error);
+      }
+    }
+
+    setText("");
+    getItemList();
+  };
+
+  //timestampの型定義がわからない(後で確認)
+  const sortData = (data: any) => {
+    const arr = data.sort(
+      (a: { buyDate: string[] }, b: { buyDate: string[] }) => {
+        if (Number(a.buyDate[2]) === Number(b.buyDate[2])) {
+          if (Number(a.buyDate[3]) < Number(b.buyDate[3])) {
+            return 1;
+          } else {
+            return -1;
+          }
+        }
+        if (Number(a.buyDate[2]) < Number(b.buyDate[2])) {
+          return 1;
+        } else {
+          return -1;
+        }
+      }
+    );
+    return arr;
+  };
+
+  const data = sortData(items);
+
+  const getLastDate = (year: number, month: number) => {
+    return new Date(year, month, 0).getDate();
+  };
+
+  const count = getLastDate(year, month);
+
+  const targetAverage = userData ? userData.targetAmount / count : null;
+  const nowAverage = total ? total / d.getDate() : null;
 
   if (user) {
     return (
       <div>
+        <h2 className="text-xl">{month}月</h2>
         <div className="flex gap-2 justify-center p-4">
           <input
             className="px-4 w-full h-12 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
             placeholder="Filtering text"
             value={text}
-            onChange={(e) => {return setText(e.target.value)}}
+            autoFocus
+            type="text"
+            onChange={(e) => {
+              return setText(e.target.value);
+            }}
           />
         </div>
-        <TitleList
-          userData={userData}
-          uuid={user.id}
-          getTitleList={getTitleList}
-          filterText={text}
-        />
-        {userData[0]?.categories_list.length > 0 ? (
-          userData[0].categories_list.map(value => {
-            return (
-              <div key={value} >{value}</div>
-            )
-          })
+        <button
+          className="table p-1 mr-10 ml-auto text-lg bg-green-200 rounded-md cursor-pointer"
+          onClick={() => {
+            return addCategory(text);
+          }}
+        >
+          カテゴリー追加
+        </button>
+        <div className=" ">
+          {userData
+            ? userData.categories_list.map((value, index) => {
+                return (
+                  <EditCategory
+                    key={index}
+                    category={value}
+                    num={index}
+                    getItemList={getItemList}
+                    userData={userData}
+                  />
+                );
+              })
+            : null}
+        </div>
+        <p className="text-lg">今月の金額：{userData?.targetAmount}</p>
+        <p className="text-lg">1日の平均金額：{targetAverage ? Math.floor(targetAverage) : null}</p>
+        <p className="text-lg">
+          現在の1日平均金額：{nowAverage ? Math.floor(nowAverage) : null}
+        </p>
+        {total ? (
+          <div className="px-8 pt-2 pb-1 text-2xl text-right border-b border-gray-300">
+            合計：{total}
+          </div>
         ) : null}
+        <AddItem userData={userData} uuid={user.id} getItemList={getItemList} />
+        {userData && (
+          <ItemList
+            items={data}
+            userData={userData}
+            uuid={user.id}
+            getItemList={getItemList}
+          />
+        )}
         <div className="flex justify-end my-4 mx-2">
           <Button
             size="medium"
             icon={<IconLogOut />}
-            onClick={() => {return client.auth.signOut()}}
+            onClick={() => {
+              return client.auth.signOut();
+            }}
           >
-            Sign out
+            Sign Out
           </Button>
         </div>
       </div>

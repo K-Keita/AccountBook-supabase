@@ -1,11 +1,19 @@
 import "tailwindcss/tailwind.css";
 
-import { Auth, Button, IconLogOut } from "@supabase/ui";
+import { Auth } from "@supabase/ui";
 import type { AppProps } from "next/app";
+import PropTypes from "prop-types";
 
-function MyApp({ Component, pageProps }: AppProps) {
-  const { user } = Auth.useUser();
+const MyApp = (props: AppProps): JSX.Element => {
+  // const { user } = Auth.useUser();
 
-  return <Component {...pageProps} />;
+  return <props.Component {...props.pageProps} />;
 }
+
+
+MyApp.propTypes = {
+  Component: PropTypes.elementType.isRequired,
+  pageProps: PropTypes.object.isRequired,
+};
+
 export default MyApp;
