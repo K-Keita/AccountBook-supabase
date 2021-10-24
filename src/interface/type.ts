@@ -1,10 +1,19 @@
 export type Data = {
   id: number;
-  user_id: string;
+  userID: string;
   category: string;
   title: string;
-  user_name: string;
-  categories_list: string[];
-  image_url: string;
+  userName: string;
+  categoryList: string[];
   targetAmount: number;
+};
+
+export type UserData = {
+  id: number;
+  userID: string;
+  createdAt: string;
+  volume: number;
+  isbn: number;
+  buyDate: string[];
+  possession: boolean;
 };
