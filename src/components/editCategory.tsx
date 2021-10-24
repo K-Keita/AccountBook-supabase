@@ -1,8 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Auth, Button, IconX } from "@supabase/ui";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { Button, IconX } from "@supabase/ui";
+import { Fragment, useCallback, useState } from "react";
 import { client } from "src/libs/supabase";
 
 type Props = {
@@ -13,32 +11,23 @@ type Props = {
 };
 
 export const EditCategory = (props: Props) => {
-  const { user } = Auth.useUser();
-
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [category, setCategory] = useState<string>(props.category);
 
-  const router = useRouter();
-  const { id } = router.query;
-
-  const editItems = async (category_id, value) => {
+  const editItems = async (prevValue: string, value: string) => {
     const { error } = await client
       .from("purchasedItem")
       .update({
-        user_id: props.userData.user_id,
-        category_id: value,
+        userID: props.userData.userID,
+        categoryID: value,
       })
-      .match({ category_id: category_id, user_id: props.userData.user_id });
+      .match({ categoryID: prevValue, userID: props.userData.userID });
 
     if (error) {
       alert(error);
     }
     props.getItemList();
   };
-
-  useEffect(() => {
-    props.getItemList();
-  }, [user, props.getItemList, id, router]);
 
   const openModal = useCallback(() => {
     setIsOpen(true);
@@ -48,15 +37,13 @@ export const EditCategory = (props: Props) => {
     setIsOpen(false);
   }, []);
 
-  console.log(props.num);
-
   const handleRemove = useCallback(
-    async (category_id, user_id) => {
+    async (categoryID, userID) => {
       const { error } = await client
         .from("purchasedItem")
         .delete()
-        .eq("category_id", category_id)
-        .eq("user_id", user_id);
+        .eq("categoryID", categoryID)
+        .eq("userID", userID);
       if (error) {
         alert(error);
       }
@@ -68,11 +55,15 @@ export const EditCategory = (props: Props) => {
 
   //カテゴリーの削除
   const removeCategory = async (value: string) => {
-    if (!confirm("削除しますが、よろしいですか？ *このカテゴリーに属している商品も削除されます。")) {
+    if (
+      !confirm(
+        "削除しますが、よろしいですか？ *このカテゴリーに属している商品も削除されます。"
+      )
+    ) {
       return false;
     }
     if (props.userData) {
-      const arr = props.userData.categories_list;
+      const arr = props.userData.categoryList;
 
       const newArr = arr.filter((v: any) => {
         return v !== value;
@@ -80,23 +71,24 @@ export const EditCategory = (props: Props) => {
 
       const { error } = await client.from("users").upsert({
         id: props.userData.id,
-        user_id: props.userData.user_id,
-        categories_list: newArr,
+        userID: props.userData.userID,
+        categoryList: newArr,
       });
 
       if (error) {
         alert(error);
       }
 
-      handleRemove(value, props.userData.user_id);
+      handleRemove(value, props.userData.userID);
 
       props.getItemList();
+      closeModal();
     }
   };
 
   const editCategory = async (value: string, category: string) => {
     if (props.userData) {
-      const arr = props.userData.categories_list;
+      const arr = props.userData.categoryList;
 
       const num = arr.indexOf(category);
 
@@ -104,8 +96,8 @@ export const EditCategory = (props: Props) => {
 
       const { error } = await client.from("users").upsert({
         id: props.userData.id,
-        user_id: props.userData.user_id,
-        categories_list: arr,
+        userID: props.userData.userID,
+        categoryList: arr,
       });
 
       if (error) {
@@ -118,28 +110,30 @@ export const EditCategory = (props: Props) => {
   };
 
   return (
-    <div>
-      <Link href={`/category?id=${props.num}`} passHref>
-        <p className="text-xl cursor-pointer">{props.category}</p>
-      </Link>
-      <button className="cursor-pointer" onClick={openModal}>
-        編集
-      </button>
-      <button
-        className="cursor-pointer"
-        onClick={() => {
-          return removeCategory(props.category);
-        }}
-      >
-        削除
-      </button>
+    <>
+      <div className="flex justify-around">
+        <button
+          className="table p-1 mx-4 bg-green-100 border border-gray-400 cursor-pointer"
+          onClick={openModal}
+        >
+          編集
+        </button>
+        <button
+          className="table p-1 mx-4 bg-green-100 border border-gray-400 cursor-pointer"
+          onClick={() => {
+            return removeCategory(props.category);
+          }}
+        >
+          削除
+        </button>
+      </div>
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
           className="overflow-y-auto fixed inset-0 z-10"
           onClose={closeModal}
         >
-          <div className="px-4 min-h-screen text-center border-2">
+          <div className="px-4 text-center border-2">
             <span
               className="inline-block h-screen align-middle"
               aria-hidden="true"
@@ -201,6 +195,6 @@ export const EditCategory = (props: Props) => {
           </div>
         </Dialog>
       </Transition>
-    </div>
+    </>
   );
 };

@@ -6,8 +6,14 @@ import { client } from "src/libs/supabase";
 type Props = {
   userData: any;
   uuid: string;
-  getItemList: VoidFunction;
+  getItemList: (year: number, month: number) => void;
 };
+  const d = new Date();
+
+  const year = d.getFullYear();
+  const month = d.getMonth() + 1;
+  const day = d.getDate();
+  const hours = d.getHours();
 
 export const AddItem = (props: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -29,13 +35,6 @@ export const AddItem = (props: Props) => {
     setDescription("");
     setIsOpen(false);
   }, []);
-
-  const d = new Date();
-
-  const year = d.getFullYear();
-  const month = d.getMonth() + 1;
-  const day = d.getDate();
-  const hours = d.getHours();
 
   //商品の追加
   const handleAdd = useCallback(
@@ -59,8 +58,8 @@ export const AddItem = (props: Props) => {
 
       const { data, error } = await client.from("purchasedItem").insert([
         {
-          user_id: props.uuid,
-          category_id: value,
+          userID: props.uuid,
+          categoryID: value,
           price: price,
           description: description,
           buyDate: date,
@@ -70,23 +69,21 @@ export const AddItem = (props: Props) => {
         alert(error);
       } else {
         if (data) {
-          props.getItemList();
+          props.getItemList(year, month);
           closeModal();
         }
       }
     },
-    [props, price, description, closeModal]
+    [price, description, closeModal]
   );
 
   return (
     <>
-      <button className="p-2 border" onClick={openModal}>
-        <div className="flex justify-center">
-          <div className="w-32 h-12 text-center bg-yellow-300 cursor-pointer">
-            登録
-          </div>
-        </div>
-        <div className="mt-2 text-center">ADD NEW</div>
+      <button
+        className="block p-2 py-2 my-4 mx-auto w-32 text-center bg-yellow-300 border cursor-pointer"
+        onClick={openModal}
+      >
+        登録
       </button>
 
       <Transition appear show={isOpen} as={Fragment}>
@@ -95,7 +92,7 @@ export const AddItem = (props: Props) => {
           className="overflow-y-auto fixed inset-0 z-10"
           onClose={closeModal}
         >
-          <div className="px-4 min-h-screen text-center border-2">
+          <div className="px-4 text-center border-2">
             <span
               className="inline-block h-screen align-middle"
               aria-hidden="true"
@@ -116,7 +113,7 @@ export const AddItem = (props: Props) => {
                   as="h3"
                   className="text-2xl font-medium leading-6 text-center text-gray-900"
                 >
-                  Add Subtitle
+                  商品追加
                 </Dialog.Title>
                 <div className="grid grid-cols-4 gap-2 mt-4">
                   <div className="col-span-1 pt-1 text-xl text-center">
@@ -157,8 +154,8 @@ export const AddItem = (props: Props) => {
                     }}
                   />
                 </div>
-                <Select label="Select label" onChange={handleChange}>
-                  {props.userData?.categories_list?.map((value) => {
+                <Select label="カテゴリー" onChange={handleChange}>
+                  {props.userData?.categoryList?.map((value: string) => {
                     return (
                       <Select.Option value={value} key={value}>
                         {value}

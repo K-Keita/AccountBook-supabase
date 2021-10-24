@@ -1,6 +1,5 @@
-import { Dialog, Disclosure, Transition } from "@headlessui/react";
-import { ChevronUpIcon } from "@heroicons/react/solid";
-import { Button, IconSave, IconTrash2, IconX, Select } from "@supabase/ui";
+import { Dialog, Transition } from "@headlessui/react";
+import { Button, IconSave, IconX, Input,Select } from "@supabase/ui";
 import { Fragment, useCallback, useState } from "react";
 import { client } from "src/libs/supabase";
 
@@ -8,8 +7,12 @@ type Props = {
   item: any;
   userData: any;
   uuid: string;
-  getItemList: VoidFunction;
+  getItemList: (year: number, month: number) => void;
 };
+
+const d = new Date();
+const year = d.getFullYear();
+const month = d.getMonth() + 1;
 
 const colors = ["red", "blue", "green", "orange", "gray", "pink", "yellow"];
 
@@ -19,8 +22,8 @@ export const ItemCard = (props: Props) => {
   const [description, setDescription] = useState<string>(
     props.item.description.toString()
   );
-  const [possession, setPossession] = useState<boolean>(props.item.possession);
-  const [value, setValue] = useState(props.item.category_id);
+  const [value, setValue] = useState(props.item.categoryID);
+
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setValue(e.target.value);
   };
@@ -44,7 +47,7 @@ export const ItemCard = (props: Props) => {
     if (error) {
       alert(error);
     }
-    props.getItemList();
+    props.getItemList(year, month);
     closeModal();
   }, [props, closeModal]);
 
@@ -62,9 +65,9 @@ export const ItemCard = (props: Props) => {
 
       const { error } = await client.from("purchasedItem").upsert({
         id: props.item.id,
-        user_id: props.item.user_id,
+        userID: props.item.userID,
         buyDate: props.item.buyDate,
-        category_id: value,
+        categoryID: value,
         price: Number(price),
         description: description,
       });
@@ -72,40 +75,91 @@ export const ItemCard = (props: Props) => {
       if (error) {
         alert(error);
       }
-      props.getItemList();
+      props.getItemList(year, month);
       closeModal();
     },
-    [props, price, description, possession, closeModal]
+    [props, price, description, closeModal]
   );
 
-  const date = `${props.item.buyDate[0]}.${props.item.buyDate[1]}/${props.item.buyDate[2]}`;
+  const date = `${props.item.buyDate[1]}/${props.item.buyDate[2]}`;
 
   const color =
-    colors[props.userData.categories_list.indexOf(props.item.category_id)];
+    colors[props.userData.categoryList.indexOf(props.item.categoryID)];
+
   return (
     <>
-      <div className="p-2 border cursor-pointer">
-        <div className="flex" style={{ border: `solid 3px ${color}` }}>
-          <p className="bg-green-200">{date}</p>
-          <p>{props.item.price}</p>
-          <p>カテゴリー：{props.item.category_id}</p>
-          <div className="text-center">({props.item.description})</div>
-          <button className="bg-green-200" onClick={openModal}>
-            編集
+      <div className="p-2 text-lg border-b cursor-pointer">
+        <div className="flex">
+          <p className="w-16">{date}</p>
+          <p
+            className="w-24 text-base text-center"
+            style={{ border: `solid 1px ${color}` }}
+          >
+            {props.item.categoryID}
+          </p>
+          <p className="px-2 ml-auto w-32 text-right border-r">
+            ¥{props.item.price.toLocaleString()}
+          </p>
+          <button className="px-2 border-r" onClick={openModal}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-5 h-5 text-blue-400"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+              <path
+                fillRule="evenodd"
+                d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
+                clipRule="evenodd"
+              />
+            </svg>
           </button>
-          <button onClick={handleRemove}>
-            <IconTrash2 />
+          <button className="px-2 border-r" onClick={handleRemove}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-6 h-6 text-red-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
           </button>
+          <button className="px-2" onClick={handleRemove}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-6 h-6 text-green-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 13l-7 7-7-7m14-8l-7 7-7-7"
+              />
+            </svg>
+          </button>
+        </div>
+        <div className="flex">
+          <p className="ml-auto">{props.item.description}</p>
         </div>
       </div>
 
-      <Transition  appear show={isOpen} as={Fragment}>
+      <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
           className="overflow-y-auto fixed inset-0 z-10"
           onClose={closeModal}
         >
-          <div className="px-4 min-h-screen text-center border-2">
+          <div className="px-4 text-center border-2">
             <span
               className="inline-block h-screen align-middle"
               aria-hidden="true"
@@ -126,93 +180,52 @@ export const ItemCard = (props: Props) => {
                   as="h3"
                   className="text-2xl font-medium leading-6 text-center text-gray-900"
                 >
-                  Add Subtitle
+                  編集
                 </Dialog.Title>
-                <div className="grid grid-cols-4 gap-2 mt-4">
-                  <div className="col-span-1 pt-1 text-xl text-center">
-                    価格
-                  </div>
-                  <input
-                    className="col-span-3 p-2 w-full h-10 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
+                <div className="flex justify-between mt-4">
+                  <div className="pt-1 w-20 text-lg">価格:</div>
+                  <Input
+                    className="w-80"
                     value={price}
                     onChange={(e) => {
                       return setPrice(e.target.value);
                     }}
                   />
                 </div>
-                <div className="grid grid-cols-4 gap-2 mt-4">
-                  <div className="col-span-1 pt-1 text-xl text-center">
-                    説明
-                  </div>
-                  <input
-                    className="col-span-3 p-2 w-full h-10 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
+                <div className="flex justify-between mt-4">
+                  <div className="pt-1 w-20 text-lg">説明:</div>
+                  <Input
+                    className="w-80"
                     value={description}
                     onChange={(e) => {
                       return setDescription(e.target.value);
                     }}
                   />
                 </div>
-                <Select
-                  label="Select label"
-                  defaultValue={props.item.category_id}
-                  onChange={handleChange}
-                >
-                  {props.userData.categories_list.map((value, index) => {
-                    return (
-                      <Select.Option value={value} key={index}>
-                        {value}
-                      </Select.Option>
-                    );
-                  })}
-                </Select>
-                <div className="grid grid-cols-5 gap-2 mt-4">
-                  <div className="col-span-2 pt-1 text-xl text-center">
-                    Possession
-                  </div>
-                  <div className="col-span-3 pt-2 pl-2">
-                    <input
-                      type="checkbox"
-                      className="scale-150"
-                      checked={possession}
-                      onChange={() => {
-                        return setPossession(!possession);
-                      }}
-                    />
-                  </div>
-                </div>
-                <div className="mx-4 mt-4 bg-blue-50">
-                  <Disclosure>
-                    {({ open }) => {
-                      return (
-                        <>
-                          <Disclosure.Button className="flex justify-between py-2 px-4 w-full text-sm font-medium text-left text-blue-500 bg-blue-100 hover:bg-blue-200 rounded-lg focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 focus:outline-none">
-                            <span>REMOVE THIS</span>
-                            <ChevronUpIcon
-                              className={`${
-                                open ? "transform rotate-180" : ""
-                              } w-5 h-5 text-blue-500`}
-                            />
-                          </Disclosure.Button>
-                          <Disclosure.Panel className="p-4 text-gray-500 text-md">
-                            <Button
-                              block
-                              onClick={handleRemove}
-                              icon={<IconTrash2 />}
-                            >
-                              REMOVE
-                            </Button>
-                          </Disclosure.Panel>
-                        </>
-                      );
-                    }}
-                  </Disclosure>
+                <div className="flex justify-between mt-4">
+                  <p className="pt-1 mr-2 text-lg text-center">カテゴリー:</p>
+                  <Select
+                    className="w-60"
+                    defaultValue={props.item.categoryID}
+                    onChange={handleChange}
+                  >
+                    {props.userData.categoryList.map(
+                      (value: string, index: number) => {
+                        return (
+                          <option value={value} key={index}>
+                            {value}
+                          </option>
+                        );
+                      }
+                    )}
+                  </Select>
                 </div>
                 <div className="flex justify-center mt-4">
                   <div className="p-2 w-32">
                     <Button
                       block
-                      type="default"
-                      size="large"
+                      type="outline"
+                      size="tiny"
                       icon={<IconX />}
                       onClick={closeModal}
                     >
@@ -222,7 +235,9 @@ export const ItemCard = (props: Props) => {
                   <div className="p-2 w-32">
                     <Button
                       block
-                      size="large"
+                      size="tiny"
+                      type="outline"
+                      // style={{background: "skyBlue"}}
                       icon={<IconSave />}
                       onClick={() => {
                         return handleSave(value);

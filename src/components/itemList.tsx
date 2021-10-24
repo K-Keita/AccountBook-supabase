@@ -1,16 +1,16 @@
 import { ItemCard } from "src/components/itemCard";
-import type { UserData } from "src/pages/category";
+import type { UserData } from "src/interface/type";
 
 type Props = {
   items: UserData[];
   userData: any;
   uuid: string;
-  getItemList: VoidFunction;
+  getItemList: (year: number, month: number) => void;
 };
 
 export const ItemList = (props: Props) => {
   return (
-    <div>
+    <div className="p-3 bg-white border">
       {props.items.map((item) => {
         return (
           <div key={item.id}>
