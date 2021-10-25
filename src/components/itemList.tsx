@@ -10,7 +10,7 @@ type Props = {
 
 export const ItemList = (props: Props) => {
   return (
-    <div className="p-3 bg-white border">
+    <div className="p-1">
       {props.items.map((item) => {
         return (
           <div key={item.id}>

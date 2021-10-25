@@ -88,19 +88,19 @@ export const ItemCard = (props: Props) => {
 
   return (
     <>
-      <div className="p-2 text-lg border-b cursor-pointer">
-        <div className="flex">
-          <p className="w-16">{date}</p>
+      <div className="p-2 m-1 text-lg bg-blue-50 border-b cursor-pointer">
+        <div className="flex border-b">
+          <p className="px-2 w-20 text-lg font-bold text-left">
+            ¥{props.item.price.toLocaleString()}
+          </p>
+          <p className="ml-auto w-16">{date}</p>
           <p
-            className="w-24 text-base text-center"
+            className="px-1 my-1 mr-2 w-20 text-sm text-center"
             style={{ border: `solid 1px ${color}` }}
           >
             {props.item.categoryID}
           </p>
-          <p className="px-2 ml-auto w-32 text-right border-r">
-            ¥{props.item.price.toLocaleString()}
-          </p>
-          <button className="px-2 border-r" onClick={openModal}>
+          <button className="px-2 my-1 border-r border-l" onClick={openModal}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="w-5 h-5 text-blue-400"
@@ -115,7 +115,7 @@ export const ItemCard = (props: Props) => {
               />
             </svg>
           </button>
-          <button className="px-2 border-r" onClick={handleRemove}>
+          <button className="px-2 my-1" onClick={handleRemove}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="w-6 h-6 text-red-400"
@@ -131,25 +131,9 @@ export const ItemCard = (props: Props) => {
               />
             </svg>
           </button>
-          <button className="px-2" onClick={handleRemove}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-6 h-6 text-green-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 13l-7 7-7-7m14-8l-7 7-7-7"
-              />
-            </svg>
-          </button>
         </div>
         <div className="flex">
-          <p className="ml-auto">{props.item.description}</p>
+          <p className="py-1 ml-3 text-sm">{props.item.description}</p>
         </div>
       </div>
 
