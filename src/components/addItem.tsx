@@ -74,7 +74,7 @@ export const AddItem = (props: Props) => {
         }
       }
     },
-    [price, description, closeModal]
+    [price, props, description, closeModal]
   );
 
   return (
