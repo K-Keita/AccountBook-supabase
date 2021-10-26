@@ -14,6 +14,7 @@ export type UserData = {
   createdAt: string;
   volume: number;
   isbn: number;
+  categoryID: string;
   buyDate: string[];
-  possession: boolean;
+  price: number;
 };
