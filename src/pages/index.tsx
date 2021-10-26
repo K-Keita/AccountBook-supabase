@@ -1,3 +1,4 @@
+import { Tab } from "@headlessui/react";
 import { Auth } from "@supabase/ui";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -19,8 +20,40 @@ const year = d.getFullYear();
 const month = d.getMonth() + 1;
 const day = d.getDate();
 
+const classNames = (...classes: any) => {
+  return classes.filter(Boolean).join(" ");
+};
+
 const getLastDate = (year: number, month: number) => {
   return new Date(year, month, 0).getDate();
+};
+
+// データベースからカテゴリーごとの商品の取得
+const getCategoryItems = async (userID: string, categoryID: number) => {
+  let { data, error } = await client
+    .from("users")
+    .select("*")
+    .eq("userID", userID);
+
+  if (!error && data) {
+    const userData = data[0];
+    ({ data, error } = await client
+      .from("purchasedItem")
+      .select("*")
+      .eq("userID", userID)
+      .eq("categoryID", userData.categoryList[categoryID]));
+
+    const newData = data?.reduce((sum, element) => {
+      return sum + element.price;
+    }, 0);
+
+    if (!error && data) {
+      return { userData: userData, items: data, totalPrice: newData };
+    } else {
+      return { userData: userData, items: null, totalPrice: null };
+    }
+  }
+  return { userData: null, items: null, totalPrice: null };
 };
 
 const count = getLastDate(year, month);
@@ -66,6 +99,8 @@ const Container = (props: Props) => {
   const [oneDayTotal, setOneDayTotal] = useState<number>(0);
   const [m, setM] = useState<number>(month);
 
+  const [categories, setCategories] = useState<string[]>([]);
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const handleOpenCategory = () => {
@@ -89,6 +124,7 @@ const Container = (props: Props) => {
         );
         if (userData) {
           setUserData(userData);
+          setCategories(["全て", ...userData.categoryList]);
         } else {
           router.push("/");
         }
@@ -161,46 +197,15 @@ const Container = (props: Props) => {
   const targetAverage = userData ? userData.targetAmount / count : null;
   const nowAverage = total ? total / d.getDate() : null;
 
+  console.log(categories);
+
   if (user) {
     return (
-      <div className="min-h-lg ">
-        <div className="flex pt-8">
-          <div className="p-5 w-1/2">
+      <div className="min-h-lg text-white">
+        <div className="md:flex pt-1">
+          <div className="p-5 md:w-1/2 h-lg -z-10">
             <div className="flex">
-              <button onClick={prevMonth}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="mb-4 w-6 h-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-                  />
-                </svg>
-              </button>
-              <h2 className="p-4 text-2xl">{m}月</h2>
-              <button onClick={nextMonth}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="mb-4 w-6 h-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 5l7 7-7 7M5 5l7 7-7 7"
-                  />
-                </svg>
-              </button>
-              <div className="p-4">
+              <div className="px-2">
                 <p className="text-lg">
                   今月の金額：¥{userData?.targetAmount.toLocaleString()}
                 </p>
@@ -213,8 +218,8 @@ const Container = (props: Props) => {
                 </p>
               </div>
             </div>
-            <div className=" p-1 pb-4 my-4">
-              <h2 className="p-2 text-lg">カテゴリー</h2>
+            <div className="p-1 pb-2 my-4">
+              <h2 className="px-2 text-lg">カテゴリー</h2>
               <div className="flex flex-wrap justify-around">
                 {userData
                   ? userData.categoryList.map((value, index) => {
@@ -225,7 +230,7 @@ const Container = (props: Props) => {
                           passHref
                         >
                           <p
-                            className="table px-1 m-3 w-28 text-center rounded-lg cursor-pointer"
+                            className="table px-1 m-1 w-28 text-center rounded-lg cursor-pointer"
                             style={{ border: `solid 1px ${colors[index]}` }}
                           >
                             {value}
@@ -236,7 +241,7 @@ const Container = (props: Props) => {
                   : null}
               </div>
               {isOpen ? (
-                <div className="flex justify-center p-4">
+                <div className="flex justify-center px-4">
                   <input
                     className="px-4 h-12 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
                     placeholder="Filtering text"
@@ -265,7 +270,7 @@ const Container = (props: Props) => {
               ) : null}
               <button
                 onClick={handleOpenCategory}
-                className="block p-1 mx-10 ml-auto w-24 bg-green-100 border border-gray-400 cursor-pointer"
+                className="block text-sm p-1 mx-10 ml-auto w-24 bg-green-100 border border-gray-400 cursor-pointer"
               >
                 追加
               </button>
@@ -289,16 +294,93 @@ const Container = (props: Props) => {
               getItemList={getItemList}
             />
           </div>
-          <div className="p-5 w-1/2">
-            <h2 className="p-4 text-2xl">アイテムリスト</h2>
-            {userData && (
-              <ItemList
-                items={data}
-                userData={userData}
-                uuid={user.id}
-                getItemList={getItemList}
-              />
-            )}
+          {/* <div className="h-lg opacity-0" /> */}
+          <div className="md:p-5 md:w-1/2 z-auto  bg-gradient-to-b from-dark via-green-200 to-blue-500 rounded-t-3xl pt-10">
+            <div className="flex px-4  ">
+              <button onClick={prevMonth}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-6 h-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
+                  />
+                </svg>
+              </button>
+              <h2 className="p-2 text-2xl">{m}月</h2>
+              <button onClick={nextMonth}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-6 h-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 5l7 7-7 7M5 5l7 7-7 7"
+                  />
+                </svg>
+              </button>
+            </div>
+            <Tab.Group>
+              <Tab.List className="flex flex-nowrap overflow-x-scroll px-4 py-3 space-x-1  w-full">
+                {categories.map((category) => {
+                  return (
+                    <Tab
+                      key={category}
+                      className={({ selected }) => {
+                        return classNames(
+                          "min-w-lg py-2.5 text-sm leading-5 font-medium text-blue-700 rounded-lg",
+                          "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60",
+                          selected
+                            ? "bg-white shadow"
+                            : "text-blue-100 hover:bg-white/[0.12] hover:text-white"
+                        );
+                      }}
+                    >
+                      {category}
+                    </Tab>
+                  );
+                })}
+              </Tab.List>
+              {categories.map((category) => {
+                const item = data.filter((value) => {
+                  return value.categoryID === category;
+                });
+                const total = item.reduce((sum, element) => {
+                  return sum + element.price;
+                }, 0);
+                return (
+                  <Tab.Panels className="" key={category}>
+                    <Tab.Panel
+                      className={classNames(
+                        "  rounded-b-xl min-h-lg",
+                        "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60"
+                      )}
+                    >
+                      <div className="text-xl mx-4 py-3 px-4 border-t">
+                        total: ¥{total}
+                      </div>
+                      <ItemList
+                        items={category === "全て" ? data : item}
+                        userData={userData}
+                        uuid={user.id}
+                        getItemList={getItemList}
+                      />
+                    </Tab.Panel>
+                  </Tab.Panels>
+                );
+              })}
+            </Tab.Group>
           </div>
         </div>
       </div>
