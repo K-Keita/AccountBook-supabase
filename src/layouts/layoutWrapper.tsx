@@ -8,8 +8,10 @@ type Props = {
 
 export const LayoutWrapper = (props: Props) => {
   return (
-    // <div className="bg-gradient-to-b from-blue-400 to-red-500">
-    <div className="bg-gradient-to-b from-purple-600 via-blue-500 to-breen-300">
+    <div
+      style={{ fontFamily: "游明朝体" }}
+      className="bg-gradient-to-b from-purple-600 via-blue-500 to-breen-300"
+    >
       <Header />
       <main className="text-gray-600 ">
         <div>{props.children}</div>

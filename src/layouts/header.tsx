@@ -7,7 +7,7 @@ export const Header = () => {
     <header className="flex justify-between p-5 h-20">
       <Link href="/">
         <a className="text-3xl">
-          <h2 className="text-blue-500">-Title-</h2>
+          <h2 className="font-bold text-white text-shadow" >-Title-</h2>
         </a>
       </Link>
       <div className="text-blue-600">
