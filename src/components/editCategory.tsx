@@ -1,20 +1,32 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Button, IconX } from "@supabase/ui";
-import { Fragment, useCallback, useState } from "react";
+import { Fragment, useCallback, useEffect,useState } from "react";
 import { client } from "src/libs/supabase";
 
 type Props = {
-  category: string;
-  getItemList: VoidFunction;
+  category: string[];
+  getItemList: (year: number, month: number) => void;
   userData: any;
   num: number;
 };
 
+const d = new Date();
+const year = d.getFullYear();
+const month = d.getMonth() + 1;
+const day = d.getDate();
+
 export const EditCategory = (props: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [category, setCategory] = useState<string>(props.category);
+  const [category, setCategory] = useState<string>(
+    props.category[props.num - 1],
+  );
+
+  useEffect(() => {
+    setCategory(props.category[props.num - 1]);
+  }, [props.category,props.num])
 
   const editItems = async (prevValue: string, value: string) => {
+    console.log(prevValue, value);
     const { error } = await client
       .from("purchasedItem")
       .update({
@@ -26,7 +38,7 @@ export const EditCategory = (props: Props) => {
     if (error) {
       alert(error);
     }
-    props.getItemList();
+    props.getItemList(year, month);
   };
 
   const openModal = useCallback(() => {
@@ -39,15 +51,16 @@ export const EditCategory = (props: Props) => {
 
   const handleRemove = useCallback(
     async (categoryID, userID) => {
-      const { error } = await client
-        .from("purchasedItem")
-        .delete()
-        .eq("categoryID", categoryID)
-        .eq("userID", userID);
-      if (error) {
-        alert(error);
-      }
-      props.getItemList();
+      console.log(categoryID, userID);
+      // const { error } = await client
+      //   .from("purchasedItem")
+      //   .delete()
+      //   .eq("categoryID", categoryID)
+      //   .eq("userID", userID);
+      // if (error) {
+      //   alert(error);
+      // }
+      props.getItemList(year, month);
       closeModal();
     },
     [props, closeModal]
@@ -55,6 +68,7 @@ export const EditCategory = (props: Props) => {
 
   //カテゴリーの削除
   const removeCategory = async (value: string) => {
+    console.log(value);
     if (
       !confirm(
         "削除しますが、よろしいですか？ *このカテゴリーに属している商品も削除されます。"
@@ -69,19 +83,19 @@ export const EditCategory = (props: Props) => {
         return v !== value;
       });
 
-      const { error } = await client.from("users").upsert({
-        id: props.userData.id,
-        userID: props.userData.userID,
-        categoryList: newArr,
-      });
+      // const { error } = await client.from("users").upsert({
+      //   id: props.userData.id,
+      //   userID: props.userData.userID,
+      //   categoryList: newArr,
+      // });
 
-      if (error) {
-        alert(error);
-      }
+      // if (error) {
+      //   alert(error);
+      // }
 
       handleRemove(value, props.userData.userID);
 
-      props.getItemList();
+      props.getItemList(year, month);
       closeModal();
     }
   };
@@ -94,6 +108,13 @@ export const EditCategory = (props: Props) => {
 
       arr.splice(num, 1, value);
 
+      console.log(value, category);
+      console.log({
+        id: props.userData.id,
+        userID: props.userData.userID,
+        categoryList: arr,
+      });
+
       const { error } = await client.from("users").upsert({
         id: props.userData.id,
         userID: props.userData.userID,
@@ -105,9 +126,11 @@ export const EditCategory = (props: Props) => {
       }
 
       editItems(category, value);
-      props.getItemList();
+      props.getItemList(year, month);
     }
   };
+
+  console.log(category);
 
   return (
     <>
@@ -121,7 +144,7 @@ export const EditCategory = (props: Props) => {
         <button
           className="table p-1 mx-4 bg-green-100 border border-gray-400 cursor-pointer"
           onClick={() => {
-            return removeCategory(props.category);
+            return removeCategory(props.category[props.num - 1]);
           }}
         >
           削除
@@ -130,7 +153,7 @@ export const EditCategory = (props: Props) => {
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
-          className="overflow-y-auto fixed inset-0 z-10"
+          className="overflow-y-auto fixed inset-0 z-50"
           onClose={closeModal}
         >
           <div className="px-4 text-center border-2">
@@ -163,7 +186,6 @@ export const EditCategory = (props: Props) => {
                   <input
                     className="col-span-3 p-2 w-full h-10 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
                     value={category}
-                    defaultValue={props.category}
                     onChange={(e) => {
                       return setCategory(e.target.value);
                     }}
@@ -172,7 +194,10 @@ export const EditCategory = (props: Props) => {
                 <button
                   className=""
                   onClick={() => {
-                    return editCategory(category, props.category);
+                    return editCategory(
+                      category,
+                      props.category[props.num - 1]
+                    );
                   }}
                 >
                   変更
