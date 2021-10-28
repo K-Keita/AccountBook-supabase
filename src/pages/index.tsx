@@ -1,71 +1,33 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Tab } from "@headlessui/react";
 import { Auth } from "@supabase/ui";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import type { ReactNode } from "react";
-import {
-  createRef,
-  forwardRef,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AddItem } from "src/components/addItem";
 import { ItemList } from "src/components/itemList";
-import { TabList } from "src/components/tab";
 import { sortData } from "src/hooks/sortData";
 import type { Data } from "src/interface/type";
 import type { UserData } from "src/interface/type";
 import { client } from "src/libs/supabase";
-// import throttle from "lodash.throttle";
 
 type Props = {
   children: ReactNode;
 };
 
 const d = new Date();
-const year = d.getFullYear();
-const month = d.getMonth() + 1;
+const y = d.getFullYear();
+const m = d.getMonth() + 1;
 const day = d.getDate();
+const count = new Date(y, m, 0).getDate();
+const thisMonthDays = [...Array(count)].map((_, i) => {
+  return i + 1;
+});
 
-const classNames = (...classes: any) => {
+const classNames = (...classes: string[]) => {
   return classes.filter(Boolean).join(" ");
 };
-
-const getLastDate = (year: number, month: number) => {
-  return new Date(year, month, 0).getDate();
-};
-
-// データベースからカテゴリーごとの商品の取得
-const getCategoryItems = async (userID: string, categoryID: number) => {
-  let { data, error } = await client
-    .from("users")
-    .select("*")
-    .eq("userID", userID);
-
-  if (!error && data) {
-    const userData = data[0];
-    ({ data, error } = await client
-      .from("purchasedItem")
-      .select("*")
-      .eq("userID", userID)
-      .eq("categoryID", userData.categoryList[categoryID]));
-
-    const newData = data?.reduce((sum, element) => {
-      return sum + element.price;
-    }, 0);
-
-    if (!error && data) {
-      return { userData: userData, items: data, totalPrice: newData };
-    } else {
-      return { userData: userData, items: null, totalPrice: null };
-    }
-  }
-  return { userData: null, items: null, totalPrice: null };
-};
-
-const count = getLastDate(year, month);
 
 const colors = [
   "red",
@@ -79,7 +41,7 @@ const colors = [
 ];
 
 // 全てのアイテムの取得
-const getItems = async (userID: string, year: number, month: number) => {
+const getItems = async (userID: string, y: number, m: number) => {
   let { data, error } = await client
     .from("users")
     .select("*")
@@ -90,7 +52,7 @@ const getItems = async (userID: string, year: number, month: number) => {
     ({ data, error } = await client
       .from("purchasedItem")
       .select("*")
-      .contains("date", [`year:${year}`, `month:${month}`])
+      .contains("date", [`year:${y}`, `month:${m}`])
       .eq("userID", userID));
 
     const newData = data?.reduce((sum, element) => {
@@ -110,18 +72,13 @@ const getItems = async (userID: string, year: number, month: number) => {
 const Container = (props: Props) => {
   const { user } = Auth.useUser();
 
-  const [text, setText] = useState<string>("");
   const [userData, setUserData] = useState<Data>();
   const [total, setTotal] = useState<number>();
   const [items, setItems] = useState<UserData[]>([]);
   const [oneDayTotal, setOneDayTotal] = useState<number>(0);
-  const [m, setM] = useState<number>(month);
+  const [year, setYear] = useState<number>(y);
+  const [month, setMonth] = useState<number>(m);
 
-  const [categories, setCategories] = useState<string[]>([]);
-
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-
-  // const isHome = router === "/";
   const [isTop, setIsTop] = useState<boolean>(false);
 
   useEffect(() => {
@@ -142,33 +99,25 @@ const Container = (props: Props) => {
       window.removeEventListener("scroll", scrollAction);
     };
   }, []);
-  const handleOpenCategory = () => {
-    setIsOpen(true);
-  };
-
-  const handleCloseCategory = () => {
-    setIsOpen(false);
-  };
 
   const router = useRouter();
-  const { id } = router.query;
 
+  //ユーザーデータ、アイテムの取得
   const getItemList = useCallback(
-    async (year: number, month: number) => {
+    async (y: number, m: number) => {
       if (user) {
         const { userData, items, totalPrice } = await getItems(
           user.id.toString(),
-          year,
-          month
+          y,
+          m
         );
         if (userData) {
           setUserData(userData);
-          setCategories(["全て", ...userData.categoryList]);
         } else {
           router.push("/");
         }
         if (items) {
-          setItems(items);
+          setItems(sortData(items));
           setTotal(totalPrice);
           const oneDayPrice = items.reduce((sum: number, element: any) => {
             if (element.buyDate[2] === day.toString()) {
@@ -184,13 +133,14 @@ const Container = (props: Props) => {
   );
 
   useEffect(() => {
-    getItemList(year, m);
-  }, [user, getItemList, id, router, m]);
+    getItemList(year, month);
+  }, [user, getItemList, router, year, month]);
 
   useEffect(() => {
     moveScroll();
   }, []);
 
+  //ボタンの位置へ移動
   const moveScroll = () => {
     const target = document.getElementById("sc");
     if (target === null) {
@@ -201,58 +151,42 @@ const Container = (props: Props) => {
     target ? (target.scrollLeft += 48 * day - 1) : null;
   };
 
-  //カテゴリーの追加
-  const addCategory = async (text: string) => {
-    if (text === "") {
-      return false;
-    }
-
-    if (userData) {
-      const arr = userData.categoryList;
-      if (arr.indexOf(text) !== -1) {
-        alert("すでに同じカテゴリー名があります");
-        return false;
-      }
-      const newArr = [...arr, text];
-
-      const { error } = await client.from("users").upsert({
-        id: userData.id,
-        userID: userData.userID,
-        categoryList: newArr,
-      });
-
-      if (error) {
-        alert(error);
-      }
-    }
-
-    setText("");
-    getItemList(year, m);
-  };
-
   //前の月へ
   const prevMonth = useCallback(() => {
-    const count = m - 1;
-    setM(count);
-  }, [m]);
+    if (month === 1) {
+      setYear((year) => {
+        return year - 1;
+      });
+      setMonth(12);
+      return;
+    }
+    setMonth((month) => {
+      return month - 1;
+    });
+  }, [month]);
 
   //次の月へ
   const nextMonth = useCallback(() => {
-    if (m === month) {
+    if (month === m && year === y) {
       return false;
+    } else if (month === 12) {
+      setYear((year) => {
+        return year - 1;
+      });
+      setMonth(1);
+      return;
     }
-    const count = m + 1;
-    setM(count);
-  }, [m]);
 
-  const data = sortData(items);
+    setMonth((month) => {
+      return month + 1;
+    });
+  }, [month, year]);
 
+  //1日の平均金額(今月)
   const targetAverage = userData ? userData.targetAmount / count : null;
-  const nowAverage = total ? total / d.getDate() : null;
 
-  const test = [...Array(count)].map((_, i) => {
-    return i + 1;
-  });
+  //1日の平均金額(現在)
+  const nowAverage = total ? total / d.getDate() : null;
 
   if (user) {
     return (
@@ -294,40 +228,6 @@ const Container = (props: Props) => {
                     })
                   : null}
               </div>
-              {isOpen ? (
-                <div className="flex justify-center px-4">
-                  <input
-                    className="px-4 h-12 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
-                    placeholder="Filtering text"
-                    value={text}
-                    autoFocus
-                    type="text"
-                    onChange={(e) => {
-                      return setText(e.target.value);
-                    }}
-                  />
-                  <button
-                    className="table p-1 mr-10 ml-auto bg-green-50 border border-gray-400 cursor-pointer"
-                    onClick={() => {
-                      return addCategory(text);
-                    }}
-                  >
-                    カテゴリー追加
-                  </button>
-                  <button
-                    onClick={handleCloseCategory}
-                    className="table p-1 bg-green-100 cursor-pointer"
-                  >
-                    キャンセル
-                  </button>
-                </div>
-              ) : null}
-              {/* <button
-                onClick={handleOpenCategory}
-                className="block p-1 mx-10 ml-auto w-24 text-sm bg-green-100 border border-gray-400 cursor-pointer"
-              >
-                追加
-              </button> */}
             </div>
           </div>
           <div className="relative -z-10 h-lg opacity-0" />
@@ -349,7 +249,7 @@ const Container = (props: Props) => {
                   />
                 </svg>
               </button>
-              <h2 className="p-2 text-2xl">{m}月</h2>
+              <h2 className="p-2 text-2xl">{month}月</h2>
               <button onClick={nextMonth}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -384,10 +284,8 @@ const Container = (props: Props) => {
                 id="sc"
                 className="flex overflow-x-scroll flex-nowrap py-3 px-4 mx-auto mt-3 space-x-1 w-11/12 border-b"
               >
-                {/* {categories.map((category) => { */}
-                {test.map((category) => {
+                {thisMonthDays.map((category) => {
                   return (
-                    // <TabList key={category} category={category} />
                     <Tab
                       key={category}
                       disabled={category > day}
@@ -396,7 +294,6 @@ const Container = (props: Props) => {
                           `min-w-lg py-2.5 text-lg font-semibold leading-5 rounded-lg ${
                             category > day ? "text-gray-400" : "text-blue-600"
                           }`,
-                          // "focus:outline-none focus:ring-1 ring-offset-1 ring-offset-blue-400 ring-white ring-opacity-60",
                           "focus:outline-none focus:ring-1 ring-opacity-60",
                           selected
                             ? "shadow bg-selected bg-opacity-50"
@@ -428,12 +325,8 @@ const Container = (props: Props) => {
                   円
                 </p>
               </div>
-              {/* {categories.map((category) => { */}
-              {test.map((category) => {
-                // const item = data.filter((value) => {
-                //   return value.categoryID === category;
-                // });
-                const item = data.filter((value) => {
+              {thisMonthDays.map((category) => {
+                const item = items.filter((value) => {
                   return value.buyDate[2] === category.toString();
                 });
                 const totalItems = item.reduce((sum, element) => {
@@ -471,7 +364,7 @@ const Container = (props: Props) => {
                         </span>
                       </div>
                       <ItemList
-                        items={category.toString() === "全て" ? data : item}
+                        items={category.toString() === "全て" ? items : item}
                         userData={userData}
                         uuid={user.id}
                         getItemList={getItemList}
