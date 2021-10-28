@@ -26,7 +26,7 @@ export const EditCategory = (props: Props) => {
   }, [props.category,props.num])
 
   const editItems = async (prevValue: string, value: string) => {
-    console.log(prevValue, value);
+    // console.log(prevValue, value);
     const { error } = await client
       .from("purchasedItem")
       .update({
@@ -51,7 +51,7 @@ export const EditCategory = (props: Props) => {
 
   const handleRemove = useCallback(
     async (categoryID, userID) => {
-      console.log(categoryID, userID);
+      // console.log(categoryID, userID);
       // const { error } = await client
       //   .from("purchasedItem")
       //   .delete()
@@ -108,12 +108,12 @@ export const EditCategory = (props: Props) => {
 
       arr.splice(num, 1, value);
 
-      console.log(value, category);
-      console.log({
-        id: props.userData.id,
-        userID: props.userData.userID,
-        categoryList: arr,
-      });
+      // console.log(value, category);
+      // console.log({
+      //   id: props.userData.id,
+      //   userID: props.userData.userID,
+      //   categoryList: arr,
+      // });
 
       const { error } = await client.from("users").upsert({
         id: props.userData.id,
@@ -130,19 +130,17 @@ export const EditCategory = (props: Props) => {
     }
   };
 
-  console.log(category);
-
   return (
     <>
-      <div className="flex justify-around">
+      <div className="flex justify-end">
         <button
-          className="table p-1 mx-4 bg-green-100 border border-gray-400 cursor-pointer"
+          className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer"
           onClick={openModal}
         >
           編集
         </button>
         <button
-          className="table p-1 mx-4 bg-green-100 border border-gray-400 cursor-pointer"
+          className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer"
           onClick={() => {
             return removeCategory(props.category[props.num - 1]);
           }}
