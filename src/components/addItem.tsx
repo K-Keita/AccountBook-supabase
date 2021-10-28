@@ -49,12 +49,14 @@ export const AddItem = (props: Props) => {
         return;
       }
 
-      const date = [
+      const buyDate = [
         year.toString(),
         month.toString(),
         day.toString(),
         hours.toString(),
       ];
+
+      const date = [`year:${year.toString()}`, `month:${month.toString()}`, `day:${day.toString()}`];
 
       const { data, error } = await client.from("purchasedItem").insert([
         {
@@ -62,7 +64,8 @@ export const AddItem = (props: Props) => {
           categoryID: value,
           price: price,
           description: description,
-          buyDate: date,
+          buyDate: buyDate,
+          date: date,
         },
       ]);
       if (error) {
@@ -80,7 +83,7 @@ export const AddItem = (props: Props) => {
   return (
     <>
       <button
-        className="block p-2 py-2 my-4 mx-auto w-32 text-center bg-yellow-300 border cursor-pointer"
+        className="block p-2 py-2 my-4 mx-auto w-32 text-center bg-gradient-to-r from-green-300 to-yellow-300 rounded-2xl border border-yellow-500 cursor-pointer"
         onClick={openModal}
       >
         登録
