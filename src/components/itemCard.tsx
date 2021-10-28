@@ -88,7 +88,7 @@ export const ItemCard = (props: Props) => {
 
   return (
     <>
-      <div className="p-2 m-1 text-lg bg-item bg-opecity-60 cursor-pointer text-white rounded-xl">
+      <div className="p-2 m-1 text-lg text-white bg-item rounded-xl cursor-pointer bg-opecity-60">
         <div className="flex border-b">
           <p className="px-2 w-20 text-lg font-bold text-left">
             ¥{props.item.price.toLocaleString()}
@@ -140,7 +140,7 @@ export const ItemCard = (props: Props) => {
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
-          className="overflow-y-auto fixed inset-0 z-10"
+          className="overflow-y-auto fixed inset-0 z-50"
           onClose={closeModal}
         >
           <div className="px-4 text-center border-2">
