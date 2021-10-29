@@ -55,12 +55,12 @@ const getItems = async (userID: string, y: number, m: number) => {
       .contains("date", [`year:${y}`, `month:${m}`])
       .eq("userID", userID));
 
-    const newData = data?.reduce((sum, element) => {
+    const totalPrice = data?.reduce((sum, element) => {
       return sum + element.price;
     }, 0);
 
     if (!error && data) {
-      return { userData: userData, items: data, totalPrice: newData };
+      return { userData: userData, items: data, totalPrice: totalPrice };
     } else {
       return { userData: userData, items: null, totalPrice: null };
     }
@@ -73,13 +73,14 @@ const Container = (props: Props) => {
   const { user } = Auth.useUser();
 
   const [userData, setUserData] = useState<Data>();
-  const [total, setTotal] = useState<number>();
+  const [totalPrice, setTotalPrice] = useState<number>(0);
   const [items, setItems] = useState<UserData[]>([]);
-  const [oneDayTotal, setOneDayTotal] = useState<number>(0);
+  const [oneDayTotalPrice, setOneDayTotalPrice] = useState<number>(0);
   const [year, setYear] = useState<number>(y);
   const [month, setMonth] = useState<number>(m);
 
   const [isTop, setIsTop] = useState<boolean>(false);
+  const router = useRouter();
 
   useEffect(() => {
     const scrollAction = () => {
@@ -100,32 +101,36 @@ const Container = (props: Props) => {
     };
   }, []);
 
-  const router = useRouter();
-
   //ユーザーデータ、アイテムの取得
   const getItemList = useCallback(
-    async (y: number, m: number) => {
+    async (year: number, month: number) => {
       if (user) {
         const { userData, items, totalPrice } = await getItems(
           user.id.toString(),
-          y,
-          m
+          year,
+          month
         );
         if (userData) {
           setUserData(userData);
         } else {
-          router.push("/");
+          router.push("/login");
         }
         if (items) {
           setItems(sortData(items));
-          setTotal(totalPrice);
-          const oneDayPrice = items.reduce((sum: number, element: any) => {
-            if (element.buyDate[2] === day.toString()) {
-              return sum + element.price;
-            }
-            return sum + 0;
-          }, 0);
-          setOneDayTotal(oneDayPrice);
+          setTotalPrice(totalPrice);
+
+          if (month === m) {
+            const oneDayPrice = items.reduce(
+              (sum: number, element: { buyDate: string[]; price: number }) => {
+                if (element.buyDate[2] === day.toString()) {
+                  return sum + element.price;
+                }
+                return sum + 0;
+              },
+              0
+            );
+            setOneDayTotalPrice(oneDayPrice);
+          }
         }
       }
     },
@@ -137,8 +142,10 @@ const Container = (props: Props) => {
   }, [user, getItemList, router, year, month]);
 
   useEffect(() => {
-    moveScroll();
-  }, []);
+    if (process.browser) {
+      moveScroll();
+    }
+  }, [process.browser]);
 
   //ボタンの位置へ移動
   const moveScroll = () => {
@@ -186,195 +193,184 @@ const Container = (props: Props) => {
   const targetAverage = userData ? userData.targetAmount / count : null;
 
   //1日の平均金額(現在)
-  const nowAverage = total ? total / d.getDate() : null;
+  const nowAverage = totalPrice / d.getDate();
 
   if (user) {
     return (
-      <div className="min-h-lg text-white">
-        <div className="pt-1 md:flex">
-          <div className="fixed p-5 w-full h-lg md:w-1/2">
-            <h2 className="mt-12 text-5xl text-center">TITLE</h2>
-            <AddItem
-              userData={userData}
-              uuid={user.id}
-              getItemList={getItemList}
-            />
-            {total ? (
-              <div className="px-8 pt-2 pb-1 text-3xl text-center ">
-                残り：¥
-                {userData
-                  ? (userData.targetAmount - total).toLocaleString()
+      <div className="pt-1 min-h-lg text-white md:flex">
+        <div className="fixed p-5 w-full h-lg md:w-1/2">
+          <h2 className="mt-12 text-5xl text-center">TITLE</h2>
+          <AddItem
+            userData={userData}
+            uuid={user.id}
+            getItemList={getItemList}
+          />
+          {totalPrice ? (
+            <div className="px-8 pt-2 pb-1 text-3xl text-center ">
+              残り：¥
+              {userData
+                ? (userData.targetAmount - totalPrice).toLocaleString()
+                : null}
+            </div>
+          ) : null}
+          <div className="flex z-10 flex-wrap justify-around p-1 pb-2 my-4">
+            {userData
+              ? userData.categoryList.map((value, index) => {
+                  return (
+                    <Link key={index} href={`/category?id=${index}`} passHref>
+                      <p
+                        className="table px-1 m-1 w-24 text-sm text-center hover:text-blue-600 bg-gray-50 bg-opacity-20 rounded-lg cursor-pointer"
+                        style={{ border: `solid 1px ${colors[index]}` }}
+                      >
+                        {value}
+                      </p>
+                    </Link>
+                  );
+                })
+              : null}
+          </div>
+        </div>
+        <div className="relative -z-10 h-lg opacity-0" />
+        <div className="relative z-40 pt-10 w-full bg-gradient-to-b from-dark via-green-200 to-blue-500 rounded-t-3xl md:p-5 md:w-1/2">
+          <div className="flex px-4  ">
+            <button onClick={prevMonth}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
+                />
+              </svg>
+            </button>
+            <h2 className="p-2 text-2xl">{month}月</h2>
+            <button onClick={nextMonth}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 5l7 7-7 7M5 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+            <div className="mx-4 ml-auto border-white">
+              <p>今月の金額：¥{userData?.targetAmount.toLocaleString()}</p>
+              <p className="text-sm text-center">
+                (平均金額：
+                {targetAverage
+                  ? Math.floor(targetAverage).toLocaleString()
                   : null}
-              </div>
-            ) : null}
-            <div className="z-10 p-1 pb-2 my-4">
-              <div className="flex flex-wrap justify-around">
-                {userData
-                  ? userData.categoryList.map((value, index) => {
-                      return (
-                        <Link
-                          key={index}
-                          href={`/category?id=${index}`}
-                          passHref
-                        >
-                          <p
-                            className="table px-1 m-1 w-24 text-sm text-center hover:text-blue-600 bg-gray-50 bg-opacity-20 rounded-lg cursor-pointer"
-                            style={{ border: `solid 1px ${colors[index]}` }}
-                          >
-                            {value}
-                          </p>
-                        </Link>
-                      );
-                    })
-                  : null}
-              </div>
+                )
+              </p>
             </div>
           </div>
-          <div className="relative -z-10 h-lg opacity-0" />
-          <div className="relative z-40 pt-10 w-full bg-gradient-to-b from-dark via-green-200 to-blue-500 rounded-t-3xl md:p-5 md:w-1/2">
-            <div className="flex px-4  ">
-              <button onClick={prevMonth}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-6 h-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-                  />
-                </svg>
-              </button>
-              <h2 className="p-2 text-2xl">{month}月</h2>
-              <button onClick={nextMonth}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-6 h-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 5l7 7-7 7M5 5l7 7-7 7"
-                  />
-                </svg>
-              </button>
-              <div className="mx-4 ml-auto border-white">
-                <p className="">
-                  今月の金額：¥{userData?.targetAmount.toLocaleString()}
-                </p>
-                <p className="text-sm text-center">
-                  (平均金額：
-                  {targetAverage
-                    ? Math.floor(targetAverage).toLocaleString()
-                    : null}
-                  )
-                </p>
-              </div>
-            </div>
-            <Tab.Group defaultIndex={day - 1}>
-              <Tab.List
-                id="sc"
-                className="flex overflow-x-scroll flex-nowrap py-3 px-4 mx-auto mt-3 space-x-1 w-11/12 border-b"
-              >
-                {thisMonthDays.map((category) => {
-                  return (
-                    <Tab
-                      key={category}
-                      disabled={category > day}
-                      className={({ selected }) => {
-                        return classNames(
-                          `min-w-lg py-2.5 text-lg font-semibold leading-5 rounded-lg ${
-                            category > day ? "text-gray-400" : "text-blue-600"
-                          }`,
-                          "focus:outline-none focus:ring-1 ring-opacity-60",
-                          selected
-                            ? "shadow bg-selected bg-opacity-50"
-                            : `${
-                                category > day
-                                  ? ""
-                                  : "text-blue-100 hover:bg-white/[0.12] hover:text-white"
-                              }`
-                        );
-                      }}
-                    >
-                      {category}
-                    </Tab>
-                  );
-                })}
-              </Tab.List>
-              <div
-                className={`${
-                  isTop ? "block" : "hidden"
-                } animate-slide-in-bck-center ml-auto mt-5 w-1/2`}
-              >
-                <p className="py-1">
-                  今日の金額：
-                  {oneDayTotal.toLocaleString()}円
-                </p>
-                <p className="text-sm">
-                  1日の平均金額：
-                  {nowAverage ? Math.floor(nowAverage).toLocaleString() : null}
-                  円
-                </p>
-              </div>
+          <Tab.Group defaultIndex={day - 1}>
+            <Tab.List
+              id="sc"
+              className="flex overflow-x-scroll flex-nowrap py-3 px-4 mx-auto mt-3 space-x-1 w-11/12 border-b"
+            >
               {thisMonthDays.map((category) => {
-                const item = items.filter((value) => {
-                  return value.buyDate[2] === category.toString();
-                });
-                const totalItems = item.reduce((sum, element) => {
-                  return sum + element.price;
-                }, 0);
                 return (
-                  <Tab.Panels className="" key={category}>
-                    <Tab.Panel
-                      className={classNames(
-                        "rounded-b-xl min-h-lg",
-                        "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60"
-                      )}
-                    >
-                      <div
-                        className={`text-xl py-3 mx-4 px-4 font-semibold ${
-                          isTop ? "hidden" : "block animate-slide-in-bck-center"
-                        }`}
-                      >
-                        total: ¥
-                        {category.toString() === "全て"
-                          ? total?.toLocaleString()
-                          : totalItems.toLocaleString()}
-                      </div>
-                      <div
-                        className={`${
-                          isTop ? "block" : "hidden"
-                        } animate-slit-in-vertical text-base mx-4 py-3 my-3 px-4 table border-r`}
-                      >
-                        total:
-                        <span className="block text-3xl font-bold">
-                          ¥
-                          {category.toString() === "全て"
-                            ? total?.toLocaleString()
-                            : totalItems.toLocaleString()}
-                        </span>
-                      </div>
-                      <ItemList
-                        items={category.toString() === "全て" ? items : item}
-                        userData={userData}
-                        uuid={user.id}
-                        getItemList={getItemList}
-                      />
-                    </Tab.Panel>
-                  </Tab.Panels>
+                  <Tab
+                    key={category}
+                    disabled={category > day}
+                    className={({ selected }) => {
+                      return classNames(
+                        `min-w-lg py-2.5 text-lg font-semibold leading-5 rounded-lg ${
+                          category > day ? "text-gray-400" : "text-blue-600"
+                        }`,
+                        "focus:outline-none focus:ring-1 ring-opacity-60",
+                        selected
+                          ? "shadow bg-selected bg-opacity-50"
+                          : `${
+                              category > day
+                                ? ""
+                                : "text-blue-100 hover:bg-white/[0.12] hover:text-white"
+                            }`
+                      );
+                    }}
+                  >
+                    {category}
+                  </Tab>
                 );
               })}
-            </Tab.Group>
-          </div>
+            </Tab.List>
+            <div
+              className={`${
+                isTop ? "block" : "hidden"
+              } animate-slide-in-bck-center ml-auto mt-5 w-1/2`}
+            >
+              <p className="py-1">
+                今日の金額：
+                {oneDayTotalPrice.toLocaleString()}円
+              </p>
+              <p className="text-sm">
+                1日の平均金額：
+                {nowAverage ? Math.floor(nowAverage).toLocaleString() : null}円
+              </p>
+            </div>
+            {thisMonthDays.map((category) => {
+              const item = items.filter((value) => {
+                return value.buyDate[2] === category.toString();
+              });
+              const totalItems = item.reduce((sum, element) => {
+                return sum + element.price;
+              }, 0);
+              return (
+                <Tab.Panels key={category}>
+                  <Tab.Panel
+                    className={classNames(
+                      "rounded-b-xl min-h-lg",
+                      "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60"
+                    )}
+                  >
+                    <div
+                      className={`text-xl py-3 mx-4 px-4 font-semibold ${
+                        isTop ? "hidden" : "block animate-slide-in-bck-center"
+                      }`}
+                    >
+                      total: ¥
+                      {category.toString() === "全て"
+                        ? totalPrice.toLocaleString()
+                        : totalItems.toLocaleString()}
+                    </div>
+                    <div
+                      className={`${
+                        isTop ? "block" : "hidden"
+                      } animate-slit-in-vertical text-base mx-4 py-3 my-3 px-4 table border-r`}
+                    >
+                      total:
+                      <span className="block text-3xl font-bold">
+                        ¥
+                        {category.toString() === "全て"
+                          ? totalPrice.toLocaleString()
+                          : totalItems.toLocaleString()}
+                      </span>
+                    </div>
+                    <ItemList
+                      items={category.toString() === "全て" ? items : item}
+                      userData={userData}
+                      uuid={user.id}
+                      getItemList={getItemList}
+                    />
+                  </Tab.Panel>
+                </Tab.Panels>
+              );
+            })}
+          </Tab.Group>
         </div>
       </div>
     );

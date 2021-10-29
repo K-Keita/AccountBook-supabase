@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 
 type Props = {
@@ -54,48 +53,6 @@ export const Graph = (props: Props): JSX.Element => {
       },
     },
   };
-
-  // const options = {
-  //   responsive: true,
-  //   // maintainAspectRatio: true,
-  //   color: "white",
-  //   legend: {
-  //     labels: {
-  //       fontColor: "orange",
-  //     },
-  //   },
-  //   title: {
-  //     display: true,
-  //     fontColor: "blue",
-  //     text: "Custom Chart Title",
-  //   },
-  //   animation: {
-  //     duration: 2000,
-  //     // easing: "easeInBounce",
-  //   },
-  //   scales: {
-  //     yAxes: {
-  //       grid: {
-  //         drawBorder: true,
-  //         color: "#fff",
-  //       },
-  //       // ticks: {
-  //       //   beginAtZero: false,
-  //       //   fontColor: "red",
-  //       // },
-  //     },
-  //     xAxes: {
-  //       grid: {
-  //         drawBorder: true,
-  //         color: "#fff",
-  //       },
-  //       // ticks: {
-  //       //   fontColor: "blue",
-  //       //   beginAtZero: false,
-  //       // },
-  //     },
-  //   },
-  // };
 
   return <Bar data={props.data} options={options} />;
 };

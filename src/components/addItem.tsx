@@ -8,12 +8,12 @@ type Props = {
   uuid: string;
   getItemList: (year: number, month: number) => void;
 };
-  const d = new Date();
+const d = new Date();
 
-  const year = d.getFullYear();
-  const month = d.getMonth() + 1;
-  const day = d.getDate();
-  const hours = d.getHours();
+const year = d.getFullYear();
+const month = d.getMonth() + 1;
+const day = d.getDate();
+const hours = d.getHours();
 
 export const AddItem = (props: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -56,7 +56,11 @@ export const AddItem = (props: Props) => {
         hours.toString(),
       ];
 
-      const date = [`year:${year.toString()}`, `month:${month.toString()}`, `day:${day.toString()}`];
+      const date = [
+        `year:${year.toString()}`,
+        `month:${month.toString()}`,
+        `day:${day.toString()}`,
+      ];
 
       const { data, error } = await client.from("purchasedItem").insert([
         {
@@ -92,7 +96,7 @@ export const AddItem = (props: Props) => {
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
-          className="overflow-y-auto fixed inset-0 z-10"
+          className="overflow-y-auto fixed inset-0 z-50"
           onClose={closeModal}
         >
           <div className="px-4 text-center border-2">
@@ -145,7 +149,7 @@ export const AddItem = (props: Props) => {
                     }}
                   />
                 </div>
-                <div className="grid grid-cols-4 gap-2 mt-4">
+                {/* <div className="grid grid-cols-4 gap-2 mt-4">
                   <div className="col-span-1 pt-1 text-xl text-center">
                     日付
                   </div>
@@ -156,7 +160,7 @@ export const AddItem = (props: Props) => {
                       return setDescription(e.target.value);
                     }}
                   />
-                </div>
+                </div> */}
                 <Select label="カテゴリー" onChange={handleChange}>
                   {props.userData?.categoryList?.map((value: string) => {
                     return (
