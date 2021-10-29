@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Bar, Pie } from "react-chartjs-2";
 
 type Props = {
@@ -7,6 +8,15 @@ type Props = {
 
 // レンダリング
 export const Graph = (props: Props): JSX.Element => {
+  const [selectChart, setSelectChart] = useState<"Pie" | "Bar">("Pie");
+
+  const changeChart = (chart: "Pie" | "Bar") => {
+    if (selectChart === chart) {
+      return;
+    }
+    setSelectChart(chart);
+  };
+
   const data = {
     labels: props.labels,
     datasets: [
@@ -41,7 +51,7 @@ export const Graph = (props: Props): JSX.Element => {
     ],
   };
 
-  const options = {
+  const optionsBar = {
     responsive: true,
     animation: {
       duration: 2000,
@@ -60,7 +70,7 @@ export const Graph = (props: Props): JSX.Element => {
       x: {
         grid: {
           drawBorder: true,
-          color: "#fff",
+          color: "rgb(255, 255, 255, 0.3)",
         },
         ticks: {
           color: "#fff",
@@ -72,7 +82,7 @@ export const Graph = (props: Props): JSX.Element => {
       y: {
         grid: {
           drawBorder: true,
-          color: "#fff",
+          color: "rgb(255, 255, 255, 0.3)",
         },
         ticks: {
           color: "#fff",
@@ -131,13 +141,38 @@ export const Graph = (props: Props): JSX.Element => {
 
   return (
     <>
-      <div className="flex text-2xl">
-        <h2 className="">Bar Chart</h2>
-        <h2 className="">Pie Chart</h2>
+      <div className="flex justify-around mb-4 text-xl">
+        <button
+          className={`px-2 py-1 ${
+            selectChart === "Pie" ? "bg-blue-400 bg-opacity-50" : ""
+          }`}
+          onClick={() => {
+            changeChart("Pie");
+          }}
+        >
+          Pie Chart
+        </button>
+        <button
+          className={`px-2 py-1 ${
+            selectChart === "Bar" ? "bg-blue-400 bg-opacity-50" : ""
+          }`}
+          onClick={() => {
+            changeChart("Bar");
+          }}
+        >
+          Bar Chart
+        </button>
       </div>
-      <Bar data={data} options={options} />
-      <div className="p-5">
-        <Pie data={data} options={optionsPie} />
+      <div className="h-80">
+        {selectChart === "Pie" ? (
+          <div className="p-5">
+            <Pie data={data} options={optionsPie} />
+          </div>
+        ) : (
+          <div className="pt-6">
+            <Bar height={240} data={data} options={optionsBar} />
+          </div>
+        )}
       </div>
     </>
   );
