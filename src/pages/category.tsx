@@ -6,7 +6,6 @@ import type { VFC } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { AddCategory } from "src/components/addCategory";
 import { EditCategory } from "src/components/editCategory";
-import { Graph } from "src/components/Graph";
 import { ItemList } from "src/components/itemList";
 import { sortData } from "src/hooks/sortData";
 import type { Data as TitleType } from "src/interface/type";
@@ -16,7 +15,6 @@ import { client } from "src/libs/supabase";
 const d = new Date();
 const y = d.getFullYear();
 const m = d.getMonth() + 1;
-// const day = d.getDate();
 
 const classNames = (...classes: string[]) => {
   return classes.filter(Boolean).join(" ");
@@ -24,53 +22,13 @@ const classNames = (...classes: string[]) => {
 
 const classes = ({ selected }: any) => {
   return classNames(
-    " py-2 min-w-xl text-xl leading-5 font-medium rounded-lg",
+    " py-2 min-w-xl text-lg leading-5 font-medium rounded-lg",
     "focus:outline-none focus:ring-1 ring-offset-1 ring-offset-blue-400 ring-green-400",
     selected
-      ? "shadow bg-opacity-50 text-white"
+      ? "shadow bg-gradient-to-r from-yellow-200 via-green-200 to-green-300 bg-opacity-20 text-white"
       : "text-gray-200 text-sm min-w-lg hover:bg-white/[0.12]  hover:text-white"
   );
 };
-// const count = new Date(y, m, 0).getDate();
-
-// const colors = [
-//   "red",
-//   "blue",
-//   "green",
-//   "orange",
-//   "gray",
-//   "pink",
-//   "yellow",
-//   "lime",
-// ];
-
-// データベースからカテゴリーごとの商品の取得
-// const getCategoryItems = async (userID: string, categoryID: number) => {
-//   let { data, error } = await client
-//     .from("users")
-//     .select("*")
-//     .eq("userID", userID);
-
-//   if (!error && data) {
-//     const userData = data[0];
-//     ({ data, error } = await client
-//       .from("purchasedItem")
-//       .select("*")
-//       .eq("userID", userID)
-//       .eq("categoryID", userData.categoryList[categoryID]));
-
-//     const newData = data?.reduce((sum, element) => {
-//       return sum + element.price;
-//     }, 0);
-
-//     if (!error && data) {
-//       return { userData: userData, items: data, totalPrice: newData };
-//     } else {
-//       return { userData: userData, items: null, totalPrice: null };
-//     }
-//   }
-//   return { userData: null, items: null, totalPrice: null };
-// };
 
 //全てのアイテムの取得
 const getItems = async (userID: string, year: number, month: number) => {
@@ -193,17 +151,6 @@ const Title: VFC = () => {
     });
   }, [month, year]);
 
-  //カテゴリーごとの合計金額
-  const priceArr = userData?.categoryList.map((category) => {
-    const arr = items.filter((value) => {
-      return value.categoryID === category;
-    });
-    const totalPrice = arr.reduce((sum, element) => {
-      return sum + element.price;
-    }, 0);
-    return totalPrice;
-  });
-
   return user ? (
     <div className="min-h-lg text-white">
       <div className="md:flex">
@@ -212,26 +159,44 @@ const Title: VFC = () => {
             <Link href="/" passHref>
               <button className="px-4 text-2xl">-Title-</button>
             </Link>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="mx-4 w-8 h-8"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.0}
-                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.2}
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-            </svg>
+            <div className="flex">
+              <Link href="/chart" passHref>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="mx-2 w-8 h-8"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.0}
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                  />
+                </svg>
+              </Link>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="mx-4 w-8 h-8"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.0}
+                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.2}
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
+            </div>
           </div>
           <Tab.Group>
             <Tab.List className="flex flex-wrap justify-around py-3 px-2 mt-3">
@@ -244,7 +209,9 @@ const Title: VFC = () => {
                 );
               })}
             </Tab.List>
-            <AddCategory userData={userData} getItemList={getItemList} />
+            {userData ? (
+              <AddCategory userData={userData} getItemList={getItemList} />
+            ) : null}
             <Tab.Panels>
               <Tab.Panel
                 className={classNames(
@@ -285,14 +252,6 @@ const Title: VFC = () => {
                     ¥{totalPrice?.toLocaleString()}
                   </div>
                 </div>
-                {/* <div className="px-3 my-8">
-                  {userData ? (
-                    <Graph
-                      arr={priceArr}
-                      labels={userData.categoryList}
-                    />
-                  ) : null}
-                </div> */}
                 <h2 className="p-4 text-4xl font-bold">History</h2>
                 <ItemList
                   items={items}
@@ -356,14 +315,6 @@ const Title: VFC = () => {
                         total: ¥{categoryTotalPrice?.toLocaleString()}
                       </div>
                     </div>
-                    {/* <div className="px-3 my-8">
-                      {userData ? (
-                        <Graph
-                          arr={priceArr}
-                          labels={userData.categoryList}
-                        />
-                      ) : null}
-                    </div> */}
                     <h2 className="p-4 text-4xl font-bold">History</h2>
                     <ItemList
                       items={itemList}
