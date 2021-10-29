@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import type { VFC } from "react";
 import { useCallback, useEffect, useState } from "react";
-import { EditCategory } from "src/components/editCategory";
 import { AddCategory } from "src/components/addCategory";
+import { EditCategory } from "src/components/editCategory";
 import { Graph } from "src/components/Graph";
 import { ItemList } from "src/components/itemList";
 import { sortData } from "src/hooks/sortData";
@@ -18,10 +18,19 @@ const y = d.getFullYear();
 const m = d.getMonth() + 1;
 // const day = d.getDate();
 
-const classNames = (...classes: any) => {
+const classNames = (...classes: string[]) => {
   return classes.filter(Boolean).join(" ");
 };
 
+const classes = ({ selected }: any) => {
+  return classNames(
+    " py-2 min-w-xl text-xl leading-5 font-medium rounded-lg",
+    "focus:outline-none focus:ring-1 ring-offset-1 ring-offset-blue-400 ring-green-400",
+    selected
+      ? "shadow bg-opacity-50 text-white"
+      : "text-gray-200 text-sm min-w-lg hover:bg-white/[0.12]  hover:text-white"
+  );
+};
 // const count = new Date(y, m, 0).getDate();
 
 // const colors = [
@@ -99,19 +108,12 @@ const Title: VFC = () => {
   const [userData, setUserData] = useState<TitleType>();
   const [totalPrice, setTotalPrice] = useState<number>();
   const [categories, setCategories] = useState<string[]>([]);
+  const [isTop, setIsTop] = useState<boolean>(false);
 
-  const [categoryName, setCategoryName] = useState<string>("");
   const [year, setYear] = useState<number>(y);
   const [month, setMonth] = useState<number>(m);
 
-  const [num, setNum] = useState<number>(0);
-
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-
-  const [isTop, setIsTop] = useState<boolean>(false);
-
   const router = useRouter();
-  const { id } = router.query;
 
   //IDと同じカテゴリーの商品を取得
   const getItemList = useCallback(
@@ -124,7 +126,7 @@ const Title: VFC = () => {
         );
         if (userData) {
           setUserData(userData);
-          setCategories(["全て", ...userData.categoryList]);
+          setCategories(userData.categoryList);
         } else {
           router.push("/login");
         }
@@ -143,7 +145,7 @@ const Title: VFC = () => {
 
   useEffect(() => {
     const scrollAction = () => {
-      if (window.scrollY > 200) {
+      if (window.scrollY > 120) {
         setIsTop(true);
       } else {
         setIsTop(false);
@@ -159,44 +161,6 @@ const Title: VFC = () => {
       window.removeEventListener("scroll", scrollAction);
     };
   }, []);
-
-  const handleOpenCategory = () => {
-    setIsOpen(true);
-  };
-
-  const handleCloseCategory = () => {
-    setIsOpen(false);
-  };
-
-  //カテゴリーの追加
-  const addCategory = async (text: string) => {
-    if (text === "") {
-      return false;
-    }
-
-    if (userData) {
-      const arr = userData.categoryList;
-      if (arr.indexOf(text) !== -1) {
-        alert("すでに同じカテゴリー名があります");
-        return false;
-      }
-      const newArr = [...arr, text];
-
-      const { error } = await client.from("users").upsert({
-        id: userData.id,
-        userID: userData.userID,
-        categoryList: newArr,
-      });
-
-      if (error) {
-        alert(error);
-      }
-    }
-
-    setCategoryName("");
-    setIsOpen(false);
-    getItemList(year, month);
-  };
 
   //前の月へ
   const prevMonth = useCallback(() => {
@@ -229,16 +193,6 @@ const Title: VFC = () => {
     });
   }, [month, year]);
 
-  const itemList = userData
-    ? items.filter((value) => {
-        return value.categoryID === userData.categoryList[num - 1];
-      })
-    : null;
-
-  const categoryTotalPrice = itemList?.reduce((sum, element) => {
-    return sum + element.price;
-  }, 0);
-
   //カテゴリーごとの合計金額
   const priceArr = userData?.categoryList.map((category) => {
     const arr = items.filter((value) => {
@@ -249,45 +203,6 @@ const Title: VFC = () => {
     }, 0);
     return totalPrice;
   });
-
-  const graph = {
-    // x 軸のラベル
-    labels: userData?.categoryList,
-    datasets: [
-      {
-        responsive: true,
-        label: "Category",
-        ticks: {
-          beginAtZero: true,
-          fontColor: "white",
-        },
-        // データの値
-        data: priceArr,
-        // グラフの背景色
-        backgroundColor: [
-          "rgba(255, 99, 132, 0.2)",
-          "rgba(255, 159, 64, 0.2)",
-          "rgba(255, 205, 86, 0.2)",
-          "rgba(75, 192, 192, 0.2)",
-          "rgba(54, 162, 235, 0.2)",
-          "rgba(153, 102, 255, 0.2)",
-          "rgba(201, 203, 207, 0.2)",
-        ],
-        // グラフの枠線の色
-        borderColor: [
-          "rgb(255, 99, 132)",
-          "rgb(255, 159, 64)",
-          "rgb(255, 205, 86)",
-          "rgb(75, 192, 192)",
-          "rgb(54, 162, 235)",
-          "rgb(153, 102, 255)",
-          "rgb(201, 203, 207)",
-        ],
-        // グラフの枠線の太さ
-        borderWidth: 1,
-      },
-    ],
-  };
 
   return user ? (
     <div className="min-h-lg text-white">
@@ -318,34 +233,84 @@ const Title: VFC = () => {
               />
             </svg>
           </div>
-          <Tab.Group
-            defaultIndex={num}
-            onChange={(index) => {
-              setNum(index);
-            }}
-          >
+          <Tab.Group>
             <Tab.List className="flex flex-wrap justify-around py-3 px-2 mt-3">
+              <Tab className={classes}>全て</Tab>
               {categories.map((category) => {
                 return (
-                  <Tab
-                    key={category}
-                    className={({ selected }) => {
-                      return classNames(
-                        " py-2 min-w-xl text-xl leading-5 font-medium rounded-lg",
-                        "focus:outline-none focus:ring-1 ring-offset-1 ring-offset-blue-400 ring-green-400",
-                        selected
-                          ? "shadow bg-opacity-50 text-white"
-                          : "text-gray-200 text-sm min-w-lg hover:bg-white/[0.12]  hover:text-white"
-                      );
-                    }}
-                  >
+                  <Tab key={category} className={classes}>
                     {category}
                   </Tab>
                 );
               })}
             </Tab.List>
             <AddCategory userData={userData} getItemList={getItemList} />
+            <Tab.Panels>
+              <Tab.Panel
+                className={classNames(
+                  "rounded-b-xl min-h-lg",
+                  "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60"
+                )}
+              >
+                <div className="flex">
+                  <div
+                    className={`${
+                      isTop ? "block" : "hidden"
+                    } animate-slit-in-vertical text-base text-center py-3 mt-16 mb-3 px-4 min-w-4l table border-r`}
+                  >
+                    total:
+                    <span className="block text-3xl font-bold">
+                      ¥{totalPrice?.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className={`${isTop ? "mx-auto" : "w-1/2"}`}>
+                    {userData && (
+                      <>
+                        <h2
+                          className={`pt-4 pb-8 font-bold text-center ${
+                            isTop ? "text-3xl" : "text-xl"
+                          }`}
+                        >
+                          全て
+                        </h2>
+                        <div className="m-8" />
+                      </>
+                    )}
+                  </div>
+                  <div
+                    className={`text-xl mt-4 py-3 px-4 font-semibold ${
+                      isTop ? "hidden" : "block animate-slide-in-bck-center"
+                    }`}
+                  >
+                    ¥{totalPrice?.toLocaleString()}
+                  </div>
+                </div>
+                {/* <div className="px-3 my-8">
+                  {userData ? (
+                    <Graph
+                      arr={priceArr}
+                      labels={userData.categoryList}
+                    />
+                  ) : null}
+                </div> */}
+                <h2 className="p-4 text-4xl font-bold">History</h2>
+                <ItemList
+                  items={items}
+                  userData={userData}
+                  uuid={user.id}
+                  getItemList={getItemList}
+                />
+              </Tab.Panel>
+            </Tab.Panels>
             {categories.map((value) => {
+              const itemList = userData
+                ? items.filter((item) => {
+                    return item.categoryID === value;
+                  })
+                : null;
+              const categoryTotalPrice = itemList?.reduce((sum, element) => {
+                return sum + element.price;
+              }, 0);
               return (
                 <Tab.Panels key={value}>
                   <Tab.Panel
@@ -362,10 +327,7 @@ const Title: VFC = () => {
                       >
                         total:
                         <span className="block text-3xl font-bold">
-                          ¥
-                          {value === "全て"
-                            ? totalPrice?.toLocaleString()
-                            : categoryTotalPrice?.toLocaleString()}
+                          ¥{categoryTotalPrice?.toLocaleString()}
                         </span>
                       </div>
                       <div className={`${isTop ? "mx-auto" : "w-1/2"}`}>
@@ -376,20 +338,13 @@ const Title: VFC = () => {
                                 isTop ? "text-3xl" : "text-xl"
                               }`}
                             >
-                              {num === 0
-                                ? "全て"
-                                : userData.categoryList[num - 1]}
+                              {value}
                             </h2>
-                            {userData &&
-                              (id ? (
-                                <EditCategory
-                                  categoryList={userData.categoryList}
-                                  num={num - 1}
-                                  category={value}
-                                  getItemList={getItemList}
-                                  userData={userData}
-                                />
-                              ) : null)}
+                            <EditCategory
+                              category={value}
+                              getItemList={getItemList}
+                              userData={userData}
+                            />
                           </>
                         )}
                       </div>
@@ -398,18 +353,20 @@ const Title: VFC = () => {
                           isTop ? "hidden" : "block animate-slide-in-bck-center"
                         }`}
                       >
-                        total: ¥
-                        {value === "全て"
-                          ? totalPrice?.toLocaleString()
-                          : categoryTotalPrice?.toLocaleString()}
+                        total: ¥{categoryTotalPrice?.toLocaleString()}
                       </div>
                     </div>
-                    <div className="px-3 my-8">
-                      {userData ? <Graph data={graph} /> : null}
-                    </div>
+                    {/* <div className="px-3 my-8">
+                      {userData ? (
+                        <Graph
+                          arr={priceArr}
+                          labels={userData.categoryList}
+                        />
+                      ) : null}
+                    </div> */}
                     <h2 className="p-4 text-4xl font-bold">History</h2>
                     <ItemList
-                      items={value === "全て" && itemList ? items : itemList}
+                      items={itemList}
                       userData={userData}
                       uuid={user.id}
                       getItemList={getItemList}
