@@ -88,7 +88,7 @@ export const ItemCard = (props: Props) => {
 
   return (
     <>
-      <div className="p-2 m-1 text-lg text-white bg-item rounded-xl cursor-pointer bg-opecity-60">
+      <div className="p-2 m-1 text-lg text-white bg-item bg-opacity-60 rounded-xl cursor-pointer">
         <div className="flex border-b">
           <p className="px-2 w-20 text-lg font-bold text-left">
             ¥{props.item.price.toLocaleString()}
