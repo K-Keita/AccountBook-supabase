@@ -11,7 +11,6 @@ import { sortData } from "src/hooks/sortData";
 import type { Data } from "src/interface/type";
 import type { UserData } from "src/interface/type";
 import { client } from "src/libs/supabase";
-import { Graph } from "src/components/Graph";
 
 type Props = {
   children: ReactNode;
@@ -29,17 +28,6 @@ const thisMonthDays = [...Array(count)].map((_, i) => {
 const classNames = (...classes: string[]) => {
   return classes.filter(Boolean).join(" ");
 };
-
-const colors = [
-  "red",
-  "blue",
-  "green",
-  "orange",
-  "gray",
-  "pink",
-  "yellow",
-  "lime",
-];
 
 // 全てのアイテムの取得
 const getItems = async (userID: string, y: number, m: number) => {
@@ -196,30 +184,18 @@ const Container = (props: Props) => {
   //1日の平均金額(現在)
   const nowAverage = totalPrice / d.getDate();
 
-  //カテゴリーごとの合計金額
-  const priceArr = userData?.categoryList.map((category) => {
-    const arr = items.filter((value) => {
-      return value.categoryID === category;
-    });
-    const totalPrice = arr.reduce((sum, element) => {
-      return sum + element.price;
-    }, 0);
-    return totalPrice;
-  });
-
   if (user) {
     return (
       <div className="pt-1 min-h-lg text-white md:flex">
         <div className="fixed p-5 mt-10 w-full h-lg md:w-1/2">
           <h2 className="mt-24 text-5xl text-center">TITLE</h2>
           <div className="mt-16 mb-8">
-
-          <AddItem
-            userData={userData}
-            uuid={user.id}
-            getItemList={getItemList}
+            <AddItem
+              userData={userData}
+              uuid={user.id}
+              getItemList={getItemList}
             />
-            </div>
+          </div>
           {totalPrice ? (
             <div className="px-8 pt-2 pb-1 text-3xl text-center ">
               残り：¥
@@ -228,29 +204,10 @@ const Container = (props: Props) => {
                 : null}
             </div>
           ) : null}
-          {/* <div className="flex z-10 flex-wrap justify-around p-1 pb-2 my-4">
-            {userData
-              ? userData.categoryList.map((value, index) => {
-                  return (
-                    <Link key={index} href="/category" passHref>
-                      <p
-                        className="table px-1 m-1 w-24 text-sm text-center hover:text-blue-600 bg-gray-50 bg-opacity-20 rounded-lg cursor-pointer"
-                        style={{ border: `solid 1px ${colors[index]}` }}
-                      >
-                        {value}
-                      </p>
-                    </Link>
-                  );
-                })
-              : null}
-          </div> */}
-          {/* {userData ? (
-            <Graph arr={priceArr} labels={userData.categoryList} />
-          ) : null} */}
           <div className="flex justify-around">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-8 w-8 mx-4"
+              className="mx-4 w-8 h-8"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -265,7 +222,7 @@ const Container = (props: Props) => {
             <Link href="/category" passHref>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8 mx-4"
+                className="mx-4 w-8 h-8"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -278,40 +235,44 @@ const Container = (props: Props) => {
                 />
               </svg>
             </Link>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-8 w-8 mx-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.2}
-                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-              />
-            </svg>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="mx-4 w-8 h-8"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.0}
-                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.2}
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-            </svg>
+            <Link href="/chart" passHref>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="mx-4 w-8 h-8"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.2}
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                />
+              </svg>
+            </Link>
+            <Link href="/setting" passHref>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="mx-4 w-8 h-8"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.0}
+                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.2}
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
+            </Link>
           </div>
         </div>
         <div className="relative -z-10 h-lg opacity-0" />
