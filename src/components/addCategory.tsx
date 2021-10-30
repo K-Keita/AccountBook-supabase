@@ -1,12 +1,19 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
+import type { SubmitHandler} from "react-hook-form";
+import {useForm } from "react-hook-form";
+import type {Data} from 'src/interface/type';
 import { client } from "src/libs/supabase";
-import {useForm} from 'react-hook-form';
 
 type Props = {
-  userData: any;
+  userData: Data;
   getItemList: (year: number, month: number) => void;
 };
+
+type Inputs = {
+  categoryName: string;
+};
+
 const d = new Date();
 
 const year = d.getFullYear();
@@ -14,11 +21,12 @@ const month = d.getMonth() + 1;
 
 export const AddCategory = (props: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [categoryName, setCategoryName] = useState<string>("");
 
-  // const handleChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-  //   setCategoryName(e.target.value);
-  // }, [setCategoryName]);
+  const { register, handleSubmit } = useForm<Inputs>();
+
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    addCategory(data.categoryName);
+  };
 
   const addCategory = async (text: string) => {
     if (text === "") {
@@ -44,7 +52,7 @@ export const AddCategory = (props: Props) => {
       }
     }
 
-    setCategoryName("");
+    // setCategoryName("");
     setIsOpen(false);
     props.getItemList(year, month);
   };
@@ -95,34 +103,26 @@ export const AddCategory = (props: Props) => {
                 >
                   CategoryName
                 </Dialog.Title>
-                <div className="mt-4">
+                <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
                   <input
-                    className="px-4 h-12 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
-                    placeholder="Filtering text"
-                    value={categoryName}
                     autoFocus
-                    type="text"
-                    onChange={(e) => {
-                      return setCategoryName(e.target.value);
-                    }}
+                    {...register("categoryName")}
+                    className="px-4 h-12 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
                   />
-                </div>
-                <div className="flex justify-around mt-3">
-                  <button
-                    onClick={() => {
-                      addCategory(categoryName);
-                    }}
-                    className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer"
-                  >
-                    change
-                  </button>
-                  <button
-                    onClick={handleCloseCategory}
-                    className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer"
-                  >
-                    Cancel
-                  </button>
-                </div>
+                  <div className="flex justify-around mt-3">
+                    <input
+                      type="submit"
+                      value="Change"
+                      className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer"
+                    />
+                    <input
+                      type="reset"
+                      onClick={handleCloseCategory}
+                      className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer"
+                      value="Cancel"
+                    />
+                  </div>
+                </form>
               </div>
             </Transition.Child>
           </div>

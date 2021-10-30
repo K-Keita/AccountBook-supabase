@@ -103,7 +103,7 @@ export const ItemCard = (props: Props) => {
           <button className="px-2 my-1 border-r border-l" onClick={openModal}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-blue-400"
+              className="w-6 h-6 text-blue-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
