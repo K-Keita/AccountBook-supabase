@@ -22,10 +22,20 @@ const classNames = (...classes: string[]) => {
 
 const classes = ({ selected }: any) => {
   return classNames(
-    " py-2 min-w-xl text-lg leading-5 font-medium rounded-lg",
+    `py-1 min-w-xl leading-5 font-medium rounded-lg mb-1`,
     "focus:outline-none focus:ring-1 ring-offset-1 ring-offset-blue-400 ring-green-400",
     selected
       ? "shadow bg-gradient-to-r from-yellow-200 via-green-200 to-green-300 bg-opacity-20 text-white"
+      : "text-gray-200 text-sm min-w-lg hover:bg-white/[0.12]  hover:text-white"
+  );
+};
+
+const classes2 = ({ selected }: any) => {
+  return classNames(
+    `min-w-2lg leading-5 font-medium rounded-lg mx-1 mt-1`,
+    "focus:outline-none focus:ring-1 ring-offset-1 ring-offset-blue-400 ring-green-400",
+    selected
+      ? "shadow text-white"
       : "text-gray-200 text-sm min-w-lg hover:bg-white/[0.12]  hover:text-white"
   );
 };
@@ -151,6 +161,7 @@ const Title: VFC = () => {
     });
   }, [month, year]);
 
+
   return user ? (
     <div className="min-h-lg text-white">
       <div className="md:flex">
@@ -163,7 +174,7 @@ const Title: VFC = () => {
               <Link href="/chart" passHref>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="mx-2 w-8 h-8"
+                  className="mx-2 w-7 h-7"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -179,7 +190,7 @@ const Title: VFC = () => {
               <Link href="/setting" passHref>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="mx-4 w-8 h-8"
+                  className="mx-4 w-7 h-7"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -202,23 +213,32 @@ const Title: VFC = () => {
           </div>
           <h2 className="p-4 text-4xl font-bold">Category</h2>
           <Tab.Group>
-            <Tab.List className="flex flex-wrap justify-around py-3 px-2 mt-3">
-              <Tab className={classes}>全て</Tab>
+            <div className="min-h-screen">
+            <Tab.List
+              className={`${
+                isTop
+                  ? "overflow-x-scroll py-1"
+                  : "flex-wrap justify-around py-3"
+              } flex px-2`}
+            >
+              <Tab className={isTop ? classes2 : classes}>全て</Tab>
               {categories.map((category) => {
                 return (
-                  <Tab key={category} className={classes}>
+                  <Tab key={category} className={isTop ? classes2 : classes}>
                     {category}
                   </Tab>
                 );
               })}
             </Tab.List>
-            {userData ? (
-              <AddCategory userData={userData} getItemList={getItemList} />
-            ) : null}
+            <div className={`${isTop ? "hidden" : ""}`}>
+              {userData ? (
+                <AddCategory userData={userData} getItemList={getItemList} />
+              ) : null}
+            </div>
             <Tab.Panels>
               <Tab.Panel
                 className={classNames(
-                  "rounded-b-xl min-h-lg",
+                  "rounded-b-xl",
                   "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60"
                 )}
               >
@@ -226,7 +246,7 @@ const Title: VFC = () => {
                   <div
                     className={`${
                       isTop ? "block" : "hidden"
-                    } animate-slit-in-vertical text-base text-center py-3 mt-16 mb-3 px-4 min-w-4l table border-r`}
+                    } animate-slit-in-vertical text-base text-center py-3 mt-10 mb-3 px-4 min-w-4l table border-r`}
                   >
                     total:
                     <span className="block text-3xl font-bold">
@@ -238,12 +258,12 @@ const Title: VFC = () => {
                       <>
                         <h2
                           className={`pt-4 pb-8 font-bold text-center ${
-                            isTop ? "text-3xl" : "text-xl"
+                            isTop ? "text-2xl" : "text-xl"
                           }`}
                         >
                           全て
                         </h2>
-                        <div className="m-8" />
+                        <div className="m-8"/>
                       </>
                     )}
                   </div>
@@ -252,7 +272,7 @@ const Title: VFC = () => {
                       isTop ? "hidden" : "block animate-slide-in-bck-center"
                     }`}
                   >
-                    ¥{totalPrice?.toLocaleString()}
+                    total: ¥{totalPrice?.toLocaleString()}
                   </div>
                 </div>
                 <h2 className="p-4 text-4xl font-bold">History</h2>
@@ -277,7 +297,7 @@ const Title: VFC = () => {
                 <Tab.Panels key={value}>
                   <Tab.Panel
                     className={classNames(
-                      "rounded-b-xl min-h-lg",
+                      "rounded-b-xl",
                       "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60"
                     )}
                   >
@@ -285,7 +305,7 @@ const Title: VFC = () => {
                       <div
                         className={`${
                           isTop ? "block" : "hidden"
-                        } animate-slit-in-vertical text-base text-center py-3 mt-16 mb-3 px-4 min-w-4l table border-r`}
+                        } animate-slit-in-vertical text-base text-center py-3 mt-10 mb-3 px-4 min-w-4l table border-r`}
                       >
                         total:
                         <span className="block text-3xl font-bold">
@@ -296,17 +316,19 @@ const Title: VFC = () => {
                         {userData && (
                           <>
                             <h2
-                              className={`pt-4 pb-8 font-bold text-center ${
-                                isTop ? "text-3xl" : "text-xl"
+                              className={`pt-4 pb-8 font-bold text-center  ${
+                                isTop ? "text-2xl" : "text-xl "
                               }`}
                             >
                               {value}
                             </h2>
-                            <EditCategory
-                              category={value}
-                              getItemList={getItemList}
-                              userData={userData}
-                            />
+                            {userData && (
+                              <EditCategory
+                                category={value}
+                                getItemList={getItemList}
+                                userData={userData}
+                              />
+                            )}
                           </>
                         )}
                       </div>
@@ -318,7 +340,42 @@ const Title: VFC = () => {
                         total: ¥{categoryTotalPrice?.toLocaleString()}
                       </div>
                     </div>
-                    <h2 className="p-4 text-4xl font-bold">History</h2>
+                    <h2 className="px-4 mt-6 text-4xl font-bold">History</h2>
+                    <div className={`flex justify-end px-8`}>
+                      <button onClick={prevMonth}>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-6 h-6"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
+                          />
+                        </svg>
+                      </button>
+                      <h2 className={`px-2 text-xl`}>{month}月</h2>
+                      <button onClick={nextMonth}>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-6 h-6"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13 5l7 7-7 7M5 5l7 7-7 7"
+                          />
+                        </svg>
+                      </button>
+                    </div>
                     <ItemList
                       items={itemList}
                       userData={userData}
@@ -329,6 +386,7 @@ const Title: VFC = () => {
                 </Tab.Panels>
               );
             })}
+            </div>
           </Tab.Group>
         </div>
       </div>
