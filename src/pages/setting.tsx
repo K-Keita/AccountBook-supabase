@@ -1,10 +1,44 @@
 import { Switch } from "@headlessui/react";
+import { Auth } from "@supabase/ui";
 import Link from "next/link";
 import type { VFC } from "react";
-import { useState } from "react";
+import { useCallback,useEffect, useState } from "react";
+import type { Data } from "src/interface/type";
+import { client } from "src/libs/supabase";
+
+const getUserData = async (userID: string) => {
+  const { data, error } = await client
+    .from("users")
+    .select("*")
+    .eq("userID", userID);
+
+  if (!error && data) {
+    return { userData: data[0] };
+  } else {
+    return { userData: null };
+  }
+};
 
 const Setting: VFC = () => {
+  const { user } = Auth.useUser();
   const [isEnabled, setIdEnabled] = useState(false);
+  const [userData, setUserData] = useState<Data>();
+
+  const getUser = useCallback(async () => {
+    if (user) {
+      const { userData } = await getUserData(user.id.toString());
+
+      if (userData) {
+        setUserData(userData);
+      }
+    }
+  }, [user]);
+
+  useEffect(() => {
+    getUser();
+  }, [getUser]);
+
+  console.log(userData);
 
   return (
     <main className="relative z-40 pt-7 pb-16 w-full min-h-screen text-white bg-gradient-to-b from-dark via-green-200 to-blue-500 rounded-t-3xl md:p-5 md:w-1/2">
@@ -16,7 +50,7 @@ const Setting: VFC = () => {
           <Link href="/category" passHref>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="mx-2 w-8 h-8"
+              className="mx-2 w-7 h-7"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -32,7 +66,7 @@ const Setting: VFC = () => {
           <Link href="/chart" passHref>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="mx-4 w-8 h-8"
+              className="mx-4 w-7 h-7"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -71,7 +105,7 @@ const Setting: VFC = () => {
             isEnabled
               ? "bg-blue-600 bg-opacity-30"
               : "bg-gray-200 bg-opacity-30"
-          } relative inline-flex items-center h-6 rounded-full ml-auto mr-2 w-11`}
+          } relative inline-flex items-center h-6 rounded-full ml-auto mr-1 w-11`}
         >
           <span className="sr-only">Enable notifications</span>
           <span
@@ -92,14 +126,48 @@ const Setting: VFC = () => {
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth={1.5}
+            strokeWidth={1.2}
+            d="M9 8l3 5m0 0l3-5m-3 5v4m-3-5h6m-6 3h6m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        <p className="text-lg">使用額変更</p>
+        <p className="mx-1 mt-1 ml-auto opacity-80">
+          ¥{userData?.targetAmount.toLocaleString()}
+        </p>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="mr-1 w-8 h-8"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.2}
+            d="M9 5l7 7-7 7"
+          />
+        </svg>
+      </div>
+      <div className="flex py-1 my-5 mx-auto w-11/12 border-b ">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="mx-2 w-8 h-8"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.3}
             d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
           />
         </svg>
         <p className="text-lg">ログアウト</p>
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="mr-3 ml-auto w-8 h-8"
+          className="mr-1 ml-auto w-8 h-8"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -113,7 +181,7 @@ const Setting: VFC = () => {
         </svg>
       </div>
     </main>
-  )
+  );
 };
 
 export default Setting;
