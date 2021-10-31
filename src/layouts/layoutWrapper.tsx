@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Footer } from "src/layouts/footer";
+// import { Footer } from "src/layouts/footer";
 // import { Header } from "src/layouts/header";
 
 type Props = {
@@ -16,7 +16,7 @@ export const LayoutWrapper = (props: Props) => {
       <main className="text-gray-600 ">
         <div>{props.children}</div>
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };
