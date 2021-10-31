@@ -188,25 +188,11 @@ const Container = (props: Props) => {
     return (
       <div className="pt-1 min-h-lg text-white md:flex">
         <div className="fixed p-5 mt-5 w-full h-lg md:w-1/2">
-          <div className="flex justify-end">
-            {/* <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="mx-4 w-8 h-8"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.2}
-                d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg> */}
+          <div className="flex justify-between">
             <Link href="/category" passHref>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="mx-4 w-8 h-8"
+                className="mx-2 w-8 h-8"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -222,7 +208,7 @@ const Container = (props: Props) => {
             <Link href="/chart" passHref>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="mx-4 w-8 h-8"
+                className="mx-2 w-8 h-8"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -238,7 +224,7 @@ const Container = (props: Props) => {
             <Link href="/setting" passHref>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="mx-4 w-8 h-8"
+                className="mx-2 w-8 h-8"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -267,12 +253,17 @@ const Container = (props: Props) => {
             />
           </div>
           {totalPrice ? (
-            <div className="px-8 pt-2 pb-1 text-3xl text-center ">
-              残り：¥
-              {userData
-                ? (userData.targetAmount - totalPrice).toLocaleString()
-                : null}
-            </div>
+            <>
+              <h3 className="px-8 pt-2 text-4xl tracking-wide text-center ">
+                ¥ {totalPrice.toLocaleString()}
+              </h3>
+              <p className="text-center">
+                残り：¥
+                {userData
+                  ? (userData.targetAmount - totalPrice).toLocaleString()
+                  : null}
+              </p>
+            </>
           ) : null}
         </div>
         <div className="relative -z-10 h-lg opacity-0" />
@@ -312,7 +303,7 @@ const Container = (props: Props) => {
               </svg>
             </button>
             <div className="mx-4 ml-auto border-white">
-              <p>今月の金額：¥{userData?.targetAmount.toLocaleString()}</p>
+              <p className="text-sm">使用金額(月)：<span className="text-base">¥{userData?.targetAmount.toLocaleString()}</span></p>
               <p className="text-sm text-center">
                 (平均金額：
                 {targetAverage
