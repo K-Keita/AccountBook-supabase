@@ -2,7 +2,7 @@ import { Switch } from "@headlessui/react";
 import { Auth } from "@supabase/ui";
 import Link from "next/link";
 import type { VFC } from "react";
-import { useCallback,useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { Data } from "src/interface/type";
 import { client } from "src/libs/supabase";
 
@@ -38,48 +38,44 @@ const Setting: VFC = () => {
     getUser();
   }, [getUser]);
 
-  console.log(userData);
-
   return (
     <main className="relative z-40 pt-7 pb-16 w-full min-h-screen text-white bg-gradient-to-b from-dark via-green-200 to-blue-500 rounded-t-3xl md:p-5 md:w-1/2">
-      <div className="flex justify-between pb-3">
+      <div className="flex justify-around pb-3">
+        <Link href="/chart" passHref>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="mx-2 w-7 h-7"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.0}
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+            />
+          </svg>
+        </Link>
         <Link href="/" passHref>
           <button className="px-4 text-2xl">-Title-</button>
         </Link>
-        <div className="flex">
-          <Link href="/category" passHref>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="mx-2 w-7 h-7"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.0}
-                d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
-              />
-            </svg>
-          </Link>
-          <Link href="/chart" passHref>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="mx-4 w-7 h-7"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.0}
-                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-              />
-            </svg>
-          </Link>
-        </div>
+        <Link href="/category" passHref>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="mx-2 w-7 h-7"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.0}
+              d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+            />
+          </svg>
+        </Link>
       </div>
       <h2 className="p-4 text-4xl font-bold">Setting</h2>
       <div className="flex py-1 my-5 mx-auto w-11/12 border-b">
