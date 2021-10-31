@@ -7,6 +7,7 @@ import { LayoutWrapper } from "src/layouts/layoutWrapper";
 import { client } from "src/libs/supabase";
 
 const MyApp = (props: AppProps): JSX.Element => {
+  // const { user } = Auth.useUser();
 
   return (
     <LayoutWrapper>
