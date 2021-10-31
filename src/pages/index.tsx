@@ -187,25 +187,9 @@ const Container = (props: Props) => {
   if (user) {
     return (
       <div className="pt-1 min-h-lg text-white md:flex">
-        <div className="fixed p-5 mt-10 w-full h-lg md:w-1/2">
-          <h2 className="mt-24 text-5xl text-center">TITLE</h2>
-          <div className="mt-16 mb-8">
-            <AddItem
-              userData={userData}
-              uuid={user.id}
-              getItemList={getItemList}
-            />
-          </div>
-          {totalPrice ? (
-            <div className="px-8 pt-2 pb-1 text-3xl text-center ">
-              残り：¥
-              {userData
-                ? (userData.targetAmount - totalPrice).toLocaleString()
-                : null}
-            </div>
-          ) : null}
-          <div className="flex justify-around">
-            <svg
+        <div className="fixed p-5 mt-5 w-full h-lg md:w-1/2">
+          <div className="flex justify-end">
+            {/* <svg
               xmlns="http://www.w3.org/2000/svg"
               className="mx-4 w-8 h-8"
               fill="none"
@@ -218,7 +202,7 @@ const Container = (props: Props) => {
                 strokeWidth={1.2}
                 d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
               />
-            </svg>
+            </svg> */}
             <Link href="/category" passHref>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -274,10 +258,26 @@ const Container = (props: Props) => {
               </svg>
             </Link>
           </div>
+          <h2 className="mt-24 text-5xl text-center">TITLE</h2>
+          <div className="mt-16 mb-8">
+            <AddItem
+              userData={userData}
+              uuid={user.id}
+              getItemList={getItemList}
+            />
+          </div>
+          {totalPrice ? (
+            <div className="px-8 pt-2 pb-1 text-3xl text-center ">
+              残り：¥
+              {userData
+                ? (userData.targetAmount - totalPrice).toLocaleString()
+                : null}
+            </div>
+          ) : null}
         </div>
         <div className="relative -z-10 h-lg opacity-0" />
-        <div className="relative z-40 pt-10 w-full bg-gradient-to-b from-dark via-green-200 to-blue-500 rounded-t-3xl md:p-5 md:w-1/2">
-          <div className="flex px-4  ">
+        <div className="relative z-40 pt-10 w-full h-screen bg-gradient-to-b from-dark via-green-200 to-blue-500 rounded-t-3xl md:p-5 md:w-1/2">
+          <div className="flex px-4">
             <button onClick={prevMonth}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -378,7 +378,7 @@ const Container = (props: Props) => {
                 <Tab.Panels key={category}>
                   <Tab.Panel
                     className={classNames(
-                      "rounded-b-xl min-h-lg",
+                      "rounded-b-xl",
                       "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60"
                     )}
                   >
