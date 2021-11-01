@@ -5,10 +5,10 @@ import "tailwindcss/tailwind.css";
 import type { AppProps } from "next/app";
 import PropTypes from "prop-types";
 import { LayoutWrapper } from "src/layouts/layoutWrapper";
-// import { client } from "src/libs/supabase";
+import { client } from "src/libs/supabase";
 
 const MyApp = (props: AppProps): JSX.Element => {
-  // const { user } = Auth.useUser();
+  const user = client.auth.user();
   // const [session, setSession] = useState<any>();
   // useEffect(() => {
   //   client.auth.onAuthStateChange(
@@ -21,15 +21,35 @@ const MyApp = (props: AppProps): JSX.Element => {
   //     authListener.unsubscribe();
   //   };
   // }, []);
+  const signInWithGoogle = async () => {
+    const { error } = await client.auth.signIn({
+      provider: "google",
+    });
+
+    // console.log(user, session);
+    if (error) {
+      throw new Error("");
+    }
+  };
 
   // console.log(session);
+  if (user) {
+    return (
+      <LayoutWrapper>
+        <props.Component {...props.pageProps} />
+      </LayoutWrapper>
+    );
+  }
 
   return (
-    <LayoutWrapper>
-      {/* <Auth.UserContextProvider supabaseClient={client}> */}
-      <props.Component {...props.pageProps} />
-      {/* </Auth.UserContextProvider> */}
-    </LayoutWrapper>
+    <div className="w-full sm:w-96">
+      {/* <Auth
+            supabaseClient={client}
+            providers={["google"]}
+            // socialColors={true}
+          /> */}
+      <button onClick={signInWithGoogle}>signIn</button>
+    </div>
   );
 };
 
