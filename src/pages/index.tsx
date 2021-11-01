@@ -208,7 +208,7 @@ const Container = (props: Props) => {
     }
   };
 
-  console.log(user);
+  // console.log(user);
 
   if (user) {
     return (
@@ -452,7 +452,7 @@ const Home = () => {
       provider: "google",
     });
 
-    console.log(user, session);
+    // console.log(user, session);
     if (error) {
       throw new Error("");
     }
@@ -466,8 +466,8 @@ const Home = () => {
             providers={["google"]}
             // socialColors={true}
           /> */}
-          <button onClick={signInWithGoogle}>signIn</button>
         </div>
+          <button onClick={signInWithGoogle}>signIn</button>
       </div>
     </Container>
   );
