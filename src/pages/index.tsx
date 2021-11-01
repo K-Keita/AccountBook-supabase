@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Tab } from "@headlessui/react";
-import { Auth } from "@supabase/ui";
+// import { Auth } from "@supabase/ui";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import type { ReactNode } from "react";
@@ -11,7 +11,7 @@ import { sortData } from "src/hooks/sortData";
 import type { Data } from "src/interface/type";
 import type { UserData } from "src/interface/type";
 import { client } from "src/libs/supabase";
-import { useUser } from "src/hooks/useUser";
+// import { useUser } from "src/hooks/useUser";
 
 type Props = {
   children: ReactNode;
@@ -61,10 +61,7 @@ const getItems = async (userID: string, y: number, m: number) => {
 
 const Container = (props: Props) => {
   const user = client.auth.user();
-  const session = client.auth.session();
-  // const { session } = useUser();
 
-  console.log(session)
   // const [user, setUser] = useState<any>(null);
   const [userData, setUserData] = useState<Data>();
   const [totalPrice, setTotalPrice] = useState<number>(0);

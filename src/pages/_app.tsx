@@ -1,28 +1,28 @@
 import "tailwindcss/tailwind.css";
 
-import { useState, useEffect } from "react";
-import { Auth } from "@supabase/ui";
+// import { useState, useEffect } from "react";
+// import { Auth } from "@supabase/ui";
 import type { AppProps } from "next/app";
 import PropTypes from "prop-types";
 import { LayoutWrapper } from "src/layouts/layoutWrapper";
-import { client } from "src/libs/supabase";
+// import { client } from "src/libs/supabase";
 
 const MyApp = (props: AppProps): JSX.Element => {
   // const { user } = Auth.useUser();
-  const [session, setSession] = useState<any>();
-  useEffect(() => {
-    client.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-      }
-    );
+  // const [session, setSession] = useState<any>();
+  // useEffect(() => {
+  //   client.auth.onAuthStateChange(
+  //     (event, session) => {
+  //       setSession(session);
+  //     }
+  //   );
 
-    // return () => {
-    //   authListener.unsubscribe();
-    // };
-  }, []);
+  //   return () => {
+  //     authListener.unsubscribe();
+  //   };
+  // }, []);
 
-  console.log(session);
+  // console.log(session);
 
   return (
     <LayoutWrapper>
