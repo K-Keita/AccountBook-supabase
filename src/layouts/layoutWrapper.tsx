@@ -13,7 +13,7 @@ export const LayoutWrapper = (props: Props) => {
       className="bg-gradient-to-b from-purple-600 via-blue-500 to-green-300"
     >
       {/* <Header /> */}
-      <main className="text-gray-600 ">
+      <main className="text-white">
         <div>{props.children}</div>
       </main>
       {/* <Footer /> */}

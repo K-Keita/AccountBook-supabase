@@ -438,7 +438,7 @@ const Container = (props: Props) => {
               );
             })}
           </Tab.Group>
-        {/* <button onClick={signOut}>signOut</button> */}
+          {/* <button onClick={signOut}>signOut</button> */}
         </div>
       </div>
     );
@@ -447,28 +447,26 @@ const Container = (props: Props) => {
 };
 
 const Home = () => {
-  // const signInWithGoogle = async () => {
-  //   const { user, session, error } = await client.auth.signIn({
-  //     provider: "google",
-  //   });
+  const signInWithGoogle = async () => {
+    const { error } = await client.auth.signIn({
+      provider: "google",
+    });
 
-  //   // console.log(user, session);
-  //   if (error) {
-  //     throw new Error("");
-  //   }
-  // };
+    // console.log(user, session);
+    if (error) {
+      throw new Error("");
+    }
+  };
   return (
     <Container>
-      {/* <div className="flex justify-center pt-8">
         <div className="w-full sm:w-96">
-          <Auth
+          {/* <Auth
             supabaseClient={client}
             providers={["google"]}
             // socialColors={true}
-          />
+          /> */}
+          <button onClick={signInWithGoogle}>signIn</button>
         </div>
-      </div>
-          <button onClick={signInWithGoogle}>signIn</button> */}
     </Container>
   );
 };
