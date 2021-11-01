@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Tab } from "@headlessui/react";
-// import { Auth } from "@supabase/ui";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import type { ReactNode } from "react";
@@ -11,11 +10,10 @@ import { sortData } from "src/hooks/sortData";
 import type { Data } from "src/interface/type";
 import type { UserData } from "src/interface/type";
 import { client } from "src/libs/supabase";
-// import { useUser } from "src/hooks/useUser";
 
-type Props = {
-  children: ReactNode;
-};
+// type Props = {
+//   children: ReactNode;
+// };
 
 const d = new Date();
 const y = d.getFullYear();
@@ -59,10 +57,9 @@ const getItems = async (userID: string, y: number, m: number) => {
   return { userData: null, items: null, totalPrice: null };
 };
 
-const Container = (props: Props) => {
+const Home = () => {
   const user = client.auth.user();
 
-  // const [user, setUser] = useState<any>(null);
   const [userData, setUserData] = useState<Data>();
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [items, setItems] = useState<UserData[]>([]);
@@ -72,20 +69,6 @@ const Container = (props: Props) => {
 
   const [isTop, setIsTop] = useState<boolean>(false);
   const router = useRouter();
-
-  // useEffect(() => {
-  //   client.auth.onAuthStateChange((event, session) => {
-  //     console.log(event, session);
-  //     setUser(session.user);
-  //   });
-  // })
-
-  // useEffect(() => {
-  //   if (session) {
-  //     setUser(session.user);
-  //     console.log(session.user);
-  //   }
-  // }, [session]);
 
   useEffect(() => {
     const scrollAction = () => {
@@ -199,16 +182,6 @@ const Container = (props: Props) => {
 
   //1日の平均金額(現在)
   const nowAverage = totalPrice / d.getDate();
-
-  // const signOut = async () => {
-  //   const { error } = await client.auth.signOut();
-
-  //   if (error) {
-  //     throw new Error("");
-  //   }
-  // };
-
-  // console.log(user);
 
   if (user) {
     return (
@@ -438,37 +411,10 @@ const Container = (props: Props) => {
               );
             })}
           </Tab.Group>
-          {/* <button onClick={signOut}>signOut</button> */}
         </div>
       </div>
     );
   }
-  return <>{props.children}</>;
-};
-
-const Home = () => {
-  const signInWithGoogle = async () => {
-    const { error } = await client.auth.signIn({
-      provider: "google",
-    });
-
-    // console.log(user, session);
-    if (error) {
-      throw new Error("");
-    }
-  };
-  return (
-    <Container>
-        <div className="w-full sm:w-96">
-          {/* <Auth
-            supabaseClient={client}
-            providers={["google"]}
-            // socialColors={true}
-          /> */}
-          <button onClick={signInWithGoogle}>signIn</button>
-        </div>
-    </Container>
-  );
 };
 
 export default Home;
