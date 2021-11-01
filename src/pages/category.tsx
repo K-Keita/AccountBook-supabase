@@ -1,5 +1,4 @@
 import { Tab } from "@headlessui/react";
-import { Auth } from "@supabase/ui";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import type { VFC } from "react";
