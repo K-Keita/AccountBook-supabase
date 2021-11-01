@@ -2,7 +2,7 @@
 import { Tab } from "@headlessui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import type { ReactNode } from "react";
+// import type { ReactNode } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { AddItem } from "src/components/addItem";
 import { ItemList } from "src/components/itemList";
@@ -185,7 +185,7 @@ const Home = () => {
 
   if (user) {
     return (
-      <div className="pt-1 min-h-lg text-white">
+      <div className="pt-1 min-h-lg">
         <div className="fixed p-5 mt-5 w-full h-lg">
           <div className="flex justify-between">
             <Link href="/category" passHref>
@@ -301,14 +301,14 @@ const Home = () => {
                 />
               </svg>
             </button>
-            <div className="mx-4 ml-auto border-white">
-              <p className="text-sm">
+            <div className="mx-4 ml-auto text-sm border-white">
+              <p>
                 使用金額(月)：
                 <span className="text-base">
                   ¥{userData?.targetAmount.toLocaleString()}
                 </span>
               </p>
-              <p className="text-sm text-center">
+              <p className="text-center">
                 (平均金額：
                 {targetAverage
                   ? Math.floor(targetAverage).toLocaleString()

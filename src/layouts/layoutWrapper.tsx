@@ -10,12 +10,10 @@ export const LayoutWrapper = (props: Props) => {
   return (
     <main
       style={{ fontFamily: "游明朝体" }}
-      className="bg-gradient-to-b from-purple-600 via-blue-500 to-green-300"
+      className="bg-gradient-to-b from-purple-600 via-blue-500 to-green-300 text-white"
     >
       {/* <Header /> */}
-      <div className="text-white">
         <div>{props.children}</div>
-      </div>
       {/* <Footer /> */}
     </main>
   );

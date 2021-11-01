@@ -126,7 +126,7 @@ const Chart: VFC = () => {
   });
 
   return user ? (
-    <div className="relative z-40 pt-7 pb-16 w-full min-h-lg text-white bg-gradient-to-b from-dark via-green-200 to-blue-500 rounded-t-3xl md:p-5 md:w-1/2">
+    <main className="relative z-40 pt-7 pb-16 w-full min-h-lg text-white bg-gradient-to-b from-dark via-green-200 to-blue-500 rounded-t-3xl md:p-5 md:w-1/2">
       <div className="flex justify-around pb-3">
         <Link href="/category" passHref>
           <svg
@@ -242,7 +242,7 @@ const Chart: VFC = () => {
           </div>
         );
       })}
-    </div>
+    </main>
   ) : null;
 };
 
