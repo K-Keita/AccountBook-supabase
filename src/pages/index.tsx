@@ -11,6 +11,7 @@ import { sortData } from "src/hooks/sortData";
 import type { Data } from "src/interface/type";
 import type { UserData } from "src/interface/type";
 import { client } from "src/libs/supabase";
+import { useUser } from "src/hooks/useUser";
 
 type Props = {
   children: ReactNode;
@@ -59,8 +60,12 @@ const getItems = async (userID: string, y: number, m: number) => {
 };
 
 const Container = (props: Props) => {
-  const { user } = Auth.useUser();
+  const user = client.auth.user();
+  const session = client.auth.session();
+  // const { session } = useUser();
 
+  console.log(session)
+  // const [user, setUser] = useState<any>(null);
   const [userData, setUserData] = useState<Data>();
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [items, setItems] = useState<UserData[]>([]);
@@ -70,6 +75,20 @@ const Container = (props: Props) => {
 
   const [isTop, setIsTop] = useState<boolean>(false);
   const router = useRouter();
+
+  // useEffect(() => {
+  //   client.auth.onAuthStateChange((event, session) => {
+  //     console.log(event, session);
+  //     setUser(session.user);
+  //   });
+  // })
+
+  // useEffect(() => {
+  //   if (session) {
+  //     setUser(session.user);
+  //     console.log(session.user);
+  //   }
+  // }, [session]);
 
   useEffect(() => {
     const scrollAction = () => {
@@ -184,10 +203,20 @@ const Container = (props: Props) => {
   //1日の平均金額(現在)
   const nowAverage = totalPrice / d.getDate();
 
+  const signOut = async () => {
+    const { error } = await client.auth.signOut();
+
+    if (error) {
+      throw new Error("");
+    }
+  };
+
+  console.log(user);
+
   if (user) {
     return (
       <div className="pt-1 min-h-lg text-white md:flex">
-        <div className="fixed p-5 mt-5 w-full h-lg md:w-1/2">
+        <div className="fixed p-5 mt-5 w-full h-lg">
           <div className="flex justify-between">
             <Link href="/category" passHref>
               <svg
@@ -303,7 +332,12 @@ const Container = (props: Props) => {
               </svg>
             </button>
             <div className="mx-4 ml-auto border-white">
-              <p className="text-sm">使用金額(月)：<span className="text-base">¥{userData?.targetAmount.toLocaleString()}</span></p>
+              <p className="text-sm">
+                使用金額(月)：
+                <span className="text-base">
+                  ¥{userData?.targetAmount.toLocaleString()}
+                </span>
+              </p>
               <p className="text-sm text-center">
                 (平均金額：
                 {targetAverage
@@ -408,6 +442,7 @@ const Container = (props: Props) => {
             })}
           </Tab.Group>
         </div>
+        <button onClick={signOut}>signOut</button>
       </div>
     );
   }
@@ -415,15 +450,26 @@ const Container = (props: Props) => {
 };
 
 const Home = () => {
+  const signInWithGoogle = async () => {
+    const { user, session, error } = await client.auth.signIn({
+      provider: "google",
+    });
+
+    console.log(user, session);
+    if (error) {
+      throw new Error("");
+    }
+  };
   return (
     <Container>
       <div className="flex justify-center pt-8">
         <div className="w-full sm:w-96">
-          <Auth
+          {/* <Auth
             supabaseClient={client}
             providers={["google"]}
-            socialColors={true}
-          />
+            // socialColors={true}
+          /> */}
+          <button onClick={signInWithGoogle}>signIn</button>
         </div>
       </div>
     </Container>
