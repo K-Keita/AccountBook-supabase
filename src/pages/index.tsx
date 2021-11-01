@@ -200,19 +200,19 @@ const Container = (props: Props) => {
   //1日の平均金額(現在)
   const nowAverage = totalPrice / d.getDate();
 
-  const signOut = async () => {
-    const { error } = await client.auth.signOut();
+  // const signOut = async () => {
+  //   const { error } = await client.auth.signOut();
 
-    if (error) {
-      throw new Error("");
-    }
-  };
+  //   if (error) {
+  //     throw new Error("");
+  //   }
+  // };
 
   // console.log(user);
 
   if (user) {
     return (
-      <div className="pt-1 min-h-lg text-white md:flex">
+      <div className="pt-1 min-h-lg text-white">
         <div className="fixed p-5 mt-5 w-full h-lg">
           <div className="flex justify-between">
             <Link href="/category" passHref>
@@ -438,8 +438,8 @@ const Container = (props: Props) => {
               );
             })}
           </Tab.Group>
+        {/* <button onClick={signOut}>signOut</button> */}
         </div>
-        <button onClick={signOut}>signOut</button>
       </div>
     );
   }
@@ -447,28 +447,28 @@ const Container = (props: Props) => {
 };
 
 const Home = () => {
-  const signInWithGoogle = async () => {
-    const { user, session, error } = await client.auth.signIn({
-      provider: "google",
-    });
+  // const signInWithGoogle = async () => {
+  //   const { user, session, error } = await client.auth.signIn({
+  //     provider: "google",
+  //   });
 
-    // console.log(user, session);
-    if (error) {
-      throw new Error("");
-    }
-  };
+  //   // console.log(user, session);
+  //   if (error) {
+  //     throw new Error("");
+  //   }
+  // };
   return (
     <Container>
-      <div className="flex justify-center pt-8">
+      {/* <div className="flex justify-center pt-8">
         <div className="w-full sm:w-96">
-          {/* <Auth
+          <Auth
             supabaseClient={client}
             providers={["google"]}
             // socialColors={true}
-          /> */}
+          />
         </div>
-          <button onClick={signInWithGoogle}>signIn</button>
       </div>
+          <button onClick={signInWithGoogle}>signIn</button> */}
     </Container>
   );
 };
