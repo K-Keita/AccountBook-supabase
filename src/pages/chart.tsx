@@ -1,4 +1,3 @@
-import { Auth } from "@supabase/ui";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import type { VFC } from "react";
@@ -43,8 +42,8 @@ const getItems = async (userID: string, year: number, month: number) => {
   return { userData: null, items: null, totalPrice: null };
 };
 
-const Title: VFC = () => {
-  const { user } = Auth.useUser();
+const Chart: VFC = () => {
+  const user  = client.auth.user();
 
   const [items, setItems] = useState<UserData[]>([]);
   const [userData, setUserData] = useState<TitleType>();
@@ -247,4 +246,4 @@ const Title: VFC = () => {
   ) : null;
 };
 
-export default Title;
+export default Chart;
