@@ -70,7 +70,7 @@ const getItems = async (userID: string, year: number, month: number) => {
 };
 
 const Title: VFC = () => {
-  const { user } = Auth.useUser();
+  const user = client.auth.user();
 
   const [items, setItems] = useState<UserData[]>([]);
   const [userData, setUserData] = useState<TitleType>();
