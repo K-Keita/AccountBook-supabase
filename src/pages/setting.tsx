@@ -1,5 +1,4 @@
 import { Switch } from "@headlessui/react";
-import { Auth } from "@supabase/ui";
 import Link from "next/link";
 import type { VFC } from "react";
 import { useCallback, useEffect, useState } from "react";
@@ -20,9 +19,17 @@ const getUserData = async (userID: string) => {
 };
 
 const Setting: VFC = () => {
-  const { user } = Auth.useUser();
+  const user = client.auth.user();
   const [isEnabled, setIdEnabled] = useState(false);
   const [userData, setUserData] = useState<Data>();
+
+  // const signOut = async () => {
+  //   const { error } = await client.auth.signOut();
+
+  //   if (error) {
+  //     throw new Error("");
+  //   }
+  // };
 
   const getUser = useCallback(async () => {
     if (user) {
