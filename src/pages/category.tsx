@@ -21,7 +21,7 @@ const classNames = (...classes: string[]) => {
 
 const classes = ({ selected }: any) => {
   return classNames(
-    `py-1 min-w-xl leading-5 font-medium rounded-lg mb-1`,
+    `py-1  leading-5 font-medium rounded-lg mb-1 min-w-3l`,
     "focus:outline-none focus:ring-1 ring-offset-1 ring-offset-blue-400 ring-green-400",
     selected
       ? "shadow bg-gradient-to-r from-yellow-200 via-green-200 to-green-300 bg-opacity-20 text-white"
@@ -272,6 +272,41 @@ const Title: VFC = () => {
                     </div>
                   </div>
                   <h2 className="p-4 text-4xl font-bold">History</h2>
+                  <div className={`flex justify-end px-8`}>
+                    <button onClick={prevMonth}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-6 h-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
+                        />
+                      </svg>
+                    </button>
+                    <h2 className={`px-2 text-xl`}>{month}月</h2>
+                    <button onClick={nextMonth}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-6 h-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 5l7 7-7 7M5 5l7 7-7 7"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                   <ItemList
                     items={items}
                     userData={userData}

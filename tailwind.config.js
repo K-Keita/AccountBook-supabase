@@ -6,13 +6,13 @@ module.exports = {
     minHeight: {
       sm: "300px",
       lg: "90vh",
-      // xl: "1vh",
       screen: "100vh",
     },
     minWidth: {
       lg: "50px",
       "2lg": "80px",
       xl: "100px",
+      "3l": "30%",
       "4l": "40%",
     },
     extend: {
@@ -65,7 +65,7 @@ module.exports = {
         "-20": "-20",
       },
       height: {
-        lg: "60vh",
+        lg: "65vh",
         "2lg": "50vh",
       },
     },
