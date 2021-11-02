@@ -4,7 +4,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useCallback, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
-import {DatePicker} from 'src/components/utils/datePicker';
+import { DatePicker } from "src/components/utils/datePicker";
 import { client } from "src/libs/supabase";
 
 type Props = {
@@ -31,14 +31,13 @@ export const AddItem = (props: Props) => {
 
   const {
     register,
-    // control,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    console.log(data);
-    // addItem(data.price, data.memo, data.category, data.dateTime);
+    addItem(data.price, data.memo, data.category, data.dateTime);
   };
 
   //モーダルを開く
@@ -53,7 +52,7 @@ export const AddItem = (props: Props) => {
 
   //商品の追加
   const addItem = useCallback(
-    async (price, memo, category, date) => {
+    async (price, memo, category, dateTime) => {
       if (price === "") {
         alert("Priceが空です");
         return;
@@ -64,38 +63,53 @@ export const AddItem = (props: Props) => {
         return;
       }
 
-      const buyDate = [
-        year.toString(),
-        month.toString(),
-        day.toString(),
-        hours.toString(),
-      ];
+      const buyDate = dateTime ? (
+        [
+          dateTime.getFullYear().toString(),
+          (dateTime.getMonth() + 1).toString(),
+          dateTime.getDate().toString(),
+          hours.toString(),
+        ]
+      ): (
+        [
+          year.toString(),
+          month.toString(),
+          day.toString(),
+          hours.toString(),
+        ]
+      );
 
-      // const date = [
-      //   `year:${year.toString()}`,
-      //   `month:${month.toString()}`,
-      //   `day:${day.toString()}`,
-      // ];
+      const date = dateTime
+        ? [
+            `year:${dateTime.getFullYear()}`,
+            `month:${dateTime.getMonth() + 1}`,
+            `day:${dateTime.getDate()}`,
+          ]
+        : [
+            `year:${year.toString()}`,
+            `month:${month.toString()}`,
+            `day:${day.toString()}`,
+          ];
 
-      const { data, error } = await client.from("purchasedItem").insert([
-        {
-          userID: props.uuid,
-          categoryID: category,
-          price: price,
-          description: memo,
-          buyDate: buyDate,
-          date: date,
-        },
-      ]);
+        const { data, error } = await client.from("purchasedItem").insert([
+          {
+            userID: props.uuid,
+            categoryID: category,
+            price: price,
+            description: memo,
+            buyDate: buyDate,
+            date: date,
+          },
+        ]);
 
-      if (error) {
-        alert(error);
-      } else {
-        if (data) {
-          props.getItemList(year, month);
-          closeModal();
+        if (error) {
+          alert(error);
+        } else {
+          if (data) {
+            props.getItemList(year, month);
+            closeModal();
+          }
         }
-      }
     },
     [props, closeModal]
   );
@@ -139,6 +153,11 @@ export const AddItem = (props: Props) => {
                   商品追加
                 </Dialog.Title>
                 <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
+                  <DatePicker
+                    name="dateTime"
+                    control={control}
+                    error={errors.dateTime?.message}
+                  />
                   <p>Price</p>
                   <input
                     defaultValue={""}
@@ -164,11 +183,6 @@ export const AddItem = (props: Props) => {
                       );
                     })}
                   </select>
-                  {/* <DatePicker
-                    name="dateTime"
-                    control={control}
-                    error={errors.dateTime?.message}
-                  /> */}
                   <div className="flex justify-around mt-3">
                     <input
                       type="submit"
