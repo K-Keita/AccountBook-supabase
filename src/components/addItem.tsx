@@ -2,6 +2,10 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Button, IconPlus, IconX, Select } from "@supabase/ui";
 import { Fragment, useCallback, useState } from "react";
 import { client } from "src/libs/supabase";
+import { useForm } from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
+import { DatePicker } from "src/components/DatePicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 type Props = {
   userData: any;
@@ -15,13 +19,32 @@ const month = d.getMonth() + 1;
 const day = d.getDate();
 const hours = d.getHours();
 
+type FormValues = {
+  price: number;
+  memo: string;
+  category: string;
+  datetime: string;
+};
+
 export const AddItem = (props: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [price, setPrice] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [value, setValue] = useState("");
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setValue(e.target.value);
+  // const [price, setPrice] = useState<string>("");
+  // const [description, setDescription] = useState<string>("");
+  // const [value, setValue] = useState("");
+  // const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   setValue(e.target.value);
+  // };
+
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>();
+
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
+    console.log(data);
+    // addItem(data.price, data.memo, data.category, data.datetime);
   };
 
   //モーダルを開く
@@ -31,20 +54,20 @@ export const AddItem = (props: Props) => {
 
   //モーダルを閉める
   const closeModal = useCallback(() => {
-    setPrice("");
-    setDescription("");
+    // setPrice("");
+    // setDescription("");
     setIsOpen(false);
   }, []);
 
   //商品の追加
-  const handleAdd = useCallback(
-    async (value) => {
+  const addItem = useCallback(
+    async (price, memo, category, date) => {
       if (price === "") {
         alert("Priceが空です");
         return;
       }
 
-      if (value === "") {
+      if (category === "") {
         alert("カテゴリーを選択してください");
         return;
       }
@@ -56,22 +79,23 @@ export const AddItem = (props: Props) => {
         hours.toString(),
       ];
 
-      const date = [
-        `year:${year.toString()}`,
-        `month:${month.toString()}`,
-        `day:${day.toString()}`,
-      ];
+      // const date = [
+      //   `year:${year.toString()}`,
+      //   `month:${month.toString()}`,
+      //   `day:${day.toString()}`,
+      // ];
 
       const { data, error } = await client.from("purchasedItem").insert([
         {
           userID: props.uuid,
-          categoryID: value,
+          categoryID: category,
           price: price,
-          description: description,
+          description: memo,
           buyDate: buyDate,
           date: date,
         },
       ]);
+
       if (error) {
         alert(error);
       } else {
@@ -81,13 +105,13 @@ export const AddItem = (props: Props) => {
         }
       }
     },
-    [price, props, description, closeModal]
+    [props, closeModal]
   );
 
   return (
     <>
       <button
-        className="block p-2 py-2 my-4 mx-auto w-32 text-center bg-gradient-to-r from-green-300 to-yellow-300 rounded-2xl border border-yellow-500 cursor-pointer"
+        className="block p-1 my-4 mx-auto w-24 text-sm text-center rounded-2xl border border-yellow-500 cursor-pointer"
         onClick={openModal}
       >
         登録
@@ -122,7 +146,53 @@ export const AddItem = (props: Props) => {
                 >
                   商品追加
                 </Dialog.Title>
-                <div className="grid grid-cols-4 gap-2 mt-4">
+                <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
+                  <p>Price</p>
+                  <input
+                    defaultValue={""}
+                    autoFocus
+                    type="number"
+                    {...register("price", { required: true, min: 0 })}
+                    className="col-span-3 p-2 w-full h-10 bg-white rounded hover:border shadow appearance-none"
+                  />
+                  {errors.price && <span>This field is required</span>}
+                  <p>Memo</p>
+                  <input
+                    defaultValue={""}
+                    autoFocus
+                    {...register("memo")}
+                    className="col-span-3 p-2 w-full h-10 bg-white rounded hover:border shadow appearance-none"
+                  />
+                  <select {...register("category")}>
+                    {props.userData?.categoryList?.map((value: string) => {
+                      return (
+                        <option value={value} key={value}>
+                          {value}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <DatePicker
+                    label="datetime"
+                    name="datetime"
+                    control={control}
+                    error={errors.datetime?.message}
+                  />
+                  <div className="flex justify-around mt-3">
+                    <input
+                      type="submit"
+                      value="Add"
+                      className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer"
+                    />
+                    <input
+                      type="reset"
+                      onClick={closeModal}
+                      className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer"
+                      value="Cancel"
+                    />
+                  </div>
+                </form>
+                {/* <div className="grid grid-cols-4 gap-2 mt-4">
                   <div className="col-span-1 pt-1 text-xl text-center">
                     価格
                   </div>
@@ -136,8 +206,8 @@ export const AddItem = (props: Props) => {
                       return setPrice(e.target.value);
                     }}
                   />
-                </div>
-                <div className="grid grid-cols-4 gap-2 mt-4">
+                </div> */}
+                {/* <div className="grid grid-cols-4 gap-2 mt-4">
                   <div className="col-span-1 pt-1 text-xl text-center">
                     説明
                   </div>
@@ -148,20 +218,8 @@ export const AddItem = (props: Props) => {
                       return setDescription(e.target.value);
                     }}
                   />
-                </div>
-                {/* <div className="grid grid-cols-4 gap-2 mt-4">
-                  <div className="col-span-1 pt-1 text-xl text-center">
-                    日付
-                  </div>
-                  <input
-                    className="col-span-3 p-2 w-full h-10 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
-                    value={description}
-                    onChange={(e) => {
-                      return setDescription(e.target.value);
-                    }}
-                  />
                 </div> */}
-                <Select label="カテゴリー" onChange={handleChange}>
+                {/* <Select label="カテゴリー" onChange={handleChange}>
                   {props.userData?.categoryList?.map((value: string) => {
                     return (
                       <Select.Option value={value} key={value}>
@@ -181,20 +239,20 @@ export const AddItem = (props: Props) => {
                     >
                       Cancel
                     </Button>
-                  </div>
-                  <div className="p-2 w-32">
+                  </div> */}
+                  {/* <div className="p-2 w-32">
                     <Button
                       block
                       size="large"
                       icon={<IconPlus />}
                       onClick={() => {
-                        return handleAdd(value);
+                        return addItem(value);
                       }}
                     >
                       Add
                     </Button>
-                  </div>
-                </div>
+                  </div> */}
+                {/* </div> */}
               </div>
             </Transition.Child>
           </div>
