@@ -1,11 +1,11 @@
-import { Dialog, Transition } from "@headlessui/react";
-import { Button, IconPlus, IconX, Select } from "@supabase/ui";
-import { Fragment, useCallback, useState } from "react";
-import { client } from "src/libs/supabase";
-import { useForm } from "react-hook-form";
-import type { SubmitHandler } from "react-hook-form";
-import { DatePicker } from "src/components/DatePicker";
 import "react-datepicker/dist/react-datepicker.css";
+
+import { Dialog, Transition } from "@headlessui/react";
+import { Fragment, useCallback, useState } from "react";
+import type { SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import {DatePicker} from 'src/components/utils/datePicker';
+import { client } from "src/libs/supabase";
 
 type Props = {
   userData: any;
@@ -23,28 +23,22 @@ type FormValues = {
   price: number;
   memo: string;
   category: string;
-  datetime: string;
+  dateTime: string;
 };
 
 export const AddItem = (props: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  // const [price, setPrice] = useState<string>("");
-  // const [description, setDescription] = useState<string>("");
-  // const [value, setValue] = useState("");
-  // const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-  //   setValue(e.target.value);
-  // };
 
   const {
     register,
-    control,
+    // control,
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     console.log(data);
-    // addItem(data.price, data.memo, data.category, data.datetime);
+    // addItem(data.price, data.memo, data.category, data.dateTime);
   };
 
   //モーダルを開く
@@ -54,8 +48,6 @@ export const AddItem = (props: Props) => {
 
   //モーダルを閉める
   const closeModal = useCallback(() => {
-    // setPrice("");
-    // setDescription("");
     setIsOpen(false);
   }, []);
 
@@ -172,12 +164,11 @@ export const AddItem = (props: Props) => {
                       );
                     })}
                   </select>
-                  <DatePicker
-                    label="datetime"
-                    name="datetime"
+                  {/* <DatePicker
+                    name="dateTime"
                     control={control}
-                    error={errors.datetime?.message}
-                  />
+                    error={errors.dateTime?.message}
+                  /> */}
                   <div className="flex justify-around mt-3">
                     <input
                       type="submit"
@@ -192,67 +183,6 @@ export const AddItem = (props: Props) => {
                     />
                   </div>
                 </form>
-                {/* <div className="grid grid-cols-4 gap-2 mt-4">
-                  <div className="col-span-1 pt-1 text-xl text-center">
-                    価格
-                  </div>
-                  <input
-                    className="col-span-3 p-2 w-full h-10 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
-                    value={price}
-                    type="number"
-                    autoFocus
-                    min={1}
-                    onChange={(e) => {
-                      return setPrice(e.target.value);
-                    }}
-                  />
-                </div> */}
-                {/* <div className="grid grid-cols-4 gap-2 mt-4">
-                  <div className="col-span-1 pt-1 text-xl text-center">
-                    説明
-                  </div>
-                  <input
-                    className="col-span-3 p-2 w-full h-10 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
-                    value={description}
-                    onChange={(e) => {
-                      return setDescription(e.target.value);
-                    }}
-                  />
-                </div> */}
-                {/* <Select label="カテゴリー" onChange={handleChange}>
-                  {props.userData?.categoryList?.map((value: string) => {
-                    return (
-                      <Select.Option value={value} key={value}>
-                        {value}
-                      </Select.Option>
-                    );
-                  })}
-                </Select>
-                <div className="flex justify-center mt-4">
-                  <div className="p-2 w-32">
-                    <Button
-                      block
-                      type="default"
-                      size="large"
-                      icon={<IconX />}
-                      onClick={closeModal}
-                    >
-                      Cancel
-                    </Button>
-                  </div> */}
-                  {/* <div className="p-2 w-32">
-                    <Button
-                      block
-                      size="large"
-                      icon={<IconPlus />}
-                      onClick={() => {
-                        return addItem(value);
-                      }}
-                    >
-                      Add
-                    </Button>
-                  </div> */}
-                {/* </div> */}
               </div>
             </Transition.Child>
           </div>

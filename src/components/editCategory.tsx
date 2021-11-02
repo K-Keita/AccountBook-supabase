@@ -11,7 +11,7 @@ type Props = {
   category: string;
 };
 
-type Inputs = {
+type FormValue = {
   categoryName: string;
 };
 
@@ -22,9 +22,9 @@ const month = d.getMonth() + 1;
 export const EditCategory = (props: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const { register, handleSubmit } = useForm<Inputs>();
+  const { register, handleSubmit } = useForm<FormValue>();
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
+  const onSubmit: SubmitHandler<FormValue> = (data) => {
     editCategoryName(data.categoryName, props.category);
   };
 
