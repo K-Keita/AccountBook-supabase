@@ -1,13 +1,22 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Button, IconSave, IconX, Input,Select } from "@supabase/ui";
 import { Fragment, useCallback, useState } from "react";
+import type { SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { client } from "src/libs/supabase";
+// import { DatePicker } from "src/components/utils/DatePicker";
 
 type Props = {
   item: any;
   userData: any;
   uuid: string;
   getItemList: (year: number, month: number) => void;
+};
+
+type FormValues = {
+  price: number;
+  memo: string;
+  category: string;
+  datetime: string;
 };
 
 const d = new Date();
@@ -18,14 +27,16 @@ const colors = ["red", "blue", "green", "orange", "gray", "pink", "yellow"];
 
 export const ItemCard = (props: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [price, setPrice] = useState<string>(props.item.price.toString());
-  const [description, setDescription] = useState<string>(
-    props.item.description.toString()
-  );
-  const [value, setValue] = useState(props.item.categoryID);
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setValue(e.target.value);
+  const {
+    register,
+    // control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>();
+
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
+    handleSave(data.price, data.memo, data.category);
   };
 
   const openModal = useCallback(() => {
@@ -52,13 +63,13 @@ export const ItemCard = (props: Props) => {
   }, [props, closeModal]);
 
   const handleSave = useCallback(
-    async (value) => {
+    async (price, memo, category) => {
       if (price == "") {
         alert("Input price as an integer.");
         return;
       }
 
-      if (description == "") {
+      if (category == "") {
         alert("Input ISBN number.");
         return;
       }
@@ -67,9 +78,9 @@ export const ItemCard = (props: Props) => {
         id: props.item.id,
         userID: props.item.userID,
         buyDate: props.item.buyDate,
-        categoryID: value,
-        price: Number(price),
-        description: description,
+        categoryID: category,
+        price: price,
+        description: memo,
       });
 
       if (error) {
@@ -78,10 +89,12 @@ export const ItemCard = (props: Props) => {
       props.getItemList(year, month);
       closeModal();
     },
-    [props, price, description, closeModal]
+    [props, closeModal]
   );
 
   const date = `${props.item.buyDate[1]}/${props.item.buyDate[2]}`;
+
+  // const defaultDate = new Date(`${props.item.buyDate[0]}/${props.item.buyDate[1]}/${props.item.buyDate[2]}`)
 
   const color =
     colors[props.userData.categoryList.indexOf(props.item.categoryID)];
@@ -141,7 +154,7 @@ export const ItemCard = (props: Props) => {
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
-          className="overflow-y-auto fixed inset-0 z-50"
+          className="overflow-y-auto fixed inset-0 z-40"
           onClose={closeModal}
         >
           <div className="px-4 text-center border-2">
@@ -167,71 +180,55 @@ export const ItemCard = (props: Props) => {
                 >
                   編集
                 </Dialog.Title>
-                <div className="flex justify-between mt-4">
-                  <div className="pt-1 w-20 text-lg">価格:</div>
-                  <Input
-                    className="w-80"
-                    value={price}
-                    onChange={(e) => {
-                      return setPrice(e.target.value);
-                    }}
+                <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
+                  <p>Price</p>
+                  <input
+                    defaultValue={props.item.price}
+                    autoFocus
+                    type="number"
+                    {...register("price", { required: true, min: 0 })}
+                    className="col-span-3 p-2 w-full h-10 bg-white rounded hover:border shadow appearance-none"
                   />
-                </div>
-                <div className="flex justify-between mt-4">
-                  <div className="pt-1 w-20 text-lg">説明:</div>
-                  <Input
-                    className="w-80"
-                    value={description}
-                    onChange={(e) => {
-                      return setDescription(e.target.value);
-                    }}
+                  {errors.price && <span>This field is required</span>}
+                  {/* <DatePicker
+                    name="datetime"
+                    defaultDate={defaultDate}
+                    control={control}
+                    error={errors.datetime?.message}
+                  /> */}
+                  <p>Memo</p>
+                  <input
+                    defaultValue={props.item.description}
+                    autoFocus
+                    {...register("memo")}
+                    className="col-span-3 p-2 w-full h-10 bg-white rounded hover:border shadow appearance-none"
                   />
-                </div>
-                <div className="flex justify-between mt-4">
-                  <p className="pt-1 mr-2 text-lg text-center">カテゴリー:</p>
-                  <Select
-                    className="w-60"
-                    defaultValue={props.item.categoryID}
-                    onChange={handleChange}
-                  >
-                    {props.userData.categoryList.map(
-                      (value: string, index: number) => {
-                        return (
-                          <option value={value} key={index}>
-                            {value}
-                          </option>
-                        );
-                      }
-                    )}
-                  </Select>
-                </div>
-                <div className="flex justify-center mt-4">
-                  <div className="p-2 w-32">
-                    <Button
-                      block
-                      type="outline"
-                      size="tiny"
-                      icon={<IconX />}
+                  <select {...register("category")} defaultValue={props.item.categoryID}>
+                    {props.userData?.categoryList?.map((value: string) => {
+                      return (
+                        <option
+                          value={value}
+                          key={value}
+                        >
+                          {value}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <div className="flex justify-around mt-3">
+                    <input
+                      type="submit"
+                      value="save"
+                      className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer"
+                    />
+                    <input
+                      type="reset"
                       onClick={closeModal}
-                    >
-                      Cancel
-                    </Button>
+                      className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer"
+                      value="Cancel"
+                    />
                   </div>
-                  <div className="p-2 w-32">
-                    <Button
-                      block
-                      size="tiny"
-                      type="outline"
-                      // style={{background: "skyBlue"}}
-                      icon={<IconSave />}
-                      onClick={() => {
-                        return handleSave(value);
-                      }}
-                    >
-                      Save
-                    </Button>
-                  </div>
-                </div>
+                </form>
               </div>
             </Transition.Child>
           </div>

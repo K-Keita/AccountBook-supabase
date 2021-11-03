@@ -54,7 +54,7 @@ export const Graph = (props: Props): JSX.Element => {
   const optionsBar = {
     responsive: true,
     animation: {
-      duration: 2000,
+      duration: 2500,
     },
     plugins: {
       legend: {
@@ -99,6 +99,7 @@ export const Graph = (props: Props): JSX.Element => {
     responsive: true,
     animation: {
       duration: 2000,
+      // delay: 1000,
     },
     plugins: {
       legend: {
