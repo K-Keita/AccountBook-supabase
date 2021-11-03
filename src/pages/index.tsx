@@ -138,6 +138,9 @@ const Home = () => {
   //ボタンの位置へ移動
   const moveScroll = () => {
     const target = document.getElementById("sc");
+    if (day < 5) {
+      return;
+    }
     if (target === null) {
       setTimeout(() => {
         moveScroll();
@@ -185,47 +188,11 @@ const Home = () => {
 
   return user ? (
     <div className="pt-1 min-h-lg text-white">
-      <div className="fixed p-5 mt-2 w-full h-lg">
+      <div className="fixed py-5 mt-2 w-full h-lg">
         <div className="flex">
-          <h2 className="text-3xl px-2 text-center">TITLE</h2>
-          <Link href="/setting" passHref>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="mx-2 ml-auto w-8 h-8"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.2}
-                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.2}
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-            </svg>
-          </Link>
+          <h2 className="px-2 text-3xl text-center">TITLE</h2>
         </div>
-        <h2 className="text-5xl text-center mt-32">TITLE</h2>
-        <div className="my-8 flex justify-around">
-          {totalPrice ? (
-            <div className="w-1/2 border-r py-1">
-              <h3 className="text-4xl tracking-wide text-center">
-                ¥ {totalPrice.toLocaleString()}
-              </h3>
-              <p className="text-center text-sm">
-                残り：¥
-                {userData
-                  ? (userData.targetAmount - totalPrice).toLocaleString()
-                  : null}
-              </p>
-            </div>
-          ) : null}
+        <div className="flex justify-around my-8">
           <div className="w-1/2">
             <AddItem
               userData={userData}
@@ -233,13 +200,56 @@ const Home = () => {
               getItemList={getItemList}
             />
           </div>
+          <div className="w-1/2 border-l">
+            <Link href="/setting" passHref>
+              <div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="mx-auto mt-4 w-9 h-9"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.2}
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.2}
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
+                <p className="text-xs text-center">Setting</p>
+              </div>
+            </Link>
+          </div>
+        </div>
+        <h2 className="mt-12 text-5xl text-center">TITLE</h2>
+        <div className="py-1">
+          {totalPrice ? (
+            <>
+              <h3 className="text-3xl tracking-wide text-center">
+                ¥ {totalPrice.toLocaleString()}
+              </h3>
+              <p className="text-xs text-center">
+                残り：¥
+                {userData
+                  ? (userData.targetAmount - totalPrice).toLocaleString()
+                  : null}
+              </p>
+            </>
+          ) : null}
         </div>
         <div className="flex justify-around mt-12">
           <Link href="/category" passHref>
-            <div>
+            <div className="w-1/2 py-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="mx-2 w-8 h-8"
+                className="mx-auto w-8 h-8"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -255,10 +265,10 @@ const Home = () => {
             </div>
           </Link>
           <Link href="/chart" passHref>
-            <div>
+            <div className="w-1/2 py-4 border-l">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="mx-2 w-8 h-8"
+                className="mx-auto w-8 h-8"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -267,9 +277,29 @@ const Home = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={1.2}
-                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                  d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.3}
+                  d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"
                 />
               </svg>
+              {/* <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="mx-auto w-8 h-8"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.2}
+                  d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg> */}
               <p className="text-xs text-center">Chart</p>
             </div>
           </Link>
@@ -400,7 +430,7 @@ const Home = () => {
                   <div
                     className={`${
                       isTop ? "block" : "hidden"
-                    } animate-slit-in-vertical text-base mx-4 py-3 my-3 px-4 table border-r`}
+                    } animate-slit-in-vertical text-base mx-4 py-3 mb-3 px-4 table border-r`}
                   >
                     total:
                     <span className="block text-3xl font-bold">
