@@ -5,20 +5,28 @@ import type { Control, Path } from "react-hook-form";
 import { Controller } from "react-hook-form";
 
 type Props<T> = {
-  label: string;
   name: Path<T>;
   error?: string;
   control: Control<T>;
+  defaultDate?: Date;
   timeIntervals?: number;
 };
+const Today = new Date();
 
 export const DatePicker = <T,>(props: Props<T>) => {
-  const Today = new Date();
+    // const MyContainer = (props) => {
+    //   return (
+    //     <div className="bg-blue-500 p-2">
+    //       <CalendarContainer className={props.className}>
+    //         <div style={{ position: "relative" }}>{props.children}</div>
+    //       </CalendarContainer>
+    //     </div>
+    //   );
+    // };
 
   return (
     <>
-      <label htmlFor={props.name}>{props.label}</label>
-      <div className="table p-1 text-blue-500 border border-blue-400">
+      <div className="block p-1 text-blue-500 ">
         <Controller
           control={props.control}
           name={props.name}
@@ -26,10 +34,12 @@ export const DatePicker = <T,>(props: Props<T>) => {
             return (
               <ReactDatePicker
                 dateFormat="yyyy.MM/dd"
-                timeIntervals={props.timeIntervals}
                 onChange={onChange}
-                selected={!value ? Today : (value as Date)}
+                className="text-center px-1 w-28 cursor-pointer"
+                timeIntervals={props.timeIntervals}
+                selected={!value ? props.defaultDate : (value as Date)}
                 maxDate={Today}
+                // calendarContainer={MyContainer}
               />
             );
           }}
@@ -38,4 +48,9 @@ export const DatePicker = <T,>(props: Props<T>) => {
       <span>{props.error}</span>
     </>
   );
+};
+
+DatePicker.defaultProps = {
+  timeIntervals: 15,
+  defaultDate: Today,
 };
