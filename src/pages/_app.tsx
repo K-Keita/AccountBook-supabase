@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { useEffect } from "react";
 import { LayoutWrapper } from "src/layouts/layoutWrapper";
+// import { LogIn } from "src/components/logIn";
 import { client } from "src/libs/supabase";
 
 const MyApp = (props: AppProps): JSX.Element => {
@@ -16,7 +17,7 @@ const MyApp = (props: AppProps): JSX.Element => {
     if (!user) {
       router.push("/");
     }
-  }, [user]);
+  }, []);
 
   const signInWithGoogle = async () => {
     const { error } = await client.auth.signIn({
@@ -33,7 +34,10 @@ const MyApp = (props: AppProps): JSX.Element => {
       {user ? (
         <props.Component {...props.pageProps} />
       ) : (
-        <button onClick={signInWithGoogle}>signIn</button>
+        <>
+          <button onClick={signInWithGoogle}>signIn</button>
+          {/* <LogIn /> */}
+        </>
       )}
     </LayoutWrapper>
   );
