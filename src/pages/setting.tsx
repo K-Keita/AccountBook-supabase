@@ -1,9 +1,45 @@
 import { Switch } from "@headlessui/react";
 import Link from "next/link";
+import router from "next/router";
 import type { VFC } from "react";
 import { useCallback, useEffect, useState } from "react";
+import type { SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import type { Data } from "src/interface/type";
 import { client } from "src/libs/supabase";
+
+const d = new Date();
+const y = d.getFullYear();
+const m = d.getMonth() + 1;
+// const day = d.getDate();
+
+const getItems = async (userID: string, y: number, m: number) => {
+  let { data, error } = await client
+    .from("users")
+    .select("*")
+    .eq("userID", userID);
+
+  if (!error && data) {
+    const userData = data[0];
+    ({ data, error } = await client
+      .from("purchasedItem")
+      .select("*")
+      .contains("date", [`year:${y}`, `month:${m}`])
+      .eq("userID", userID));
+
+    const totalPrice = data?.reduce((sum, element) => {
+      return sum + element.price;
+    }, 0);
+
+    if (!error && data) {
+      return { userData: userData, items: data, totalPrice: totalPrice };
+    } else {
+      return { userData: userData, items: null, totalPrice: null };
+    }
+  }
+
+  return { userData: null, items: null, totalPrice: null };
+};
 
 const getUserData = async (userID: string) => {
   const { data, error } = await client
@@ -18,14 +54,25 @@ const getUserData = async (userID: string) => {
   }
 };
 
+type FormValue = {
+  targetAmount: number;
+};
+
 const Setting: VFC = () => {
   const user = client.auth.user();
   const [isEnabled, setIdEnabled] = useState(false);
   const [userData, setUserData] = useState<Data>();
   const [isMenu, setIsMenu] = useState<boolean>(false);
 
+  const { register, handleSubmit } = useForm<FormValue>();
+
+  const onSubmit: SubmitHandler<FormValue> = (data) => {
+    changeTargetAmount(data.targetAmount);
+  };
+
   const signOut = async () => {
     const { error } = await client.auth.signOut();
+    router.push("/");
 
     if (error) {
       throw new Error("");
@@ -42,16 +89,38 @@ const Setting: VFC = () => {
     }
   }, [user]);
 
+  //カテゴリーの削除
+  const changeTargetAmount = async (value: number) => {
+    if (value < 0) {
+      alert("金額の値が不適切です");
+      return false;
+    }
+    if (userData) {
+      const { error } = await client.from("users").upsert({
+        id: userData.id,
+        userID: userData.userID,
+        targetAmount: value,
+      });
+
+      if (error) {
+        alert(error);
+      }
+
+      // getItems(userData.id.toString(), y, m);
+    }
+  };
+
   useEffect(() => {
     getUser();
   }, [getUser]);
 
   return user ? (
     <>
-      <main className="relative z-40 pb-16 w-full min-h-screen text-white bg-gradient-to-b from-dark via-green-200 to-blue-500 rounded-t-3xl md:p-5 md:w-1/2 animate-slide-in-bottom">
-        <div className="flex justify-between px-5 relative">
+      <div className="relative -z-10 h-1 opacity-0" />
+      <main className="relative z-40 pt-6 pb-16 w-full min-h-screen text-white bg-gradient-to-b from-dark via-green-200 to-blue-500 rounded-t-3xl animate-slide-in-bottom md:p-5 md:w-1/2">
+        <div className="flex relative justify-between px-5">
           <Link href="/" passHref>
-            <button className="text-2xl px-3 py-6">-Title-</button>
+            <button className="py-6 px-3 text-2xl">-Title-</button>
           </Link>
         </div>
         <h2 className="p-4 text-4xl font-bold">Setting</h2>
@@ -122,6 +191,18 @@ const Setting: VFC = () => {
             />
           </svg>
         </div>
+        <div className="hidden">
+          <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
+            <input
+              defaultValue={userData?.targetAmount.toLocaleString()}
+              autoFocus
+              type="number"
+              {...register("targetAmount")}
+              className="block mx-auto text-gray-600 bg-blue-100 bg-opacity-20 border-b outline-none"
+            />
+            <input type="submit" />
+          </form>
+        </div>
         <div className="flex py-1 my-5 mx-auto w-11/12 border-b ">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -155,13 +236,12 @@ const Setting: VFC = () => {
           </svg>
         </div>
       </main>
-      <div className="z-50 fixed bottom-0 flex justify-around w-full py-2 rounded-t-xl bg-gradient-to-r from-green-300 via-blue-500 to-purple-600">
+      <div className="flex fixed bottom-0 z-50 justify-around py-2 w-full bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 rounded-t-xl">
         {/* <AddItem
             userData={userData}
             uuid={user.id}
             getItemList={getItemList}
           /> */}
-
         <Link href="/" passHref>
           <div className="cursor-pointer">
             <svg

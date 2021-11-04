@@ -128,7 +128,8 @@ const Chart: VFC = () => {
   // console.log(user);
   return user ? (
     <>
-      <main className="relative z-40 pt-6 pb-16 w-full min-h-screen text-white bg-gradient-to-b from-dark via-green-200 to-blue-500 rounded-t-3xl md:p-5 md:w-1/2 animate-slide-in-bottom">
+      <div className="relative -z-10 h-1 opacity-0" />
+      <main className="relative z-40 pt-6 pb-16 w-full min-h-screen text-white bg-gradient-to-b from-dark via-green-200 to-blue-500 rounded-t-3xl animate-slide-in-bottom md:p-5 md:w-1/2">
         <Link href="/" passHref>
           <button className="px-4 text-2xl">-Title-</button>
         </Link>
@@ -207,7 +208,7 @@ const Chart: VFC = () => {
           );
         })}
       </main>
-      <div className="z-50 fixed bottom-0 flex justify-around w-full py-2 rounded-t-xl bg-gradient-to-r from-green-300 via-blue-500 to-purple-600">
+      <div className="flex fixed bottom-0 z-50 justify-around py-2 w-full bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 rounded-t-xl">
         {/* <AddItem
             userData={userData}
             uuid={user.id}
@@ -217,9 +218,6 @@ const Chart: VFC = () => {
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="w-6 h-6 "
-            onClick={() => {
-              setIsMenu(true);
-            }}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

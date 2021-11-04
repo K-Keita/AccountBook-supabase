@@ -246,7 +246,7 @@ const Home = () => {
         </div>
         <div className="flex justify-around mt-12">
           <Link href="/category" passHref>
-            <div className="w-1/2 py-4">
+            <div className="py-4 w-1/2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="mx-auto w-8 h-8"
@@ -265,7 +265,7 @@ const Home = () => {
             </div>
           </Link>
           <Link href="/chart" passHref>
-            <div className="w-1/2 py-4 border-l">
+            <div className="py-4 w-1/2 border-l">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="mx-auto w-8 h-8"
@@ -306,7 +306,7 @@ const Home = () => {
         </div>
       </div>
       <div className="relative -z-10 h-lg opacity-0" />
-      <div className="relative z-40 pt-10 w-full h-screen bg-gradient-to-b from-dark via-green-200 to-blue-500 rounded-t-3xl md:p-5 md:w-1/2">
+      <div className="relative z-40 pt-10 w-full h-screen bg-gradient-to-b from-dark via-green-200 to-blue-500 rounded-t-3xl animate-slide-in-bottom md:p-5 md:w-1/2">
         <div className="flex px-4">
           <button onClick={prevMonth}>
             <svg

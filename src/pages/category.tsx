@@ -164,10 +164,11 @@ const Title: VFC = () => {
     <>
       <div className="min-h-lg text-white">
         <div className="md:flex">
-          <Link href="/" passHref>
-            <button className="px-4 text-2xl">-Title-</button>
-          </Link>
-          <div className="relative z-40 pt-2 w-full bg-gradient-to-b from-dark via-green-200 to-blue-500 rounded-t-3xl md:p-5 md:w-1/2 animate-slide-in-bottom">
+          <div className="relative -z-10 h-1 opacity-0" />
+          <div className="relative z-40 pt-2 w-full bg-gradient-to-b from-dark via-green-200 to-blue-500 rounded-t-3xl animate-slide-in-bottom md:p-5 md:w-1/2">
+            <Link href="/" passHref>
+              <button className="px-4 text-2xl">-Title-</button>
+            </Link>
             <div className="flex justify-between p-3">
               {/* <Link href="/category" passHref>
               <svg
@@ -410,7 +411,7 @@ const Title: VFC = () => {
           </div>
         </div>
       </div>
-      <div className="z-50 fixed bottom-0 flex justify-around w-full py-2 rounded-t-xl bg-gradient-to-r from-green-300 via-blue-500 to-purple-600">
+      <div className="flex fixed bottom-0 z-50 justify-around py-2 w-full bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 rounded-t-xl">
         {/* <AddItem
             userData={userData}
             uuid={user.id}
