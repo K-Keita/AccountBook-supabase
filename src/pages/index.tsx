@@ -286,20 +286,6 @@ const Home = () => {
                   d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"
                 />
               </svg>
-              {/* <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="mx-auto w-8 h-8"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.2}
-                  d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg> */}
               <p className="text-xs text-center">Chart</p>
             </div>
           </Link>
@@ -362,28 +348,29 @@ const Home = () => {
             id="sc"
             className="flex overflow-x-scroll flex-nowrap py-3 px-4 mx-auto mt-3 space-x-1 w-11/12 border-b"
           >
-            {thisMonthDays.map((category) => {
+            {thisMonthDays.map((date) => {
+              const isSelectDate = date > day && month === m;
               return (
                 <Tab
-                  key={category}
-                  disabled={category > day}
+                  key={date}
+                  disabled={isSelectDate}
                   className={({ selected }) => {
                     return classNames(
                       `min-w-lg py-2.5 text-lg font-semibold leading-5 rounded-lg ${
-                        category > day ? "text-gray-400" : "text-blue-600"
+                        isSelectDate ? "text-gray-400" : "text-blue-600"
                       }`,
                       "focus:outline-none focus:ring-1 ring-opacity-60",
                       selected
                         ? "shadow bg-selected bg-opacity-50"
                         : `${
-                            category > day
+                            isSelectDate
                               ? ""
                               : "text-blue-100 hover:bg-white/[0.12] hover:text-white"
                           }`
                     );
                   }}
                 >
-                  {category}
+                  {date}
                 </Tab>
               );
             })}
