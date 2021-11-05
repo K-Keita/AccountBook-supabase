@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import { AddCategory } from "src/components/addCategory";
 import { EditCategory } from "src/components/editCategory";
 import { ItemList } from "src/components/itemList";
-import {MenuBar} from 'src/components/menuBar';
+import { MenuBar } from "src/components/menuBar";
 import { sortData } from "src/hooks/sortData";
 import type { Data as TitleType } from "src/interface/type";
 import type { UserData } from "src/interface/type";
@@ -22,21 +22,20 @@ const classNames = (...classes: string[]) => {
 
 const classes = ({ selected }: any) => {
   return classNames(
-    `py-1  leading-5 font-medium rounded-lg mb-1 min-w-3l`,
-    "focus:outline-none focus:ring-1 ring-offset-1 ring-offset-blue-400 ring-green-400",
+    `py-1 my-1 leading-5 font-medium rounded-lg min-w-3l`,
     selected
-      ? "shadow bg-gradient-to-r from-yellow-200 via-green-200 to-green-300 bg-opacity-20 text-white"
-      : "text-gray-200 text-sm hover:bg-white/[0.12]  hover:text-white"
+      ? "shadow bg-blue-500/[0.4] text-white"
+      : "text-gray-200 text-sm hover:bg-white/[0.12] hover:text-white"
   );
 };
 
 const classes2 = ({ selected }: any) => {
   return classNames(
-    `min-w-2lg leading-5 font-medium rounded-lg mx-1 mt-1 min-w-xl`,
+    `leading-5 font-medium rounded-lg p-1 mx-1 my-1 min-w-2lg`,
     "focus:outline-none focus:ring-1 ring-offset-1 ring-offset-blue-400 ring-green-400",
     selected
       ? "shadow text-white"
-      : "text-gray-200 text-sm min-w-lg hover:bg-white/[0.12]  hover:text-white"
+      : "text-gray-200 text-sm hover:bg-white/[0.12] hover:text-white"
   );
 };
 
@@ -68,6 +67,26 @@ const getItems = async (userID: string, year: number, month: number) => {
 
   return { userData: null, items: null, totalPrice: null };
 };
+
+// const colors = [
+//   "rgb(255, 99, 132)",
+//   "rgb(255, 159, 64)",
+//   "rgb(255, 205, 86)",
+//   "rgb(75, 192, 192)",
+//   "rgb(54, 162, 235)",
+//   "rgb(153, 102, 255)",
+//   "rgb(201, 203, 207)",
+// ];
+
+const colors = [
+  "rgba(255, 99, 132, 0.5)",
+  "rgba(255, 159, 64, 0.5)",
+  "rgba(255, 205, 86, 0.5)",
+  "rgba(75, 192, 192, 0.5)",
+  "rgba(54, 162, 235, 0.5)",
+  "rgba(153, 102, 255, 0.5)",
+  "rgba(201, 203, 207, 0.5)",
+];
 
 const Title: VFC = () => {
   const user = client.auth.user();
@@ -113,7 +132,7 @@ const Title: VFC = () => {
 
   useEffect(() => {
     const scrollAction = () => {
-      if (window.scrollY > 120) {
+      if (window.scrollY > 100) {
         setIsTop(true);
       } else {
         setIsTop(false);
@@ -165,32 +184,17 @@ const Title: VFC = () => {
     <>
       <div className="min-h-lg text-white">
         <div className="md:flex">
-          <div className="relative -z-10 h-1 opacity-0" />
-          <div className="relative z-40 pt-2 w-full bg-gradient-to-b from-dark via-green-200 to-blue-500 rounded-t-3xl animate-slide-in-bottom md:p-5 md:w-1/2">
+          <div className="relative -z-10 h-1 bg-blue-400" />
+          <div className="relative z-40 w-full min-h-screen text-white bg-home rounded-t-3xl animate-slide-in-bottom md:p-5 md:w-1/2">
             <Link href="/" passHref>
-              <button className="px-4 text-2xl">-Title-</button>
+              <button className="p-6 text-2xl">-Title-</button>
             </Link>
-            <div className="flex justify-between p-3">
-              {/* <Link href="/category" passHref>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="mx-2 w-7 h-7"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.2}
-                  d="M4 6h16M4 12h16M4 18h7"
-                />
-              </svg>
-            </Link> */}
-            </div>
-            <h2 className="p-4 text-4xl font-bold">Category</h2>
+            <h2 className="py-3 px-4 text-4xl font-bold">Category</h2>
             <Tab.Group>
-              <div className="min-h-screen">
+              <div className="pb-16 min-h-screen">
+                {isTop ? (
+                  <h2 className="p-4 mt-10 text-4xl font-bold">History</h2>
+                ) : null}
                 <Tab.List
                   className={`${
                     isTop
@@ -198,12 +202,18 @@ const Title: VFC = () => {
                       : "flex-wrap justify-around py-3"
                   } flex px-2`}
                 >
-                  <Tab className={isTop ? classes2 : classes}>全て</Tab>
-                  {categories.map((category) => {
+                  <Tab
+                    className={isTop ? classes2 : classes}
+                    style={{ border: "solid 1px #fff" }}
+                  >
+                    全て
+                  </Tab>
+                  {categories.map((category, index) => {
                     return (
                       <Tab
                         key={category}
                         className={isTop ? classes2 : classes}
+                        style={{ border: `solid 1px ${colors[index]}` }}
                       >
                         {category}
                       </Tab>
@@ -218,90 +228,7 @@ const Title: VFC = () => {
                     />
                   ) : null}
                 </div>
-                <Tab.Panels>
-                  <Tab.Panel
-                    className={classNames(
-                      "rounded-b-xl",
-                      "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60"
-                    )}
-                  >
-                    <div className="flex">
-                      <div className={`${isTop ? "mx-auto" : "w-1/2"}`}>
-                        {userData && (
-                          <>
-                            <h2
-                              className={`pt-4 pb-8 font-bold text-center ${
-                                isTop ? "text-2xl" : "text-xl"
-                              }`}
-                            >
-                              全て
-                            </h2>
-                            <div className="m-8" />
-                          </>
-                        )}
-                      </div>
-                      {isTop ? (
-                        <div
-                          className={`animate-slit-in-vertical text-base text-center py-3 mt-10 mb-3 px-4 min-w-4l table w-1/2 border-l`}
-                        >
-                          total:
-                          <span className="block text-3xl font-bold">
-                            ¥{totalPrice?.toLocaleString()}
-                          </span>
-                        </div>
-                      ) : (
-                        <div
-                          className={`text-xl w-1/2 table text-center mt-4 py-3 px-4 font-semibold`}
-                        >
-                          total: ¥{totalPrice?.toLocaleString()}
-                        </div>
-                      )}
-                    </div>
-                    <h2 className="p-4 text-4xl font-bold">History</h2>
-                    <div className={`flex justify-end px-8`}>
-                      <button onClick={prevMonth}>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="w-6 h-6"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-                          />
-                        </svg>
-                      </button>
-                      <h2 className={`px-2 text-xl`}>{month}月</h2>
-                      <button onClick={nextMonth}>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="w-6 h-6"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M13 5l7 7-7 7M5 5l7 7-7 7"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                    <ItemList
-                      items={items}
-                      userData={userData}
-                      uuid={user.id}
-                      getItemList={getItemList}
-                    />
-                  </Tab.Panel>
-                </Tab.Panels>
-                {categories.map((value) => {
+                {["全て", ...categories].map((value, index) => {
                   const itemList = userData
                     ? items.filter((item) => {
                         return item.categoryID === value;
@@ -321,48 +248,60 @@ const Title: VFC = () => {
                           "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60"
                         )}
                       >
-                        <div className="flex">
-                          <div className={`${isTop ? "mx-auto" : "w-1/2"}`}>
-                            {userData && (
-                              <>
-                                <h2
-                                  className={`pt-4 pb-8 font-bold text-center  ${
-                                    isTop ? "text-2xl" : "text-xl "
-                                  }`}
-                                >
-                                  {value}
-                                </h2>
-                                {userData && (
+                        <div className="flex justify-around">
+                          {isTop ? (
+                            <h2
+                              className={"py-4 text-xl font-bold text-center"}
+                            >
+                              {value}
+                            </h2>
+                          ) : (
+                            <div className="w-1/2">
+                              {userData && (
+                                <>
+                                  <h2
+                                    className={
+                                      "pt-4 pb-8 text-xl font-bold text-center"
+                                    }
+                                  >
+                                    {value}
+                                  </h2>
                                   <EditCategory
                                     category={value}
                                     getItemList={getItemList}
                                     userData={userData}
                                   />
-                                )}
-                              </>
-                            )}
-                          </div>
+                                </>
+                              )}
+                            </div>
+                          )}
                           {isTop ? (
+                            <div
+                              className={`animate-slide-in-bck-center text-lg p-4 font-semibold`}
+                            >
+                              total:¥
+                              {index === 0
+                                ? totalPrice?.toLocaleString()
+                                : categoryTotalPrice?.toLocaleString()}
+                            </div>
+                          ) : (
                             <div
                               className={`animate-slit-in-vertical text-base text-center py-3 mt-10 mb-3 px-4 min-w-4l table w-1/2 border-l`}
                             >
                               total:
                               <span className="block text-3xl font-bold">
-                                ¥{categoryTotalPrice?.toLocaleString()}
+                                ¥
+                                {index === 0
+                                  ? totalPrice?.toLocaleString()
+                                  : categoryTotalPrice?.toLocaleString()}
                               </span>
-                            </div>
-                          ) : (
-                            <div
-                              className={`animate-slide-in-bck-center text-xl w-1/2 table text-center mt-4 py-3 px-4 font-semibold`}
-                            >
-                              total: ¥{categoryTotalPrice?.toLocaleString()}
                             </div>
                           )}
                         </div>
-                        <h2 className="px-4 mt-6 text-4xl font-bold">
-                          History
-                        </h2>
-                        <div className={`flex justify-end px-8`}>
+                        {isTop ? null : (
+                          <h2 className="p-4 text-4xl font-bold">History</h2>
+                        )}
+                        <div className={`flex px-8`}>
                           <button onClick={prevMonth}>
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -398,7 +337,7 @@ const Title: VFC = () => {
                           </button>
                         </div>
                         <ItemList
-                          items={itemList}
+                          items={index === 0 ? items : itemList}
                           userData={userData}
                           uuid={user.id}
                           getItemList={getItemList}
@@ -412,7 +351,7 @@ const Title: VFC = () => {
           </div>
         </div>
       </div>
-      <MenuBar/>
+      <MenuBar />
     </>
   ) : null;
 };
