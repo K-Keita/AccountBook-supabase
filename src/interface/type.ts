@@ -1,4 +1,4 @@
-export type Data = {
+export type UserData = {
   id: number;
   userID: string;
   category: string;
@@ -8,7 +8,7 @@ export type Data = {
   targetAmount: number;
 };
 
-export type UserData = {
+export type ItemData = {
   id: number;
   userID: string;
   createdAt: string;
@@ -17,4 +17,5 @@ export type UserData = {
   categoryID: string;
   buyDate: string[];
   price: number;
+  description: string;
 };
