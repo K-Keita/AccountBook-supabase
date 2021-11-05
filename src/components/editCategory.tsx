@@ -141,13 +141,13 @@ export const EditCategory = (props: Props) => {
     <>
       <div className="flex justify-around">
         <button
-          className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer"
+          className="table p-1 mx-4 text-sm border-2 border-flower cursor-pointer"
           onClick={openModal}
         >
           編集
         </button>
         <button
-          className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer"
+          className="table p-1 mx-4 text-sm border-2 border-flower cursor-pointer"
           onClick={() => {
             return removeCategory(props.category);
           }}
