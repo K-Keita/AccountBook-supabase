@@ -69,7 +69,7 @@ export const AddCategory = (props: Props) => {
     <>
       <button
         onClick={handleOpenCategory}
-        className="block p-1 my-2 mr-4 ml-auto w-20 text-sm border border-green-400 cursor-pointer"
+        className="block p-1 my-2 mr-4 ml-auto w-20 text-sm border-2 border-flower bg-opacity-60 cursor-pointer"
       >
         追加
       </button>

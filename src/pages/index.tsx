@@ -15,14 +15,15 @@ import { client } from "src/libs/supabase";
 //   children: ReactNode;
 // };
 
+const week = ["日", "月", "火", "水", "木", "金", "土"];
+
 const d = new Date();
 const y = d.getFullYear();
 const m = d.getMonth() + 1;
-const day = d.getDate();
-const count = new Date(y, m, 0).getDate();
-const thisMonthDays = [...Array(count)].map((_, i) => {
-  return i + 1;
-});
+const date = d.getDate();
+const day = week[d.getDay()];
+
+
 
 const classNames = (...classes: string[]) => {
   return classes.filter(Boolean).join(" ");
@@ -56,6 +57,8 @@ const getItems = async (userID: string, y: number, m: number) => {
 
   return { userData: null, items: null, totalPrice: null };
 };
+
+
 
 const Home = () => {
   const user = client.auth.user();
@@ -110,7 +113,7 @@ const Home = () => {
           if (month === m) {
             const oneDayPrice = items.reduce(
               (sum: number, element: { buyDate: string[]; price: number }) => {
-                if (element.buyDate[2] === day.toString()) {
+                if (element.buyDate[2] === date.toString()) {
                   return sum + element.price;
                 }
                 return sum + 0;
@@ -138,7 +141,7 @@ const Home = () => {
   //ボタンの位置へ移動
   const moveScroll = () => {
     const target = document.getElementById("sc");
-    if (day < 5) {
+    if (date < 5) {
       return;
     }
     if (target === null) {
@@ -146,7 +149,7 @@ const Home = () => {
         moveScroll();
       }, 100);
     }
-    target ? (target.scrollLeft += 48 * day - 1) : null;
+    target ? (target.scrollLeft += 48 * date - 1) : null;
   };
 
   //前の月へ
@@ -180,11 +183,21 @@ const Home = () => {
     });
   }, [month, year]);
 
+  const count = new Date(year, month, 0).getDate();
+
+  const t = new Date(year, month - 1, 1).getDay();
+  console.log(t)
+  const thisMonthDays = [...Array(count)].map((_, i) => {
+    return i + 1;
+  });
+
   //1日の平均金額(今月)
   const targetAverage = userData ? userData.targetAmount / count : null;
 
   //1日の平均金額(現在)
   const nowAverage = totalPrice / d.getDate();
+
+
 
   return user ? (
     <div className="pt-1 min-h-lg text-white">
@@ -193,40 +206,38 @@ const Home = () => {
           <h2 className="px-2 text-3xl text-center">TITLE</h2>
         </div>
         <div className="flex justify-around my-8">
-          <div className="w-1/2">
+          <div className="py-4 w-1/2">
             <AddItem
               userData={userData}
               uuid={user.id}
               getItemList={getItemList}
             />
           </div>
-          <div className="w-1/2 border-l">
-            <Link href="/setting" passHref>
-              <div>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="mx-auto mt-4 w-9 h-9"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.2}
-                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.2}
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-                <p className="text-xs text-center">Setting</p>
-              </div>
-            </Link>
-          </div>
+          <Link href="/chart" passHref>
+            <div className="py-4 w-1/2 border-l">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="mx-auto w-8 h-8"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.2}
+                  d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.3}
+                  d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"
+                />
+              </svg>
+              <p className="text-xs text-center">Chart</p>
+            </div>
+          </Link>
         </div>
         <h2 className="mt-12 text-5xl text-center">TITLE</h2>
         <div className="py-1">
@@ -264,35 +275,37 @@ const Home = () => {
               <p className="text-xs text-center">Category</p>
             </div>
           </Link>
-          <Link href="/chart" passHref>
-            <div className="py-4 w-1/2 border-l">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="mx-auto w-8 h-8"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.2}
-                  d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.3}
-                  d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"
-                />
-              </svg>
-              <p className="text-xs text-center">Chart</p>
-            </div>
-          </Link>
+          <div className="py-4 w-1/2 border-l">
+            <Link href="/setting" passHref>
+              <div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="mx-auto w-9 h-9"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.2}
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.2}
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
+                <p className="text-xs text-center">Setting</p>
+              </div>
+            </Link>
+          </div>
         </div>
       </div>
       <div className="relative -z-10 h-lg opacity-0" />
-      <div className="relative z-40 pt-10 w-full h-screen bg-gradient-to-b from-dark via-green-200 to-blue-500 rounded-t-3xl animate-slide-in-bottom md:p-5 md:w-1/2">
+      <div className="relative z-40 pt-10 w-full h-screen bg-home rounded-t-3xl animate-slide-in-bottom md:p-5 md:w-1/2">
         <div className="flex px-4">
           <button onClick={prevMonth}>
             <svg
@@ -343,21 +356,23 @@ const Home = () => {
             </p>
           </div>
         </div>
-        <Tab.Group defaultIndex={day - 1}>
+        <Tab.Group defaultIndex={date - 1}>
           <Tab.List
             id="sc"
             className="flex overflow-x-scroll flex-nowrap py-3 px-4 mx-auto mt-3 space-x-1 w-11/12 border-b"
           >
-            {thisMonthDays.map((date) => {
-              const isSelectDate = date > day && month === m;
+            {thisMonthDays.map((value, index) => {
+              const isSelectDate = value > date && month === m;
+              const test = week[(index + t) % 7];
+              console.log(value, test);
               return (
                 <Tab
-                  key={date}
+                  key={value}
                   disabled={isSelectDate}
                   className={({ selected }) => {
                     return classNames(
                       `min-w-lg py-2.5 text-lg font-semibold leading-5 rounded-lg ${
-                        isSelectDate ? "text-gray-400" : "text-blue-600"
+                        isSelectDate ? "text-gray-400" : "text-pink-600"
                       }`,
                       "focus:outline-none focus:ring-1 ring-opacity-60",
                       selected
@@ -365,12 +380,12 @@ const Home = () => {
                         : `${
                             isSelectDate
                               ? ""
-                              : "text-blue-100 hover:bg-white/[0.12] hover:text-white"
+                              : "text-pink-100 hover:bg-white/[0.12] hover:text-white"
                           }`
                     );
                   }}
                 >
-                  {date}
+                  {value}
                 </Tab>
               );
             })}

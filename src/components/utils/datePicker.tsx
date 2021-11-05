@@ -35,7 +35,7 @@ export const DatePicker = <T,>(props: Props<T>) => {
               <ReactDatePicker
                 dateFormat="yyyy.MM/dd"
                 onChange={onChange}
-                className="text-center px-1 w-28 cursor-pointer"
+                className="px-1 w-28 text-center cursor-pointer"
                 timeIntervals={props.timeIntervals}
                 selected={!value ? props.defaultDate : (value as Date)}
                 maxDate={Today}

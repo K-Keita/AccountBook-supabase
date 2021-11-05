@@ -10,7 +10,7 @@ type Props = {
 
 export const ItemList = (props: Props) => {
   return (
-    <div className="overflow-y-scroll p-1 h-2lg">
+    <div className="overflow-y-scroll mx-1 my-2 h-2lg">
       {props.items ? (props.items.map((item) => {
         return (
           <div key={item.id}>

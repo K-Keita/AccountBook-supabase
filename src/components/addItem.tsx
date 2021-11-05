@@ -38,7 +38,6 @@ export const AddItem = (props: Props) => {
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     addItem(data.price, data.memo, data.category, data.dateTime);
-    // console.log(data);
   };
 
   //モーダルを開く
@@ -112,7 +111,7 @@ export const AddItem = (props: Props) => {
     <>
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="h-10 w-10 mt-3 text-white block mx-auto"
+        className="mx-auto w-8 h-8"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -121,7 +120,7 @@ export const AddItem = (props: Props) => {
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeWidth={1.0}
+          strokeWidth={1.2}
           d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
         />
       </svg>
@@ -133,7 +132,7 @@ export const AddItem = (props: Props) => {
           className="overflow-y-auto fixed inset-0 z-50"
           onClose={closeModal}
         >
-          <div className="px-3 text-center border-2 relative">
+          <div className="relative px-3 text-center border-2">
             <span
               className="inline-block h-screen align-middle"
               aria-hidden="true"
@@ -151,7 +150,7 @@ export const AddItem = (props: Props) => {
             >
               <div
                 style={{ fontFamily: "游明朝体" }}
-                className="inline-block overflow-hidden p-6 py-10 w-full max-w-md text-left align-middle bg-gradient-to-r from-indigo-300 to-purple-400 rounded-xl border border-gray-300 shadow-xl transition-all transform"
+                className="inline-block overflow-hidden p-6 py-10 w-full text-left align-middle bg-gradient-to-r from-indigo-300 to-purple-400 rounded-xl border border-gray-300 shadow-xl transition-all transform max-w-md"
               >
                 <Dialog.Title
                   as="h3"
@@ -169,12 +168,12 @@ export const AddItem = (props: Props) => {
                     className="col-span-3 p-1 w-full bg-white rounded hover:border"
                   />
                   {errors.price && (
-                    <span className="text-red-500 text-xs">必須項目です</span>
+                    <span className="text-xs text-red-500">必須項目です</span>
                   )}
                   <p>Category</p>
                   <select
                     {...register("category")}
-                    className="w-full block mb-3 text-lg p-2"
+                    className="block p-2 mb-3 w-full text-lg"
                   >
                     {props.userData?.categoryList?.map((value: string) => {
                       return (
@@ -202,12 +201,12 @@ export const AddItem = (props: Props) => {
                     <input
                       type="submit"
                       value="Add"
-                      className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer w-16"
+                      className="table p-1 mx-4 w-16 text-sm border border-green-400 cursor-pointer"
                     />
                     <input
                       type="reset"
                       onClick={closeModal}
-                      className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer w-16"
+                      className="table p-1 mx-4 w-16 text-sm border border-green-400 cursor-pointer"
                       value="Cancel"
                     />
                   </div>
