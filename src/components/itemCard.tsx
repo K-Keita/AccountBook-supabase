@@ -23,7 +23,15 @@ const d = new Date();
 const year = d.getFullYear();
 const month = d.getMonth() + 1;
 
-const colors = ["red", "blue", "green", "orange", "gray", "pink", "yellow"];
+const colors = [
+  "rgb(255, 99, 132)",
+  "rgb(255, 159, 64)",
+  "rgb(255, 205, 86)",
+  "rgb(75, 192, 192)",
+  "rgb(54, 162, 235)",
+  "rgb(153, 102, 255)",
+  "rgb(201, 203, 207)",
+];
 
 export const ItemCard = (props: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -173,7 +181,7 @@ export const ItemCard = (props: Props) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div className="inline-block overflow-hidden p-6 my-8 w-full max-w-md text-left align-middle bg-gray-50 rounded-xl border border-gray-300 shadow-xl transition-all transform">
+              <div className="inline-block overflow-hidden p-6 my-8 w-full text-left align-middle bg-gray-50 rounded-xl border border-gray-300 shadow-xl transition-all transform max-w-md">
                 <Dialog.Title
                   as="h3"
                   className="text-2xl font-medium leading-6 text-center text-gray-900"
