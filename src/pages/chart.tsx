@@ -129,13 +129,13 @@ const Chart: VFC = () => {
   // console.log(user);
   return user ? (
     <>
-      <div className="relative -z-10 h-1 opacity-0" />
-      <main className="relative z-40 pt-6 pb-16 w-full min-h-screen text-white bg-gradient-to-b from-dark via-green-200 to-blue-500 rounded-t-3xl animate-slide-in-bottom md:p-5 md:w-1/2">
+      <div className="relative -z-10 h-1 bg-blue-400" />
+      <main className="relative z-40 pb-16 w-full min-h-screen text-white bg-home rounded-t-3xl animate-slide-in-bottom md:p-5 md:w-1/2">
         <Link href="/" passHref>
-          <button className="px-4 text-2xl">-Title-</button>
+          <button className="p-6 text-2xl">-Title-</button>
         </Link>
-        <div className="flex justify-between">
-          <h2 className="p-4 text-4xl font-bold">Chart</h2>
+        <div className="flex justify-between my-3">
+          <h2 className="px-4 text-4xl font-bold">Chart</h2>
           <div className={`flex justify-end px-8 mt-5`}>
             <button onClick={prevMonth}>
               <svg
@@ -153,7 +153,7 @@ const Chart: VFC = () => {
                 />
               </svg>
             </button>
-            <h2 className={`px-2 text-xl mt-3`}>{month}月</h2>
+            <h2 className={`px-2 text-xl`}>{month}月</h2>
             <button onClick={nextMonth}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -209,7 +209,7 @@ const Chart: VFC = () => {
           );
         })}
       </main>
-      <MenuBar/>
+      <MenuBar />
     </>
   ) : null;
 };

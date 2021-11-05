@@ -9,9 +9,9 @@ import { MenuBar } from "src/components/menuBar";
 import type { Data } from "src/interface/type";
 import { client } from "src/libs/supabase";
 
-const d = new Date();
-const y = d.getFullYear();
-const m = d.getMonth() + 1;
+// const d = new Date();
+// const y = d.getFullYear();
+// const m = d.getMonth() + 1;
 // const day = d.getDate();
 
 const getItems = async (userID: string, y: number, m: number) => {
@@ -107,6 +107,7 @@ const Setting: VFC = () => {
         alert(error);
       }
 
+      getUser();
       // getItems(userData.id.toString(), y, m);
     }
   };
@@ -117,18 +118,17 @@ const Setting: VFC = () => {
 
   return user ? (
     <>
-      <div className="relative -z-10 h-1 opacity-0" />
-      <main className="relative z-40 pt-6 pb-16 w-full min-h-screen text-white bg-gradient-to-b from-dark via-green-200 to-blue-500 rounded-t-3xl animate-slide-in-bottom md:p-5 md:w-1/2">
-        <div className="flex relative justify-between px-5">
-          <Link href="/" passHref>
-            <button className="py-6 px-3 text-2xl">-Title-</button>
-          </Link>
-        </div>
+      <div className="relative -z-10 h-1 opacity-0 bg-blue-300" />
+      <main className="relative z-40 pb-16 w-full min-h-screen text-white bg-home rounded-t-3xl animate-slide-in-bottom md:p-5 md:w-1/2">
+        <Link href="/" passHref>
+          <button className="p-6 text-2xl">-Title-</button>
+        </Link>
+
         <h2 className="p-4 text-4xl font-bold">Setting</h2>
-        <div className="flex py-1 my-5 mx-auto w-11/12 border-b">
+        <div className="flex py-2 my-5 mx-auto w-11/12 border-b">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="mx-2 w-8 h-8"
+            className="mx-2 w-6 h-6"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -140,7 +140,7 @@ const Setting: VFC = () => {
               d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
             />
           </svg>
-          <p className="text-lg">ダークモード</p>
+          <p className="">ダークモード</p>
           <Switch
             checked={isEnabled}
             onChange={setIdEnabled}
@@ -158,11 +158,11 @@ const Setting: VFC = () => {
             />
           </Switch>
         </div>
-        <div className="border-b w-11/12  py-1 my-5 mx-auto">
+        <div className="py-2 my-5 mx-auto w-11/12 border-b">
           <div className="flex">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="mx-2 w-8 h-8"
+              className="mx-2 w-6 h-6"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -174,13 +174,13 @@ const Setting: VFC = () => {
                 d="M9 8l3 5m0 0l3-5m-3 5v4m-3-5h6m-6 3h6m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <p className="text-lg">使用額変更</p>
-            <p className="mx-1 mt-1 ml-auto opacity-80">
+            <p className="">使用額変更</p>
+            <p className="mx-1 ml-auto opacity-80">
               ¥{userData?.targetAmount.toLocaleString()}
             </p>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="mr-1 w-8 h-8"
+              className="mr-1 w-6 h-6"
               onClick={() => {
                 setIsMenu(true);
               }}
@@ -198,7 +198,7 @@ const Setting: VFC = () => {
           </div>
           {isMenu ? (
             <form
-              className="mt-4 animate-slide-in-bck-center flex"
+              className="flex justify-center my-4 animate-slide-in-bck-center"
               onSubmit={handleSubmit(onSubmit)}
             >
               <input
@@ -206,20 +206,20 @@ const Setting: VFC = () => {
                 autoFocus
                 type="number"
                 {...register("targetAmount")}
-                className="block text-gray-600 bg-blue-100 bg-opacity-20 border-b outline-none"
+                className="block pl-2 text-gray-600 bg-blue-100 bg-opacity-20 border-b outline-none"
               />
               <input
-                className="text-sm bg-white text-gray-600"
+                className="p-1 mx-2 text-sm bg-gray-50 bg-opacity-0 border"
                 value="変更"
                 type="submit"
               />
             </form>
           ) : null}
         </div>
-        <div className="flex py-1 my-5 mx-auto w-11/12 border-b ">
+        <div className="flex py-2 my-5 mx-auto w-11/12 border-b ">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="mx-2 w-8 h-8"
+            className="mx-2 w-6 h-6"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -231,10 +231,10 @@ const Setting: VFC = () => {
               d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
             />
           </svg>
-          <p className="text-lg">ログアウト</p>
+          <p className="">ログアウト</p>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="mr-1 ml-auto w-8 h-8"
+            className="mr-1 ml-auto w-6 h-6"
             fill="none"
             onClick={signOut}
             viewBox="0 0 24 24"
