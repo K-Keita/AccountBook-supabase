@@ -2,18 +2,12 @@
 import { Tab } from "@headlessui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// import type { ReactNode } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { AddItem } from "src/components/addItem";
 import { ItemList } from "src/components/itemList";
 import { sortData } from "src/hooks/sortData";
-import type { Data } from "src/interface/type";
-import type { UserData } from "src/interface/type";
+import type { ItemData, UserData } from "src/interface/type";
 import { client } from "src/libs/supabase";
-
-// type Props = {
-//   children: ReactNode;
-// };
 
 const week = ["日", "月", "火", "水", "木", "金", "土"];
 
@@ -21,9 +15,7 @@ const d = new Date();
 const y = d.getFullYear();
 const m = d.getMonth() + 1;
 const date = d.getDate();
-const day = week[d.getDay()];
-
-
+// const day = week[d.getDay()];
 
 const classNames = (...classes: string[]) => {
   return classes.filter(Boolean).join(" ");
@@ -58,19 +50,17 @@ const getItems = async (userID: string, y: number, m: number) => {
   return { userData: null, items: null, totalPrice: null };
 };
 
-
-
 const Home = () => {
   const user = client.auth.user();
 
-  const [userData, setUserData] = useState<Data>();
+  const [isTop, setIsTop] = useState<boolean>(false);
+  const [userData, setItemData] = useState<UserData>();
+  const [items, setItems] = useState<ItemData[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
-  const [items, setItems] = useState<UserData[]>([]);
   const [oneDayTotalPrice, setOneDayTotalPrice] = useState<number>(0);
   const [year, setYear] = useState<number>(y);
   const [month, setMonth] = useState<number>(m);
 
-  const [isTop, setIsTop] = useState<boolean>(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -102,7 +92,7 @@ const Home = () => {
           month
         );
         if (userData) {
-          setUserData(userData);
+          setItemData(userData);
         } else {
           router.push("/login");
         }
@@ -185,11 +175,13 @@ const Home = () => {
 
   const count = new Date(year, month, 0).getDate();
 
-  const t = new Date(year, month - 1, 1).getDay();
-  console.log(t)
+  //月の日数
   const thisMonthDays = [...Array(count)].map((_, i) => {
     return i + 1;
   });
+
+  //月の初日の曜日
+  const thisMonthFirstDays = new Date(year, month - 1, 1).getDay();
 
   //1日の平均金額(今月)
   const targetAverage = userData ? userData.targetAmount / count : null;
@@ -197,21 +189,15 @@ const Home = () => {
   //1日の平均金額(現在)
   const nowAverage = totalPrice / d.getDate();
 
-
-
   return user ? (
     <div className="pt-1 min-h-lg text-white">
       <div className="fixed py-5 mt-2 w-full h-lg">
-        <div className="flex">
-          <h2 className="px-2 text-3xl text-center">TITLE</h2>
-        </div>
+        <h2 className="px-2 text-3xl text-center">TITLE</h2>
         <div className="flex justify-around my-8">
           <div className="py-4 w-1/2">
-            <AddItem
-              userData={userData}
-              uuid={user.id}
-              getItemList={getItemList}
-            />
+            {userData ? (
+              <AddItem userData={userData} getItemList={getItemList} />
+            ) : null}
           </div>
           <Link href="/chart" passHref>
             <div className="py-4 w-1/2 border-l">
@@ -275,33 +261,31 @@ const Home = () => {
               <p className="text-xs text-center">Category</p>
             </div>
           </Link>
-          <div className="py-4 w-1/2 border-l">
-            <Link href="/setting" passHref>
-              <div>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="mx-auto w-9 h-9"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.2}
-                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.2}
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-                <p className="text-xs text-center">Setting</p>
-              </div>
-            </Link>
-          </div>
+          <Link href="/setting" passHref>
+            <div className="py-4 w-1/2 border-l">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="mx-auto w-9 h-9"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.2}
+                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.2}
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
+              <p className="text-xs text-center">Setting</p>
+            </div>
+          </Link>
         </div>
       </div>
       <div className="relative -z-10 h-lg opacity-0" />
@@ -363,8 +347,7 @@ const Home = () => {
           >
             {thisMonthDays.map((value, index) => {
               const isSelectDate = value > date && month === m;
-              const test = week[(index + t) % 7];
-              console.log(value, test);
+              const day = week[(index + thisMonthFirstDays) % 7];
               return (
                 <Tab
                   key={value}
@@ -385,7 +368,8 @@ const Home = () => {
                     );
                   }}
                 >
-                  {value}
+                  <p>{day}</p>
+                  <p>{value}</p>
                 </Tab>
               );
             })}
@@ -442,12 +426,13 @@ const Home = () => {
                         : totalItems.toLocaleString()}
                     </span>
                   </div>
-                  <ItemList
-                    items={category.toString() === "全て" ? items : item}
-                    userData={userData}
-                    uuid={user.id}
-                    getItemList={getItemList}
-                  />
+                  {userData ? (
+                    <ItemList
+                      items={category.toString() === "全て" ? items : item}
+                      userData={userData}
+                      getItemList={getItemList}
+                    />
+                  ) : null}
                 </Tab.Panel>
               </Tab.Panels>
             );

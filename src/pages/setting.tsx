@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { MenuBar } from "src/components/menuBar";
-import type { Data } from "src/interface/type";
+import type { UserData } from "src/interface/type";
 import { client } from "src/libs/supabase";
 
 // const d = new Date();
@@ -14,35 +14,7 @@ import { client } from "src/libs/supabase";
 // const m = d.getMonth() + 1;
 // const day = d.getDate();
 
-const getItems = async (userID: string, y: number, m: number) => {
-  let { data, error } = await client
-    .from("users")
-    .select("*")
-    .eq("userID", userID);
-
-  if (!error && data) {
-    const userData = data[0];
-    ({ data, error } = await client
-      .from("purchasedItem")
-      .select("*")
-      .contains("date", [`year:${y}`, `month:${m}`])
-      .eq("userID", userID));
-
-    const totalPrice = data?.reduce((sum, element) => {
-      return sum + element.price;
-    }, 0);
-
-    if (!error && data) {
-      return { userData: userData, items: data, totalPrice: totalPrice };
-    } else {
-      return { userData: userData, items: null, totalPrice: null };
-    }
-  }
-
-  return { userData: null, items: null, totalPrice: null };
-};
-
-const getUserData = async (userID: string) => {
+const getItemData = async (userID: string) => {
   const { data, error } = await client
     .from("users")
     .select("*")
@@ -62,7 +34,7 @@ type FormValue = {
 const Setting: VFC = () => {
   const user = client.auth.user();
   const [isEnabled, setIdEnabled] = useState(false);
-  const [userData, setUserData] = useState<Data>();
+  const [userData, setItemData] = useState<UserData>();
   const [isMenu, setIsMenu] = useState<boolean>(false);
 
   const { register, handleSubmit } = useForm<FormValue>();
@@ -82,10 +54,10 @@ const Setting: VFC = () => {
 
   const getUser = useCallback(async () => {
     if (user) {
-      const { userData } = await getUserData(user.id.toString());
+      const { userData } = await getItemData(user.id.toString());
 
       if (userData) {
-        setUserData(userData);
+        setItemData(userData);
       }
     }
   }, [user]);
@@ -108,7 +80,6 @@ const Setting: VFC = () => {
       }
 
       getUser();
-      // getItems(userData.id.toString(), y, m);
     }
   };
 
@@ -118,12 +89,11 @@ const Setting: VFC = () => {
 
   return user ? (
     <>
-      <div className="relative -z-10 h-1 opacity-0 bg-blue-300" />
+      <div className="relative -z-10 h-1 bg-blue-300 opacity-0" />
       <main className="relative z-40 pb-16 w-full min-h-screen text-white bg-home rounded-t-3xl animate-slide-in-bottom md:p-5 md:w-1/2">
         <Link href="/" passHref>
           <button className="p-6 text-2xl">-Title-</button>
         </Link>
-
         <h2 className="p-4 text-4xl font-bold">Setting</h2>
         <div className="flex py-2 my-5 mx-auto w-11/12 border-b">
           <svg

@@ -3,10 +3,9 @@ import { useRouter } from "next/router";
 import type { VFC } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { Graph } from "src/components/Graph";
-import {MenuBar} from 'src/components/menuBar';
+import { MenuBar } from "src/components/menuBar";
 import { sortData } from "src/hooks/sortData";
-import type { Data as TitleType } from "src/interface/type";
-import type { UserData } from "src/interface/type";
+import type { ItemData, UserData } from "src/interface/type";
 import { client } from "src/libs/supabase";
 
 const d = new Date();
@@ -45,16 +44,15 @@ const getItems = async (userID: string, year: number, month: number) => {
 
 const Chart: VFC = () => {
   const user = client.auth.user();
+  const router = useRouter();
 
-  const [items, setItems] = useState<UserData[]>([]);
-  const [userData, setUserData] = useState<TitleType>();
+  const [items, setItems] = useState<ItemData[]>([]);
+  const [userData, setItemData] = useState<UserData>();
   const [totalPrice, setTotalPrice] = useState<number>();
-  const [categories, setCategories] = useState<string[]>([]);
+  const [categoryList, setCategoryList] = useState<string[]>([]);
 
   const [year, setYear] = useState<number>(y);
   const [month, setMonth] = useState<number>(m);
-
-  const router = useRouter();
 
   //IDと同じカテゴリーの商品を取得
   const getItemList = useCallback(
@@ -66,8 +64,8 @@ const Chart: VFC = () => {
           month
         );
         if (userData) {
-          setUserData(userData);
-          setCategories(userData.categoryList);
+          setItemData(userData);
+          setCategoryList(userData.categoryList);
         } else {
           router.push("/login");
         }
@@ -126,7 +124,6 @@ const Chart: VFC = () => {
     return totalPrice;
   });
 
-  // console.log(user);
   return user ? (
     <>
       <div className="relative -z-10 h-1 bg-blue-400" />
@@ -186,7 +183,7 @@ const Chart: VFC = () => {
             ¥{totalPrice?.toLocaleString()}
           </span>
         </p>
-        {categories.map((category) => {
+        {categoryList.map((category) => {
           const arr = items.filter((value) => {
             return value.categoryID === category;
           });
@@ -202,9 +199,7 @@ const Chart: VFC = () => {
                 {category}
                 <span className="mx-1 text-lg">({arr.length})</span>
               </div>
-              <div>
-                <p className="text-lg">¥{totalPrice.toLocaleString()}</p>
-              </div>
+              <p className="text-lg">¥{totalPrice.toLocaleString()}</p>
             </div>
           );
         })}

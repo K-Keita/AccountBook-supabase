@@ -8,8 +8,7 @@ import { EditCategory } from "src/components/editCategory";
 import { ItemList } from "src/components/itemList";
 import { MenuBar } from "src/components/menuBar";
 import { sortData } from "src/hooks/sortData";
-import type { Data as TitleType } from "src/interface/type";
-import type { UserData } from "src/interface/type";
+import type { ItemData, UserData } from "src/interface/type";
 import { client } from "src/libs/supabase";
 
 const d = new Date();
@@ -88,11 +87,11 @@ const colors = [
   "rgba(201, 203, 207, 0.5)",
 ];
 
-const Title: VFC = () => {
+const Category: VFC = () => {
   const user = client.auth.user();
 
-  const [items, setItems] = useState<UserData[]>([]);
-  const [userData, setUserData] = useState<TitleType>();
+  const [items, setItems] = useState<ItemData[]>([]);
+  const [userData, setItemData] = useState<UserData>();
   const [totalPrice, setTotalPrice] = useState<number>();
   const [categories, setCategories] = useState<string[]>([]);
   const [isTop, setIsTop] = useState<boolean>(false);
@@ -112,7 +111,7 @@ const Title: VFC = () => {
           month
         );
         if (userData) {
-          setUserData(userData);
+          setItemData(userData);
           setCategories(userData.categoryList);
         } else {
           router.push("/login");
@@ -182,58 +181,52 @@ const Title: VFC = () => {
 
   return user ? (
     <>
-      <div className="min-h-lg text-white">
-        <div className="md:flex">
-          <div className="relative -z-10 h-1 bg-blue-400" />
-          <div className="relative z-40 w-full min-h-screen text-white bg-home rounded-t-3xl animate-slide-in-bottom md:p-5 md:w-1/2">
-            <Link href="/" passHref>
-              <button className="p-6 text-2xl">-Title-</button>
-            </Link>
-            <h2 className="py-3 px-4 text-4xl font-bold">Category</h2>
-            <Tab.Group>
-              <div className="pb-16 min-h-screen">
-                {isTop ? (
-                  <h2 className="p-4 mt-10 text-4xl font-bold">History</h2>
-                ) : null}
-                <Tab.List
-                  className={`${
-                    isTop
-                      ? "overflow-x-scroll py-1"
-                      : "flex-wrap justify-around py-3"
-                  } flex px-2`}
-                >
+      <div className="relative -z-10 h-1 bg-blue-400" />
+      <div className="relative z-40 w-full min-h-screen text-white bg-home rounded-t-3xl animate-slide-in-bottom md:p-5 md:w-1/2">
+        <Link href="/" passHref>
+          <button className="p-6 text-2xl">-Title-</button>
+        </Link>
+        <h2 className="py-3 px-4 text-4xl font-bold">Category</h2>
+        <Tab.Group>
+          <div className="pb-16 min-h-screen">
+            {isTop ? (
+              <h2 className="p-4 mt-10 text-4xl font-bold">History</h2>
+            ) : null}
+            <Tab.List
+              className={`${
+                isTop
+                  ? "overflow-x-scroll py-1"
+                  : "flex-wrap justify-around py-3"
+              } flex px-2`}
+            >
+              <Tab
+                className={isTop ? classes2 : classes}
+                style={{ border: "solid 1px #fff" }}
+              >
+                全て
+              </Tab>
+              {categories.map((category, index) => {
+                return (
                   <Tab
+                    key={category}
                     className={isTop ? classes2 : classes}
-                    style={{ border: "solid 1px #fff" }}
+                    style={{ border: `solid 1px ${colors[index]}` }}
                   >
-                    全て
+                    {category}
                   </Tab>
-                  {categories.map((category, index) => {
-                    return (
-                      <Tab
-                        key={category}
-                        className={isTop ? classes2 : classes}
-                        style={{ border: `solid 1px ${colors[index]}` }}
-                      >
-                        {category}
-                      </Tab>
-                    );
-                  })}
-                </Tab.List>
-                <div className={`${isTop ? "hidden" : ""}`}>
-                  {userData ? (
-                    <AddCategory
-                      userData={userData}
-                      getItemList={getItemList}
-                    />
-                  ) : null}
-                </div>
-                {["全て", ...categories].map((value, index) => {
-                  const itemList = userData
-                    ? items.filter((item) => {
-                        return item.categoryID === value;
-                      })
-                    : null;
+                );
+              })}
+            </Tab.List>
+            <div className={`${isTop ? "hidden" : ""}`}>
+              {userData ? (
+                <AddCategory userData={userData} getItemList={getItemList} />
+              ) : null}
+            </div>
+            {userData
+              ? ["全て", ...categories].map((value, index) => {
+                  const itemList = items.filter((item) => {
+                    return item.categoryID === value;
+                  });
                   const categoryTotalPrice = itemList?.reduce(
                     (sum, element) => {
                       return sum + element.price;
@@ -339,21 +332,19 @@ const Title: VFC = () => {
                         <ItemList
                           items={index === 0 ? items : itemList}
                           userData={userData}
-                          uuid={user.id}
                           getItemList={getItemList}
                         />
                       </Tab.Panel>
                     </Tab.Panels>
                   );
-                })}
-              </div>
-            </Tab.Group>
+                })
+              : null}
           </div>
-        </div>
+        </Tab.Group>
       </div>
       <MenuBar />
     </>
   ) : null;
 };
 
-export default Title;
+export default Category;
