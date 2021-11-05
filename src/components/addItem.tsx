@@ -5,11 +5,11 @@ import { Fragment, useCallback, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { DatePicker } from "src/components/utils/datePicker";
+import type { UserData } from "src/interface/type";
 import { client } from "src/libs/supabase";
 
 type Props = {
-  userData: any;
-  uuid: string;
+  userData: UserData;
   getItemList: (year: number, month: number) => void;
 };
 const d = new Date();
@@ -86,7 +86,7 @@ export const AddItem = (props: Props) => {
 
       const { data, error } = await client.from("purchasedItem").insert([
         {
-          userID: props.uuid,
+          userID: props.userData.userID,
           categoryID: category,
           price: price,
           description: memo,

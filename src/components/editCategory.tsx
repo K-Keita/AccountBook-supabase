@@ -2,12 +2,12 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useCallback, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
-import type { Data } from "src/interface/type";
+import type { UserData } from "src/interface/type";
 import { client } from "src/libs/supabase";
 
 type Props = {
   getItemList: (year: number, month: number) => void;
-  userData: Data;
+  userData: UserData;
   category: string;
 };
 

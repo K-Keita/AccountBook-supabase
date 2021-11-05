@@ -2,13 +2,12 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useCallback, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
+import type {ItemData,UserData} from 'src/interface/type';
 import { client } from "src/libs/supabase";
-// import { DatePicker } from "src/components/utils/DatePicker";
 
 type Props = {
-  item: any;
-  userData: any;
-  uuid: string;
+  item: ItemData;
+  userData: UserData;
   getItemList: (year: number, month: number) => void;
 };
 

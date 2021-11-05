@@ -1,12 +1,12 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
-import type { SubmitHandler} from "react-hook-form";
-import {useForm } from "react-hook-form";
-import type {Data} from 'src/interface/type';
+import type { SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import type { UserData } from "src/interface/type";
 import { client } from "src/libs/supabase";
 
 type Props = {
-  userData: Data;
+  userData: UserData;
   getItemList: (year: number, month: number) => void;
 };
 
@@ -52,7 +52,6 @@ export const AddCategory = (props: Props) => {
       }
     }
 
-    // setCategoryName("");
     setIsOpen(false);
     props.getItemList(year, month);
   };
@@ -69,7 +68,7 @@ export const AddCategory = (props: Props) => {
     <>
       <button
         onClick={handleOpenCategory}
-        className="block p-1 my-2 mr-4 ml-auto w-20 text-sm border-2 border-flower bg-opacity-60 cursor-pointer"
+        className="block p-1 my-2 mr-4 ml-auto w-20 text-sm bg-opacity-60 border-2 border-flower cursor-pointer"
       >
         追加
       </button>
