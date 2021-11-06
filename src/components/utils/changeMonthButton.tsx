@@ -6,7 +6,7 @@ type Props = {
 
 export const ChangeMonthButton = (props: Props) => {
   return (
-    <>
+    <div className="flex">
       <button onClick={props.prevMonth}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -40,6 +40,6 @@ export const ChangeMonthButton = (props: Props) => {
           />
         </svg>
       </button>
-    </>
+    </div>
   );
 };
