@@ -2,7 +2,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useCallback, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
-import type {ItemData,UserData} from 'src/interface/type';
+import type { ItemData, UserData } from "src/interface/type";
 import { client } from "src/libs/supabase";
 
 type Props = {
@@ -69,15 +69,16 @@ export const ItemCard = (props: Props) => {
     closeModal();
   }, [props, closeModal]);
 
+  //アイテムのアップデート
   const handleSave = useCallback(
     async (price, memo, category) => {
       if (price == "") {
-        alert("Input price as an integer.");
+        alert("金額を入力してください");
         return;
       }
 
       if (category == "") {
-        alert("Input ISBN number.");
+        alert("カテゴリーを選択してください");
         return;
       }
 
@@ -153,9 +154,7 @@ export const ItemCard = (props: Props) => {
             </svg>
           </button>
         </div>
-        <div className="flex">
-          <p className="py-1 ml-3 text-sm">{props.item.description}</p>
-        </div>
+        <p className="py-1 ml-3 text-sm">{props.item.description}</p>
       </div>
 
       <Transition appear show={isOpen} as={Fragment}>
@@ -180,7 +179,7 @@ export const ItemCard = (props: Props) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div className="inline-block overflow-hidden p-6 my-8 w-full text-left align-middle bg-gray-50 rounded-xl border border-gray-300 shadow-xl transition-all transform max-w-md">
+              <div className="inline-block overflow-hidden p-6 my-8 w-full text-left align-middle bg-gray-50 rounded-xl border border-gray-300 shadow-xl transition-all transform">
                 <Dialog.Title
                   as="h3"
                   className="text-2xl font-medium leading-6 text-center text-gray-900"
@@ -210,13 +209,13 @@ export const ItemCard = (props: Props) => {
                     {...register("memo")}
                     className="col-span-3 p-2 w-full h-10 bg-white rounded hover:border shadow appearance-none"
                   />
-                  <select {...register("category")} defaultValue={props.item.categoryID}>
+                  <select
+                    {...register("category")}
+                    defaultValue={props.item.categoryID}
+                  >
                     {props.userData?.categoryList?.map((value: string) => {
                       return (
-                        <option
-                          value={value}
-                          key={value}
-                        >
+                        <option value={value} key={value}>
                           {value}
                         </option>
                       );
