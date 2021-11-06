@@ -1,15 +1,26 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import "tailwindcss/tailwind.css";
 
+import type { NextPage } from "next";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
+import type { ReactElement, ReactNode } from "react";
 import { useEffect } from "react";
-import { LayoutWrapper } from "src/layouts/layoutWrapper";
+// import { HomeLayout } from "src/layouts/homeLayout";
 // import { LogIn } from "src/components/logIn";
 import { client } from "src/libs/supabase";
 
-const MyApp = (props: AppProps): JSX.Element => {
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  Component: NextPageWithLayout;
+};
+
+const MyApp = (props: AppPropsWithLayout) => {
   const user = client.auth.user();
   const router = useRouter();
 
@@ -29,17 +40,23 @@ const MyApp = (props: AppProps): JSX.Element => {
     }
   };
 
-  return (
-    <LayoutWrapper>
-      {user ? (
-        <props.Component {...props.pageProps} />
-      ) : (
-        <>
-          <button onClick={signInWithGoogle}>signIn</button>
-          {/* <LogIn /> */}
-        </>
-      )}
-    </LayoutWrapper>
+  const getLayout =
+    props.Component.getLayout ??
+    ((page) => {
+      return page;
+    });
+
+  // console.log(props.Component.getLayout);
+
+  // return getLayout(<props.Component {...props.pageProps} />);
+
+  return user ? (
+    getLayout(<props.Component {...props.pageProps} />)
+  ) : (
+    <>
+      <button onClick={signInWithGoogle}>signIn</button>
+      {/* <LogIn /> */}
+    </>
   );
 };
 

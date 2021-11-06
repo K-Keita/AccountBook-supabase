@@ -1,67 +1,41 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Tab } from "@headlessui/react";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { AddItem } from "src/components/addItem";
 import { ItemList } from "src/components/itemList";
+import { ChangeMonthButton } from "src/components/utils/changeMonthButton";
+import { LinkButton } from "src/components/utils/linkButton";
+import { getItems } from "src/hooks/getData";
 import { sortData } from "src/hooks/sortData";
+import { useChangeMonth } from "src/hooks/useChangeMonth";
+import { useToggleModal } from "src/hooks/useToggleModal";
 import type { ItemData, UserData } from "src/interface/type";
+import { HomeLayout } from "src/layouts/homeLayout";
 import { client } from "src/libs/supabase";
 
 const week = ["日", "月", "火", "水", "木", "金", "土"];
 
 const d = new Date();
-const y = d.getFullYear();
 const m = d.getMonth() + 1;
 const date = d.getDate();
-// const day = week[d.getDay()];
 
 const classNames = (...classes: string[]) => {
   return classes.filter(Boolean).join(" ");
 };
 
-// 全てのアイテムの取得
-const getItems = async (userID: string, y: number, m: number) => {
-  let { data, error } = await client
-    .from("users")
-    .select("*")
-    .eq("userID", userID);
-
-  if (!error && data) {
-    const userData = data[0];
-    ({ data, error } = await client
-      .from("purchasedItem")
-      .select("*")
-      .contains("date", [`year:${y}`, `month:${m}`])
-      .eq("userID", userID));
-
-    const totalPrice = data?.reduce((sum, element) => {
-      return sum + element.price;
-    }, 0);
-
-    if (!error && data) {
-      return { userData: userData, items: data, totalPrice: totalPrice };
-    } else {
-      return { userData: userData, items: null, totalPrice: null };
-    }
-  }
-
-  return { userData: null, items: null, totalPrice: null };
-};
-
 const Home = () => {
   const user = client.auth.user();
+  const router = useRouter();
 
   const [isTop, setIsTop] = useState<boolean>(false);
   const [userData, setItemData] = useState<UserData>();
   const [items, setItems] = useState<ItemData[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [oneDayTotalPrice, setOneDayTotalPrice] = useState<number>(0);
-  const [year, setYear] = useState<number>(y);
-  const [month, setMonth] = useState<number>(m);
 
-  const router = useRouter();
+  const { year, month, prevMonth, nextMonth } = useChangeMonth();
+  const { isOpen, openModal, closeModal } = useToggleModal();
 
   useEffect(() => {
     const scrollAction = () => {
@@ -142,40 +116,10 @@ const Home = () => {
     target ? (target.scrollLeft += 48 * date - 1) : null;
   };
 
-  //前の月へ
-  const prevMonth = useCallback(() => {
-    if (month === 1) {
-      setYear((year) => {
-        return year - 1;
-      });
-      setMonth(12);
-      return;
-    }
-    setMonth((month) => {
-      return month - 1;
-    });
-  }, [month]);
-
-  //次の月へ
-  const nextMonth = useCallback(() => {
-    if (month === m && year === y) {
-      return false;
-    } else if (month === 12) {
-      setYear((year) => {
-        return year - 1;
-      });
-      setMonth(1);
-      return;
-    }
-
-    setMonth((month) => {
-      return month + 1;
-    });
-  }, [month, year]);
-
+  //月の日数
   const count = new Date(year, month, 0).getDate();
 
-  //月の日数
+  //月の日数の配列
   const thisMonthDays = [...Array(count)].map((_, i) => {
     return i + 1;
   });
@@ -189,18 +133,40 @@ const Home = () => {
   //1日の平均金額(現在)
   const nowAverage = totalPrice / d.getDate();
 
-  return user ? (
+  return userData ? (
     <div className="pt-1 min-h-lg text-white">
       <div className="fixed py-5 mt-2 w-full h-lg">
-        <h2 className="px-2 text-3xl text-center">TITLE</h2>
+        <h2 className="px-2 text-3xl">TITLE</h2>
         <div className="flex justify-around my-8">
-          <div className="py-4 w-1/2">
-            {userData ? (
-              <AddItem userData={userData} getItemList={getItemList} />
-            ) : null}
+          <div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="mx-auto w-8 h-8"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              onClick={openModal}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.3}
+                d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+              />
+            </svg>
+            <p className="text-center">register</p>
+            <AddItem
+              isOpen={isOpen}
+              closeModal={closeModal}
+              userData={userData}
+              getItemList={getItemList}
+            />
           </div>
-          <Link href="/chart" passHref>
-            <div className="py-4 w-1/2 border-l">
+          <div className="py-8 border" />
+
+          <LinkButton
+            href="/chart"
+            icon={
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="mx-auto w-8 h-8"
@@ -221,29 +187,24 @@ const Home = () => {
                   d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"
                 />
               </svg>
-              <p className="text-xs text-center">Chart</p>
-            </div>
-          </Link>
+            }
+            text="Chart"
+          />
         </div>
         <h2 className="mt-12 text-5xl text-center">TITLE</h2>
         <div className="py-1">
-          {totalPrice ? (
-            <>
-              <h3 className="text-3xl tracking-wide text-center">
-                ¥ {totalPrice.toLocaleString()}
-              </h3>
-              <p className="text-xs text-center">
-                残り：¥
-                {userData
-                  ? (userData.targetAmount - totalPrice).toLocaleString()
-                  : null}
-              </p>
-            </>
-          ) : null}
+          <h3 className="text-3xl tracking-wide text-center">
+            ¥ {totalPrice.toLocaleString()}
+          </h3>
+          <p className="text-xs text-center">
+            残り：¥
+            {(userData.targetAmount - totalPrice).toLocaleString()}
+          </p>
         </div>
         <div className="flex justify-around mt-12">
-          <Link href="/category" passHref>
-            <div className="py-4 w-1/2">
+          <LinkButton
+            href="/category"
+            icon={
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="mx-auto w-8 h-8"
@@ -258,11 +219,13 @@ const Home = () => {
                   d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
                 />
               </svg>
-              <p className="text-xs text-center">Category</p>
-            </div>
-          </Link>
-          <Link href="/setting" passHref>
-            <div className="py-4 w-1/2 border-l">
+            }
+            text={"Category"}
+          />
+          <div className="py-8 border" />
+          <LinkButton
+            href="/setting"
+            icon={
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="mx-auto w-9 h-9"
@@ -283,47 +246,19 @@ const Home = () => {
                   d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                 />
               </svg>
-              <p className="text-xs text-center">Setting</p>
-            </div>
-          </Link>
+            }
+            text="Setting"
+          />
         </div>
       </div>
       <div className="relative -z-10 h-lg opacity-0" />
       <div className="relative z-40 pt-10 w-full h-screen bg-home rounded-t-3xl animate-slide-in-bottom md:p-5 md:w-1/2">
         <div className="flex px-4">
-          <button onClick={prevMonth}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-6 h-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-              />
-            </svg>
-          </button>
-          <h2 className="p-2 text-2xl">{month}月</h2>
-          <button onClick={nextMonth}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-6 h-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 5l7 7-7 7M5 5l7 7-7 7"
-              />
-            </svg>
-          </button>
+          <ChangeMonthButton
+            prevMonth={prevMonth}
+            nextMonth={nextMonth}
+            month={month}
+          />
           <div className="mx-4 ml-auto text-sm border-white">
             <p>
               使用金額(月)：
@@ -343,7 +278,7 @@ const Home = () => {
         <Tab.Group defaultIndex={date - 1}>
           <Tab.List
             id="sc"
-            className="flex overflow-x-scroll flex-nowrap py-3 px-4 mx-auto mt-3 space-x-1 w-11/12 border-b"
+            className="flex overflow-x-scroll flex-nowrap py-3 px-4 mx-auto mt-3 space-x-2 w-11/12 border-b"
           >
             {thisMonthDays.map((value, index) => {
               const isSelectDate = value > date && month === m;
@@ -368,8 +303,10 @@ const Home = () => {
                     );
                   }}
                 >
-                  <p>{day}</p>
-                  <p>{value}</p>
+                  <p className={`text-xs ${isSelectDate ? "" : "text-white"} `}>
+                    {day}
+                  </p>
+                  <p className="text-lg">{value}</p>
                 </Tab>
               );
             })}
@@ -385,7 +322,7 @@ const Home = () => {
             </p>
             <p className="text-sm">
               1日の平均金額：
-              {nowAverage ? Math.floor(nowAverage).toLocaleString() : null}円
+              {Math.floor(nowAverage).toLocaleString()}円
             </p>
           </div>
           {thisMonthDays.map((category) => {
@@ -403,36 +340,29 @@ const Home = () => {
                     "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60"
                   )}
                 >
-                  <div
-                    className={`text-xl py-3 mx-4 px-4 font-semibold ${
-                      isTop ? "hidden" : "block animate-slide-in-bck-center"
-                    }`}
-                  >
-                    total: ¥
-                    {category.toString() === "全て"
-                      ? totalPrice.toLocaleString()
-                      : totalItems.toLocaleString()}
-                  </div>
-                  <div
-                    className={`${
-                      isTop ? "block" : "hidden"
-                    } animate-slit-in-vertical text-base mx-4 py-3 mb-3 px-4 table border-r`}
-                  >
-                    total:
-                    <span className="block text-3xl font-bold">
-                      ¥
+                  {isTop ? (
+                    <div className="table py-3 px-4 mx-4 mb-3 text-base border-r animate-slit-in-vertical">
+                      total:
+                      <span className="block text-3xl font-bold">
+                        ¥
+                        {category.toString() === "全て"
+                          ? totalPrice.toLocaleString()
+                          : totalItems.toLocaleString()}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="py-3 px-4 mx-4 text-xl font-semibold animate-slide-in-bck-center">
+                      total: ¥
                       {category.toString() === "全て"
                         ? totalPrice.toLocaleString()
                         : totalItems.toLocaleString()}
-                    </span>
-                  </div>
-                  {userData ? (
-                    <ItemList
-                      items={category.toString() === "全て" ? items : item}
-                      userData={userData}
-                      getItemList={getItemList}
-                    />
-                  ) : null}
+                    </div>
+                  )}
+                  <ItemList
+                    items={category.toString() === "全て" ? items : item}
+                    userData={userData}
+                    getItemList={getItemList}
+                  />
                 </Tab.Panel>
               </Tab.Panels>
             );
@@ -442,5 +372,8 @@ const Home = () => {
     </div>
   ) : null;
 };
+
+// Home.getLayout = HomeLayout;
+Home.getLayout = HomeLayout;
 
 export default Home;
