@@ -5,6 +5,8 @@ import { useForm } from "react-hook-form";
 import type { UserData } from "src/interface/type";
 import { client } from "src/libs/supabase";
 
+import { PrimaryButton } from "./utils/primaryButton";
+
 type Props = {
   userData: UserData;
   getItemList: (year: number, month: number) => void;
@@ -66,12 +68,9 @@ export const AddCategory = (props: Props) => {
 
   return (
     <>
-      <button
-        onClick={handleOpenCategory}
-        className="block p-1 my-2 mr-4 ml-auto w-20 text-sm bg-opacity-60 border-2 border-flower cursor-pointer"
-      >
-        追加
-      </button>
+      <div className="flex justify-end px-8">
+        <PrimaryButton text="追加" onClick={handleOpenCategory} />
+      </div>
 
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
