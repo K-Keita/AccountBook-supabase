@@ -11,7 +11,7 @@ export const LinkButton = (props: Props) => {
     <Link href={props.href} passHref>
       <div className="cursor-pointer">
         {props.icon}
-        <p className="text-center text-sm">{props.text}</p>
+        <p className="text-sm text-center">{props.text}</p>
       </div>
     </Link>
   );
