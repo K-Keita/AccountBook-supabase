@@ -159,11 +159,13 @@ const Category = () => {
                         >
                           {value}
                         </h2>
-                        <EditCategory
-                          category={value}
-                          getItemList={getItemList}
-                          userData={userData}
-                        />
+                        {value !== "全て" ? (
+                          <EditCategory
+                            category={value}
+                            getItemList={getItemList}
+                            userData={userData}
+                          />
+                        ) : null}
                       </div>
                     )}
                     {isTop ? (
@@ -215,6 +217,5 @@ const Category = () => {
 };
 
 Category.getLayout = SecondLayout;
-
 
 export default Category;
