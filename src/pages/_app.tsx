@@ -7,8 +7,6 @@ import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import type { ReactElement, ReactNode } from "react";
 import { useEffect } from "react";
-// import { HomeLayout } from "src/layouts/homeLayout";
-// import { LogIn } from "src/components/logIn";
 import { client } from "src/libs/supabase";
 
 type NextPageWithLayout = NextPage & {
@@ -24,40 +22,19 @@ const MyApp = (props: AppPropsWithLayout) => {
   const user = client.auth.user();
   const router = useRouter();
 
-  useEffect(() => {
-    if (!user) {
-      router.push("/");
-    }
-  }, []);
-
-  const signInWithGoogle = async () => {
-    const { error } = await client.auth.signIn({
-      provider: "google",
-    });
-
-    if (error) {
-      throw new Error("");
-    }
-  };
-
   const getLayout =
     props.Component.getLayout ??
     ((page) => {
       return page;
     });
 
-  // console.log(props.Component.getLayout);
+  useEffect(() => {
+    if (!user) {
+      router.push("/logIn");
+    }
+  }, [user]);
 
-  // return getLayout(<props.Component {...props.pageProps} />);
-
-  return user ? (
-    getLayout(<props.Component {...props.pageProps} />)
-  ) : (
-    <>
-      <button onClick={signInWithGoogle}>signIn</button>
-      {/* <LogIn /> */}
-    </>
-  );
+  return getLayout(<props.Component user={user} {...props.pageProps} />);
 };
 
 MyApp.propTypes = {
