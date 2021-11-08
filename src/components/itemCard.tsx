@@ -105,22 +105,16 @@ export const ItemCard = (props: Props) => {
   // const defaultDate = new Date(`${props.item.buyDate[0]}/${props.item.buyDate[1]}/${props.item.buyDate[2]}`)
 
   const color =
-    colors[props.userData.categoryList.indexOf(props.item.categoryID)];
+  colors[props.userData.categoryList.indexOf(props.item.categoryID)];
 
   return (
     <>
-      <div className="p-2 m-1 text-lg text-white bg-item bg-opacity-60 rounded-xl cursor-pointer">
-        <div className="flex border-b">
-          <p className="px-2 w-20 text-lg font-bold text-left">
+      <div className="py-1 px-2 my-2 mx-1 text-lg text-white bg-item bg-opacity-60 rounded-xl cursor-pointer">
+        <div className="flex mb-1 border-b">
+          <p className="px-2 mr-1 w-20 text-lg font-bold text-left">
             ¥{props.item.price.toLocaleString()}
           </p>
           <p className="ml-auto w-16">{date}</p>
-          <p
-            className="px-1 my-1 mr-2 w-20 text-sm text-center"
-            style={{ border: `solid 1px ${color}` }}
-          >
-            {props.item.categoryID}
-          </p>
           <button className="px-2 my-1 border-r border-l" onClick={openModal}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -154,7 +148,15 @@ export const ItemCard = (props: Props) => {
             </svg>
           </button>
         </div>
-        <p className="py-1 ml-3 text-sm">{props.item.description}</p>
+        <div className="flex py-1">
+          <p className="ml-1 text-sm">{props.item.description}</p>
+          <p
+            className="px-1 mr-2 ml-auto w-20 max-h-sm text-sm text-center"
+            style={{ border: `solid 1px ${color}` }}
+          >
+            {props.item.categoryID}
+          </p>
+        </div>
       </div>
 
       <Transition appear show={isOpen} as={Fragment}>
