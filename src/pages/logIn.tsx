@@ -2,12 +2,20 @@
 import "tailwindcss/tailwind.css";
 
 import Image from "next/image";
+import Link from 'next/link';
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { client } from "src/libs/supabase";
 
 const LogIn = () => {
-  // const user = client.auth.user();
+  const user = client.auth.user();
   const router = useRouter();
+
+  useEffect(() => {
+    if (user) {
+      router.push("/");
+    }
+  }, []);
 
   const signInWithEmail = async (email: string, password: string) => {
     const { user, error } = await client.auth.signIn({
@@ -15,7 +23,7 @@ const LogIn = () => {
       password: password,
     });
 
-    if(user) {
+    if (user) {
       router.push("/");
     }
 
@@ -43,7 +51,7 @@ const LogIn = () => {
         <div className="absolute top-0 w-full bg-blue-600 bg-opacity-20">
           <p className="py-3 text-sm text-center cursor-pointer">
             <span className="opacity-80">アカウントをお持ちでない方 </span>
-            <span className="hover:underline">登録はこちら</span>
+            <Link href="/signUp" passHref><span className="hover:underline">登録はこちら</span></Link>
           </p>
         </div>
         <div className="px-8 pt-28 pb-5">
