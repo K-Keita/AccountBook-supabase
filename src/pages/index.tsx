@@ -4,8 +4,12 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { AddItem } from "src/components/addItem";
 import { ItemList } from "src/components/itemList";
+import { LinkButtonList } from "src/components/LinkButtonList";
+import { MenuBar } from "src/components/menuBar";
 import { ChangeMonthButton } from "src/components/utils/changeMonthButton";
-import { LinkButton } from "src/components/utils/linkButton";
+import { PriceDisplay } from "src/components/utils/PriceDisplay";
+import { Title } from "src/components/utils/title";
+// import { LinkButton } from "src/components/utils/linkButton";
 import { getItems } from "src/hooks/getData";
 import { sortData } from "src/hooks/sortData";
 import { useChangeMonth } from "src/hooks/useChangeMonth";
@@ -13,6 +17,12 @@ import { useToggleModal } from "src/hooks/useToggleModal";
 import type { ItemData, UserData } from "src/interface/type";
 import { HomeLayout } from "src/layouts/homeLayout";
 import { client } from "src/libs/supabase";
+
+// 型の付け方がわからない
+type Data = {
+  data: any | null;
+  error: any;
+};
 
 const week = ["日", "月", "火", "水", "木", "金", "土"];
 
@@ -68,7 +78,22 @@ const Home = () => {
         if (userData) {
           setItemData(userData);
         } else {
-          router.push("/login");
+          const { data, error }: Data = await client.from("users").insert([
+            {
+              userID: user.id,
+              targetAmount: 50000,
+              categoryList: ["外食", "スーパー", "コンビニ"],
+              userName: "",
+            },
+          ]);
+
+          if (data) {
+            setItemData(data);
+          }
+
+          if (error) {
+            throw new Error("");
+          }
         }
         if (items) {
           setItems(sortData(items));
@@ -89,12 +114,12 @@ const Home = () => {
         }
       }
     },
-    [router, user]
+    [router]
   );
 
   useEffect(() => {
     getItemList(year, month);
-  }, [user, getItemList, router, year, month]);
+  }, [getItemList, router, year, month]);
 
   useEffect(() => {
     if (process.browser) {
@@ -133,126 +158,55 @@ const Home = () => {
   //1日の平均金額(現在)
   const nowAverage = totalPrice / d.getDate();
 
+  const item = items.filter((value) => {
+    return value.buyDate[2] === date.toString();
+  });
+  const totalItems = item.reduce((sum, element) => {
+    return sum + element.price;
+  }, 0);
+
   return userData ? (
     <div className="pt-1 min-h-lg text-white">
-      <div className="fixed py-5 mt-2 w-full h-lg">
-        <h2 className="px-2 text-3xl">TITLE</h2>
-        <div className="flex justify-around my-8">
-          <div>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="mx-auto w-8 h-8"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              onClick={openModal}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.3}
-                d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
-              />
-            </svg>
-            <p className="text-center">register</p>
-            <AddItem
-              isOpen={isOpen}
-              closeModal={closeModal}
-              userData={userData}
-              getItemList={getItemList}
+      <div className="fixed py-2 w-full h-lg">
+        <h2 className="px-3 text-2xl">TITLE</h2>
+        <div className="py-4 px-8">
+          <Title />
+        </div>
+        <PriceDisplay
+          totalPrice={totalPrice}
+          targetAmount={userData.targetAmount}
+          totalItemsPrice={totalItems}
+        />
+        <button
+          onClick={openModal}
+          className="flex justify-center py-1 px-2 mx-auto mb-3 bg-flower bg-opacity-40 rounded-lg border cursor-pointer"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="mr-1 w-8 h-8"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.0}
+              d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
             />
-          </div>
-          <div className="py-8 border" />
-
-          <LinkButton
-            href="/chart"
-            icon={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="mx-auto w-8 h-8"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.2}
-                  d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.3}
-                  d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"
-                />
-              </svg>
-            }
-            text="Chart"
+          </svg>
+          <p className="text-lg text-center">register</p>
+          <AddItem
+            isOpen={isOpen}
+            closeModal={closeModal}
+            userData={userData}
+            getItemList={getItemList}
           />
-        </div>
-        <h2 className="mt-12 text-5xl text-center">TITLE</h2>
-        <div className="py-1">
-          <h3 className="text-3xl tracking-wide text-center">
-            ¥ {totalPrice.toLocaleString()}
-          </h3>
-          <p className="text-xs text-center">
-            残り：¥
-            {(userData.targetAmount - totalPrice).toLocaleString()}
-          </p>
-        </div>
-        <div className="flex justify-around mt-12">
-          <LinkButton
-            href="/category"
-            icon={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="mx-auto w-8 h-8"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.2}
-                  d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
-                />
-              </svg>
-            }
-            text={"Category"}
-          />
-          <div className="py-8 border" />
-          <LinkButton
-            href="/setting"
-            icon={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="mx-auto w-9 h-9"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.2}
-                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.2}
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-              </svg>
-            }
-            text="Setting"
-          />
-        </div>
+        </button>
+        <LinkButtonList />
       </div>
       <div className="relative -z-10 h-lg opacity-0" />
-      <div className="relative z-40 pt-10 w-full h-screen bg-home rounded-t-3xl animate-slide-in-bottom md:p-5 md:w-1/2">
+      <div className="relative z-40 pt-8 w-full h-screen bg-home rounded-t-3xl animate-slide-in-bottom md:p-5 md:w-1/2">
         <div className="flex px-4">
           <ChangeMonthButton
             prevMonth={prevMonth}
@@ -278,7 +232,7 @@ const Home = () => {
         <Tab.Group defaultIndex={date - 1}>
           <Tab.List
             id="sc"
-            className="flex overflow-x-scroll flex-nowrap py-3 px-4 mx-auto mt-3 space-x-2 w-11/12 border-b"
+            className="flex overflow-x-scroll flex-nowrap p-3 mx-auto space-x-2 w-11/12 border-b"
           >
             {thisMonthDays.map((value, index) => {
               const isSelectDate = value > date && month === m;
@@ -314,16 +268,12 @@ const Home = () => {
           <div
             className={`${
               isTop ? "block" : "hidden"
-            } animate-slide-in-bck-center ml-auto mt-5 w-1/2`}
+            } animate-slide-in-bck-center ml-auto mt-5 w-1/2 pr-4`}
           >
-            <p className="py-1">
-              今日の金額：
-              {oneDayTotalPrice.toLocaleString()}円
-            </p>
-            <p className="text-sm">
-              1日の平均金額：
-              {Math.floor(nowAverage).toLocaleString()}円
-            </p>
+            <p className="text-sm">今日の金額：</p>
+            <p className="mb-2 text-right">¥ {oneDayTotalPrice.toLocaleString()}</p>
+            <p className="text-sm">1日の平均金額：</p>
+            <p className="text-right ">¥ {Math.floor(nowAverage).toLocaleString()}</p>
           </div>
           {thisMonthDays.map((category) => {
             const item = items.filter((value) => {
@@ -341,9 +291,9 @@ const Home = () => {
                   )}
                 >
                   {isTop ? (
-                    <div className="table py-3 px-4 mx-4 mb-3 text-base border-r animate-slit-in-vertical">
+                    <div className="table p-3 mx-2 -mt-12 mb-3 w-5/12 text-base border-r animate-slit-in-vertical">
                       total:
-                      <span className="block text-3xl font-bold">
+                      <span className="block text-3xl font-bold text-center">
                         ¥
                         {category.toString() === "全て"
                           ? totalPrice.toLocaleString()
@@ -367,13 +317,13 @@ const Home = () => {
               </Tab.Panels>
             );
           })}
+          {isTop ? <MenuBar /> : null}
         </Tab.Group>
       </div>
     </div>
   ) : null;
 };
 
-// Home.getLayout = HomeLayout;
 Home.getLayout = HomeLayout;
 
 export default Home;
