@@ -1,8 +1,5 @@
 import { Tab } from "@headlessui/react";
-// import type CustomNextPage  from "next";
 import { useRouter } from "next/router";
-// import type { VFC } from "react";
-// import type { ReactElement } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { AddCategory } from "src/components/addCategory";
 import { EditCategory } from "src/components/editCategory";

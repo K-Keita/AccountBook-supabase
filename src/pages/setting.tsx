@@ -122,26 +122,46 @@ const Setting = () => {
             />
           </svg>
           <p>使用額変更</p>
-          <p className="mx-1 ml-auto opacity-80">
+          <p className="mx-2 ml-auto opacity-80">
             ¥{userData?.targetAmount.toLocaleString()}
           </p>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="mr-1 w-6 h-6"
-            onClick={() => {
-              setIsMenu(true);
-            }}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
+          {isMenu ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="mr-1 w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              onClick={() => {
+                setIsMenu(false);
+              }}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.2}
+                d="M5 15l7-7 7 7"
+              />
+            </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="mr-1 w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              onClick={() => {
+                setIsMenu(true);
+              }}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          )}
         </div>
         {isMenu ? (
           <form
@@ -149,11 +169,11 @@ const Setting = () => {
             onSubmit={handleSubmit(onSubmit)}
           >
             <input
-              defaultValue={userData?.targetAmount.toLocaleString()}
+              defaultValue={userData ? userData.targetAmount : 0}
               autoFocus
               type="number"
               {...register("targetAmount")}
-              className="block pl-2 text-gray-600 bg-blue-100 bg-opacity-20 border-b outline-none"
+              className="block pl-2 text-white bg-blue-100 bg-opacity-20 border-b outline-none"
             />
             <input
               className="p-1 mx-2 text-sm bg-gray-50 bg-opacity-0 border"

@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-// import type { VFC } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { Graph } from "src/components/Graph";
 import { ChangeMonthButton } from "src/components/utils/changeMonthButton";
@@ -33,16 +32,15 @@ const Chart = () => {
         if (userData) {
           setItemData(userData);
           setCategoryList(userData.categoryList);
-        } else {
-          router.push("/login");
         }
+
         if (items) {
           setItems(sortData(items));
           setTotalPrice(totalPrice);
         }
       }
     },
-    [router, user]
+    [user]
   );
 
   useEffect(() => {
