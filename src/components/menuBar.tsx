@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LinkButton } from "src/components/utils/linkButton";
 
 export const MenuBar = () => {
   const menu = [
@@ -20,7 +20,7 @@ export const MenuBar = () => {
           />
         </svg>
       ),
-      text: "Registration",
+      text: "Register",
     },
     {
       href: "/category",
@@ -97,14 +97,15 @@ export const MenuBar = () => {
   ];
 
   return (
-    <div className="flex fixed bottom-0 z-50 justify-around py-2 w-full bg-gradient-to-r from-blue-900 via-purple-900 to-pink-900 rounded-t-xl">
+    <div className="flex fixed bottom-0 left-1 z-50 justify-around py-2 w-almostFull bg-gradient-to-r from-blue-900 via-purple-900 to-pink-900 rounded-3xl">
       {menu.map((value) => {
-        <Link href={value.href} passHref>
-          <div className="cursor-pointer">
-            {value.icon}
-            {value.text}
-          </div>
-        </Link>;
+        return(
+        <LinkButton
+          key={value.text}
+          href={value.href}
+          icon={value.icon}
+          text={value.text}
+        />);
       })}
     </div>
   );

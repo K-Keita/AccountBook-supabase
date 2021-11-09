@@ -145,7 +145,7 @@ export const Graph = (props: Props): JSX.Element => {
       <div className="flex justify-around mb-4 text-xl">
         <button
           className={`px-2 py-1 ${
-            selectChart === "Pie" ? "bg-blue-400 bg-opacity-50" : ""
+            selectChart === "Pie" ? "bg-flower bg-opacity-50" : ""
           }`}
           onClick={() => {
             changeChart("Pie");
@@ -155,7 +155,7 @@ export const Graph = (props: Props): JSX.Element => {
         </button>
         <button
           className={`px-2 py-1 ${
-            selectChart === "Bar" ? "bg-blue-400 bg-opacity-50" : ""
+            selectChart === "Bar" ? "bg-flower bg-opacity-50" : ""
           }`}
           onClick={() => {
             changeChart("Bar");

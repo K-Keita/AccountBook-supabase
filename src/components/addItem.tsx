@@ -1,14 +1,18 @@
 import "react-datepicker/dist/react-datepicker.css";
 
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useCallback, useState } from "react";
+import { Fragment, useCallback } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { DatePicker } from "src/components/utils/datePicker";
 import type { UserData } from "src/interface/type";
 import { client } from "src/libs/supabase";
 
+import { PrimaryButton } from "./utils/primaryButton";
+
 type Props = {
+  isOpen: boolean;
+  closeModal: () => void;
   userData: UserData;
   getItemList: (year: number, month: number) => void;
 };
@@ -27,8 +31,6 @@ type FormValues = {
 };
 
 export const AddItem = (props: Props) => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-
   const {
     register,
     control,
@@ -39,16 +41,6 @@ export const AddItem = (props: Props) => {
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     addItem(data.price, data.memo, data.category, data.dateTime);
   };
-
-  //モーダルを開く
-  const openModal = useCallback(() => {
-    setIsOpen(true);
-  }, []);
-
-  //モーダルを閉める
-  const closeModal = useCallback(() => {
-    setIsOpen(false);
-  }, []);
 
   //商品の追加
   const addItem = useCallback(
@@ -100,16 +92,16 @@ export const AddItem = (props: Props) => {
       } else {
         if (data) {
           props.getItemList(year, month);
-          closeModal();
+          props.closeModal();
         }
       }
     },
-    [props, closeModal]
+    [props]
   );
 
   return (
     <>
-      <svg
+      {/* <svg
         xmlns="http://www.w3.org/2000/svg"
         className="mx-auto w-8 h-8"
         fill="none"
@@ -124,13 +116,13 @@ export const AddItem = (props: Props) => {
           d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
         />
       </svg>
-      <p className="text-xs text-center">registration</p>
+      <p className="text-xs text-center">registration</p> */}
 
-      <Transition appear show={isOpen} as={Fragment}>
+      <Transition appear show={props.isOpen} as={Fragment}>
         <Dialog
           as="div"
           className="overflow-y-auto fixed inset-0 z-50"
-          onClose={closeModal}
+          onClose={props.closeModal}
         >
           <div className="relative px-3 text-center border-2">
             <span
@@ -150,7 +142,7 @@ export const AddItem = (props: Props) => {
             >
               <div
                 style={{ fontFamily: "游明朝体" }}
-                className="inline-block overflow-hidden p-6 py-10 w-full text-left align-middle bg-gradient-to-r from-indigo-300 to-purple-400 rounded-xl border border-gray-300 shadow-xl transition-all transform max-w-md"
+                className="inline-block overflow-hidden p-6 py-10 w-full text-left align-middle bg-gradient-to-r from-indigo-300 to-purple-400 rounded-xl border border-gray-300 shadow-xl transition-all transform"
               >
                 <Dialog.Title
                   as="h3"
@@ -198,17 +190,19 @@ export const AddItem = (props: Props) => {
                     />
                   </div>
                   <div className="flex justify-around mt-3">
-                    <input
+                    <PrimaryButton text="Add" onClick={() => {handleSubmit(onSubmit)}} />
+                    <PrimaryButton text="Cancel" onClick={props.closeModal} />
+                    {/* <input
                       type="submit"
                       value="Add"
                       className="table p-1 mx-4 w-16 text-sm border border-green-400 cursor-pointer"
                     />
                     <input
                       type="reset"
-                      onClick={closeModal}
+                      onClick={props.closeModal}
                       className="table p-1 mx-4 w-16 text-sm border border-green-400 cursor-pointer"
                       value="Cancel"
-                    />
+                    /> */}
                   </div>
                 </form>
               </div>

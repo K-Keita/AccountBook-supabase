@@ -5,6 +5,8 @@ import { useForm } from "react-hook-form";
 import type { UserData } from "src/interface/type";
 import { client } from "src/libs/supabase";
 
+import { PrimaryButton } from "./utils/primaryButton";
+
 type Props = {
   getItemList: (year: number, month: number) => void;
   userData: UserData;
@@ -140,20 +142,22 @@ export const EditCategory = (props: Props) => {
   return (
     <>
       <div className="flex justify-around">
-        <button
-          className="table p-1 mx-4 text-sm border-2 border-flower cursor-pointer"
+        <PrimaryButton text={"編集"} onClick={openModal}/>
+        <PrimaryButton text="削除" onClick={() => {removeCategory(props.category)}}/>
+        {/* <button
+          className="w-20 p-1 mx-4 text-sm border-2 border-flower hover:border-white hover:bg-flower cursor-pointer"
           onClick={openModal}
         >
           編集
         </button>
         <button
-          className="table p-1 mx-4 text-sm border-2 border-flower cursor-pointer"
+          className="w-20 p-1 mx-4 text-sm border-2 border-flower hover:border-white hover:bg-flower cursor-pointer"
           onClick={() => {
             return removeCategory(props.category);
           }}
         >
           削除
-        </button>
+        </button> */}
       </div>
 
       <Transition appear show={isOpen} as={Fragment}>
