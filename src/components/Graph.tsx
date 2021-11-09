@@ -164,13 +164,13 @@ export const Graph = (props: Props): JSX.Element => {
           Bar Chart
         </button>
       </div>
-      <div className="h-80">
+      <div className="h-80 ">
         {selectChart === "Pie" ? (
-          <div className="p-5">
+          <div className="p-2 mx-auto max-w-xl">
             <Pie data={data} options={optionsPie} />
           </div>
         ) : (
-          <div className="pt-6">
+          <div className="pt-6 mx-auto max-w-xl">
             <Bar height={240} data={data} options={optionsBar} />
           </div>
         )}

@@ -1,7 +1,7 @@
-import {client} from 'src/libs/supabase';
+import { client } from "src/libs/supabase";
 
 // 全てのアイテムの取得
-export const getItems = async (userID: string, y: number, m: number) => {
+export const getAllItem = async (userID: string, y: number, m: number) => {
   let { data, error } = await client
     .from("users")
     .select("*")
@@ -20,13 +20,13 @@ export const getItems = async (userID: string, y: number, m: number) => {
     }, 0);
 
     if (!error && data) {
-      return { userData: userData, items: data, totalPrice: totalPrice };
+      return { userData: userData, itemList: data, totalPrice: totalPrice };
     } else {
-      return { userData: userData, items: null, totalPrice: null };
+      return { userData: userData, itemList: null, totalPrice: null };
     }
   }
 
-  return { userData: null, items: null, totalPrice: null };
+  return { userData: null, itemList: null, totalPrice: null };
 };
 
 export const getUserData = async (userID: string) => {

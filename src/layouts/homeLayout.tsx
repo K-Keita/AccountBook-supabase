@@ -1,10 +1,4 @@
 import type { ReactNode } from "react";
-// import { Footer } from "src/layouts/footer";
-// import { Header } from "src/layouts/header";
-
-// type Props = {
-//   children: ReactNode;
-// };
 
 export const HomeLayout = (page: ReactNode) => {
   return (

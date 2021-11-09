@@ -7,23 +7,22 @@ export const Header = () => {
     <header className="flex justify-between p-5 h-20">
       <Link href="/">
         <a className="text-3xl">
-          <h2 className="font-bold text-white shadow" >-Title-</h2>
+          <h2 className="font-bold text-white shadow">-Title-</h2>
         </a>
       </Link>
       <div className="text-blue-600">
-
-      <Button
-        size="tiny"
-        type="text"
-        className="text-blue-600"
-        icon={<IconLogOut />}
-        onClick={() => {
-          return client.auth.signOut();
-        }}
+        <Button
+          size="tiny"
+          type="text"
+          className="text-blue-600"
+          icon={<IconLogOut />}
+          onClick={() => {
+            return client.auth.signOut();
+          }}
         >
-        Sign Out
-      </Button>
-        </div>
+          Sign Out
+        </Button>
+      </div>
     </header>
   );
 };

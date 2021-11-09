@@ -1,17 +1,8 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { MenuBar } from "src/components/menuBar";
-// import { client } from "src/libs/supabase";
-// import { Footer } from "src/layouts/footer";
-// import { Header } from "src/layouts/header";
-
-// type Props = {
-//   page: ReactNode;
-// };
 
 export const SecondLayout = (page: ReactNode) => {
-  // const user = client.auth.user();
-
   return (
     <div className="text-white bg-blue-800" style={{ fontFamily: "游明朝体" }}>
       <div className="relative -z-10 h-1" />
