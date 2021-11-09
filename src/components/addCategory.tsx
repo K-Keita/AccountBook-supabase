@@ -78,7 +78,7 @@ export const AddCategory = (props: Props) => {
           className="overflow-y-auto fixed inset-0 z-50"
           onClose={handleCloseCategory}
         >
-          <div className="px-4 text-center border-2">
+          <div className="px-4 text-center" style={{ fontFamily: "游明朝体" }}>
             <span
               className="inline-block h-screen align-middle"
               aria-hidden="true"
@@ -94,7 +94,7 @@ export const AddCategory = (props: Props) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div className="inline-block overflow-hidden p-6 my-6 w-full align-middle bg-gray-50 rounded-xl border border-gray-300 transition-all transform">
+              <div className="inline-block overflow-hidden p-6 my-6 w-full align-middle bg-gradient-to-r from-purple-200 via-purple-400 to-purple-800 rounded-xl  transition-all transform">
                 <Dialog.Title
                   as="h3"
                   className="text-xl font-medium leading-6 text-center text-gray-900"
@@ -105,10 +105,10 @@ export const AddCategory = (props: Props) => {
                   <input
                     autoFocus
                     {...register("categoryName")}
-                    className="px-4 h-12 bg-white rounded border border-gray-300 hover:border-gray-700 shadow appearance-none"
+                    className="block py-2 px-1 my-5 mx-auto w-11/12 bg-white bg-opacity-50"
                   />
                   <div className="flex justify-around mt-3">
-                    <input
+                    {/* <input
                       type="submit"
                       value="Change"
                       className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer"
@@ -118,6 +118,14 @@ export const AddCategory = (props: Props) => {
                       onClick={handleCloseCategory}
                       className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer"
                       value="Cancel"
+                    /> */}
+                    <PrimaryButton
+                      text={"Change"}
+                      onClick={handleSubmit(onSubmit)}
+                    />
+                    <PrimaryButton
+                      text={"Cancel"}
+                      onClick={handleCloseCategory}
                     />
                   </div>
                 </form>

@@ -142,22 +142,13 @@ export const EditCategory = (props: Props) => {
   return (
     <>
       <div className="flex justify-around">
-        <PrimaryButton text={"編集"} onClick={openModal}/>
-        <PrimaryButton text="削除" onClick={() => {removeCategory(props.category)}}/>
-        {/* <button
-          className="w-20 p-1 mx-4 text-sm border-2 border-flower hover:border-white hover:bg-flower cursor-pointer"
-          onClick={openModal}
-        >
-          編集
-        </button>
-        <button
-          className="w-20 p-1 mx-4 text-sm border-2 border-flower hover:border-white hover:bg-flower cursor-pointer"
+        <PrimaryButton text="編集" onClick={openModal} />
+        <PrimaryButton
+          text="削除"
           onClick={() => {
-            return removeCategory(props.category);
+            removeCategory(props.category);
           }}
-        >
-          削除
-        </button> */}
+        />
       </div>
 
       <Transition appear show={isOpen} as={Fragment}>
@@ -197,7 +188,7 @@ export const EditCategory = (props: Props) => {
                     className="col-span-3 p-2 w-full h-10 bg-white rounded hover:border shadow appearance-none"
                   />
                   <div className="flex justify-around mt-3">
-                    <input
+                    {/* <input
                       type="submit"
                       value="Change"
                       className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer"
@@ -207,7 +198,12 @@ export const EditCategory = (props: Props) => {
                       onClick={closeModal}
                       className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer"
                       value="Cancel"
+                    /> */}
+                    <PrimaryButton
+                      text="Change"
+                      onClick={handleSubmit(onSubmit)}
                     />
+                    <PrimaryButton text="Cancel" onClick={closeModal} />
                   </div>
                 </form>
               </div>
