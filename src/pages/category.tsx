@@ -1,16 +1,17 @@
 import { Tab } from "@headlessui/react";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AddCategory } from "src/components/addCategory";
 import { EditCategory } from "src/components/editCategory";
 import { ItemList } from "src/components/itemList";
 import { ChangeMonthButton } from "src/components/utils/changeMonthButton";
-import { getItems } from "src/hooks/getData";
-import { sortData } from "src/hooks/sortData";
+// import { getAllItem } from "src/hooks/getData";
+// import { sortData } from "src/hooks/sortData";
 import { useChangeMonth } from "src/hooks/useChangeMonth";
-import type { ItemData, UserData } from "src/interface/type";
+import { useGetItemList } from "src/hooks/useGetItemList";
+// import type { ItemData, UserData } from "src/interface/type";
 import { SecondLayout } from "src/layouts/secondLayout";
-import { client } from "src/libs/supabase";
+// import { client } from "src/libs/supabase";
 import { colors } from "src/utils";
 
 const classNames = (...classes: string[]) => {
@@ -37,44 +38,45 @@ const classes2 = ({ selected }: any) => {
 };
 
 const Category = () => {
-  const user = client.auth.user();
+  // const user = client.auth.user();
   const router = useRouter();
 
   const { year, month, prevMonth, nextMonth } = useChangeMonth();
+    const { userData, itemList, totalPrice, getItemList } = useGetItemList();
 
-  const [items, setItems] = useState<ItemData[]>([]);
-  const [userData, setItemData] = useState<UserData>();
-  const [totalPrice, setTotalPrice] = useState<number>();
-  const [categories, setCategories] = useState<string[]>([]);
   const [isTop, setIsTop] = useState<boolean>(false);
+  // const [itemList, setItemList] = useState<ItemData[]>([]);
+  // const [userData, setItemData] = useState<UserData>();
+  // const [totalPrice, setTotalPrice] = useState<number>();
+  // const [categoryList, setCategoryList] = useState<string[]>([]);
 
   //IDと同じカテゴリーの商品を取得
-  const getItemList = useCallback(
-    async (year, month) => {
-      if (user) {
-        const { userData, items, totalPrice } = await getItems(
-          user.id.toString(),
-          year,
-          month
-        );
-        if (userData) {
-          setItemData(userData);
-          setCategories(userData.categoryList);
-        } else {
-          router.push("/login");
-        }
-        if (items) {
-          setItems(sortData(items));
-          setTotalPrice(totalPrice);
-        }
-      }
-    },
-    [router, user]
-  );
+  // const getItemList = useCallback(
+  //   async (year, month) => {
+  //     if (user) {
+  //       const { userData, itemList, totalPrice } = await getAllItem(
+  //         user.id.toString(),
+  //         year,
+  //         month
+  //       );
+  //       if (userData) {
+  //         setItemData(userData);
+  //         // setCategoryList(userData.categoryList);
+  //       } else {
+  //         router.push("/logIn");
+  //       }
+  //       if (itemList) {
+  //         setItemList(sortData(itemList));
+  //         setTotalPrice(totalPrice);
+  //       }
+  //     }
+  //   },
+  //   [router, user]
+  // );
 
   useEffect(() => {
     getItemList(year, month);
-  }, [user, getItemList, router, month, year]);
+  }, [getItemList, router, month, year]);
 
   useEffect(() => {
     const scrollAction = () => {
@@ -114,7 +116,7 @@ const Category = () => {
             >
               全て
             </Tab>
-            {categories.map((category, index) => {
+            {userData.categoryList.map((category, index) => {
               return (
                 <Tab
                   key={category}
@@ -129,11 +131,11 @@ const Category = () => {
           {isTop ? null : (
             <AddCategory userData={userData} getItemList={getItemList} />
           )}
-          {["全て", ...categories].map((value, index) => {
-            const itemList = items.filter((item) => {
+          {["全て", ...userData.categoryList].map((value, index) => {
+            const categoryItemList = itemList.filter((item) => {
               return item.categoryID === value;
             });
-            const categoryTotalPrice = itemList?.reduce((sum, element) => {
+            const categoryTotalPrice = categoryItemList?.reduce((sum, element) => {
               return sum + element.price;
             }, 0);
             return (
@@ -199,7 +201,7 @@ const Category = () => {
                     />
                   </div>
                   <ItemList
-                    items={index === 0 ? items : itemList}
+                    items={index === 0 ? itemList : itemList}
                     userData={userData}
                     getItemList={getItemList}
                   />

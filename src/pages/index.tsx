@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Tab } from "@headlessui/react";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AddItem } from "src/components/addItem";
 import { ItemList } from "src/components/itemList";
 import { LinkButtonList } from "src/components/LinkButtonList";
@@ -10,19 +10,20 @@ import { ChangeMonthButton } from "src/components/utils/changeMonthButton";
 import { PriceDisplay } from "src/components/utils/PriceDisplay";
 import { Title } from "src/components/utils/title";
 // import { LinkButton } from "src/components/utils/linkButton";
-import { getItems } from "src/hooks/getData";
-import { sortData } from "src/hooks/sortData";
+// import { getAllItem } from "src/hooks/getData";
+// import { sortData } from "src/hooks/sortData";
 import { useChangeMonth } from "src/hooks/useChangeMonth";
+import { useGetItemList } from "src/hooks/useGetItemList";
 import { useToggleModal } from "src/hooks/useToggleModal";
-import type { ItemData, UserData } from "src/interface/type";
+// import type { ItemData, UserData } from "src/interface/type";
 import { HomeLayout } from "src/layouts/homeLayout";
-import { client } from "src/libs/supabase";
+// import { client } from "src/libs/supabase";
 
 // 型の付け方がわからない
-type Data = {
-  data: any | null;
-  error: any;
-};
+// type Data = {
+//   data: any | null;
+//   error: any;
+// };
 
 const week = ["日", "月", "火", "水", "木", "金", "土"];
 
@@ -35,17 +36,18 @@ const classNames = (...classes: string[]) => {
 };
 
 const Home = () => {
-  const user = client.auth.user();
+  // const user = client.auth.user();
   const router = useRouter();
 
   const [isTop, setIsTop] = useState<boolean>(false);
-  const [userData, setItemData] = useState<UserData>();
-  const [items, setItems] = useState<ItemData[]>([]);
-  const [totalPrice, setTotalPrice] = useState<number>(0);
-  const [oneDayTotalPrice, setOneDayTotalPrice] = useState<number>(0);
+  // const [userData, setItemData] = useState<UserData>();
+  // const [itemList, setItemList] = useState<ItemData[]>([]);
+  // const [totalPrice, setTotalPrice] = useState<number>(0);
+  // const [oneDayTotalPrice, setOneDayTotalPrice] = useState<number>(0);
 
   const { year, month, prevMonth, nextMonth } = useChangeMonth();
   const { isOpen, openModal, closeModal } = useToggleModal();
+  const { userData, itemList, totalPrice, getItemList } = useGetItemList();
 
   useEffect(() => {
     const scrollAction = () => {
@@ -67,55 +69,54 @@ const Home = () => {
   }, []);
 
   //ユーザーデータ、アイテムの取得
-  const getItemList = useCallback(
-    async (year: number, month: number) => {
-      if (user) {
-        const { userData, items, totalPrice } = await getItems(
-          user.id.toString(),
-          year,
-          month
-        );
-        if (userData) {
-          setItemData(userData);
-        } else {
-          const { data, error }: Data = await client.from("users").insert([
-            {
-              userID: user.id,
-              targetAmount: 50000,
-              categoryList: ["外食", "スーパー", "コンビニ"],
-              userName: "",
-            },
-          ]);
+  // const getItemList = useCallback(
+  //   async (year: number, month: number) => {
+  //     if (user) {
+  //       const { userData, itemList, totalPrice } = await getAllItem(
+  //         user.id.toString(),
+  //         year,
+  //         month
+  //       );
+  //       if (userData) {
+  //         setItemData(userData);
+  //       } else {
+  //         const { data, error }: Data = await client.from("users").insert([
+  //           {
+  //             userID: user.id,
+  //             targetAmount: 50000,
+  //             categoryList: ["外食", "スーパー", "コンビニ"],
+  //             userName: "",
+  //           },
+  //         ]);
+  //         if (data) {
+  //           setItemData(data);
+  //         }
 
-          if (data) {
-            setItemData(data);
-          }
+  //         if (error) {
+  //           throw new Error("");
+  //         }
+  //       }
+  //       if (itemList) {
+  //         setItemList(sortData(itemList));
+  //         setTotalPrice(totalPrice);
 
-          if (error) {
-            throw new Error("");
-          }
-        }
-        if (items) {
-          setItems(sortData(items));
-          setTotalPrice(totalPrice);
-
-          if (month === m) {
-            const oneDayPrice = items.reduce(
-              (sum: number, element: { buyDate: string[]; price: number }) => {
-                if (element.buyDate[2] === date.toString()) {
-                  return sum + element.price;
-                }
-                return sum + 0;
-              },
-              0
-            );
-            setOneDayTotalPrice(oneDayPrice);
-          }
-        }
-      }
-    },
-    [router]
-  );
+  //         if (month === m) {
+  //           const oneDayPrice = itemList.reduce(
+  //             (sum: number, element: { buyDate: string[]; price: number }) => {
+  //               if (element.buyDate[2] === date.toString()) {
+  //                 return sum + element.price;
+  //               }
+  //               return sum + 0;
+  //             },
+  //             0
+  //           );
+  //           setOneDayTotalPrice(oneDayPrice);
+  //         }
+  //       }
+  //     }
+  //   },
+  //   [router]
+  // );
 
   useEffect(() => {
     getItemList(year, month);
@@ -141,6 +142,16 @@ const Home = () => {
     target ? (target.scrollLeft += 48 * date - 1) : null;
   };
 
+  const oneDayTotalPrice = itemList.reduce(
+    (sum: number, element: { buyDate: string[]; price: number }) => {
+      if (element.buyDate[2] === date.toString()) {
+        return sum + element.price;
+      }
+      return sum + 0;
+    },
+    0
+  );
+
   //月の日数
   const count = new Date(year, month, 0).getDate();
 
@@ -158,7 +169,7 @@ const Home = () => {
   //1日の平均金額(現在)
   const nowAverage = totalPrice / d.getDate();
 
-  const item = items.filter((value) => {
+  const item = itemList.filter((value) => {
     return value.buyDate[2] === date.toString();
   });
   const totalItems = item.reduce((sum, element) => {
@@ -169,41 +180,43 @@ const Home = () => {
     <div className="pt-1 min-h-lg text-white">
       <div className="fixed py-2 w-full h-lg">
         <h2 className="px-3 text-2xl">TITLE</h2>
-        <div className="py-4 px-8">
-          <Title />
-        </div>
-        <PriceDisplay
-          totalPrice={totalPrice}
-          targetAmount={userData.targetAmount}
-          totalItemsPrice={totalItems}
-        />
-        <button
-          onClick={openModal}
-          className="flex justify-center py-1 px-2 mx-auto mb-3 bg-flower bg-opacity-40 rounded-lg border cursor-pointer"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="mr-1 w-8 h-8"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.0}
-              d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
-            />
-          </svg>
-          <p className="text-lg text-center">register</p>
-          <AddItem
-            isOpen={isOpen}
-            closeModal={closeModal}
-            userData={userData}
-            getItemList={getItemList}
+        <div className="flex flex-col justify-end h-3lg">
+          <div className="py-4 px-8">
+            <Title />
+          </div>
+          <PriceDisplay
+            totalPrice={totalPrice}
+            targetAmount={userData.targetAmount}
+            totalItemsPrice={totalItems}
           />
-        </button>
-        <LinkButtonList />
+          <button
+            onClick={openModal}
+            className="flex justify-center py-1 px-2 my-3 mx-auto bg-flower bg-opacity-40 rounded-lg border cursor-pointer"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="mr-1 w-8 h-8"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.0}
+                d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+              />
+            </svg>
+            <p className="text-lg text-center">register</p>
+            <AddItem
+              isOpen={isOpen}
+              closeModal={closeModal}
+              userData={userData}
+              getItemList={getItemList}
+            />
+          </button>
+          <LinkButtonList />
+        </div>
       </div>
       <div className="relative -z-10 h-lg opacity-0" />
       <div className="relative z-40 pt-8 w-full h-screen bg-home rounded-t-3xl animate-slide-in-bottom md:p-5 md:w-1/2">
@@ -271,12 +284,16 @@ const Home = () => {
             } animate-slide-in-bck-center ml-auto mt-5 w-1/2 pr-4`}
           >
             <p className="text-sm">今日の金額：</p>
-            <p className="mb-2 text-right">¥ {oneDayTotalPrice.toLocaleString()}</p>
+            <p className="mb-2 text-right">
+              ¥ {month === m ? oneDayTotalPrice.toLocaleString() : null}
+            </p>
             <p className="text-sm">1日の平均金額：</p>
-            <p className="text-right ">¥ {Math.floor(nowAverage).toLocaleString()}</p>
+            <p className="text-right ">
+              ¥ {Math.floor(nowAverage).toLocaleString()}
+            </p>
           </div>
           {thisMonthDays.map((category) => {
-            const item = items.filter((value) => {
+            const item = itemList.filter((value) => {
               return value.buyDate[2] === category.toString();
             });
             const totalItems = item.reduce((sum, element) => {
@@ -309,7 +326,7 @@ const Home = () => {
                     </div>
                   )}
                   <ItemList
-                    items={category.toString() === "全て" ? items : item}
+                    items={category.toString() === "全て" ? itemList : item}
                     userData={userData}
                     getItemList={getItemList}
                   />
