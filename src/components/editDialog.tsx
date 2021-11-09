@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 import { DatePicker } from "src/components/utils/datePicker";
 import type { UserData } from "src/interface/type";
 
-// import { client } from "src/libs/supabase";
 import { PrimaryButton } from "./utils/primaryButton";
 
 type Props = {
@@ -15,8 +14,8 @@ type Props = {
   title: string;
   price?: number;
   memo?: string;
-  closeModal: () => void;
   userData: UserData;
+  closeModal: () => void;
   getItemList?: (year: number, month: number) => void;
   handleSave: (
     price: number,
@@ -37,12 +36,14 @@ export const EditDialog = (props: Props) => {
   const {
     register,
     control,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     props.handleSave(data.price, data.memo, data.category, data.dateTime);
+    reset();
   };
 
   return (
@@ -120,11 +121,16 @@ export const EditDialog = (props: Props) => {
                 <div className="flex justify-around mt-3">
                   <PrimaryButton
                     text="Add"
+                    type="submit"
                     onClick={() => {
                       handleSubmit(onSubmit);
                     }}
                   />
-                  <PrimaryButton text="Cancel" onClick={props.closeModal} />
+                  <PrimaryButton
+                    type="reset"
+                    text="Cancel"
+                    onClick={props.closeModal}
+                  />
                 </div>
               </form>
             </div>
