@@ -8,8 +8,11 @@ module.exports = {
       lg: "90vh",
       screen: "100vh",
     },
+    maxHeight: {
+      sm: "22px",
+    },
     minWidth: {
-      lg: "50px",
+      lg: "48px",
       "2lg": "80px",
       xl: "100px",
       "3l": "30%",
@@ -17,8 +20,12 @@ module.exports = {
     },
     maxWidth: {
       lg: "110px",
+      xl: "320px",
     },
     extend: {
+      colors: {
+        flower: "#ec4999",
+      },
       gradientColorStops: (theme) => ({
         ...theme("colors"),
         dark: "#2a1e5b",
@@ -31,13 +38,13 @@ module.exports = {
         flower: "#ec4999",
       }),
       backgroundColor: {
-        // dark: "#120150",
+        google: "#3F7EE7",
+        flower: "#ec4999",
         dark: "#2a1e5b",
         dark2: "#101827",
         home: "#140233",
         item: "#7a6cb2",
         selected: "#ed477b",
-        // item: "rgba(146, 135, 191, 40)",
       },
       animation: {
         "slit-in-vertical": "slit-in-vertical 0.5s ease both",
@@ -107,6 +114,9 @@ module.exports = {
           },
         },
       },
+      letterSpacing: {
+        lg: "0.5em",
+      },
       zIndex: {
         "-10": "-10",
         "-20": "-20",
@@ -114,6 +124,10 @@ module.exports = {
       height: {
         lg: "65vh",
         "2lg": "50vh",
+        "3lg": "60vh",
+      },
+      width: {
+        almostFull: "98%",
       },
     },
   },

@@ -1,7 +1,7 @@
-import type {UserData} from 'src/interface/type';
+import type { ItemData } from "src/interface/type";
 
 //アイテムの並び変え
-export const sortData = (data: UserData[]) => {
+export const sortData = (data: ItemData[]) => {
   const arr = data.sort(
     (a: { buyDate: string[] }, b: { buyDate: string[] }) => {
       if (Number(a.buyDate[2]) === Number(b.buyDate[2])) {

@@ -94,14 +94,14 @@ const Chart = () => {
           }, 0);
           return (
             <div
-              className="flex justify-between py-1 my-5 mx-auto w-10/12 border-b "
+              className="flex justify-between p-1 my-5 mx-auto w-10/12 border-b"
               key={category}
             >
-              <div className="text-xl">
+              <div className="text-lg">
                 {category}
-                <span className="mx-1 text-lg">({arr.length})</span>
+                <span className="mx-1">({arr.length})</span>
               </div>
-              <p className="text-lg">¥{totalPrice.toLocaleString()}</p>
+              <p className="">¥{totalPrice.toLocaleString()}</p>
             </div>
           );
         })}
