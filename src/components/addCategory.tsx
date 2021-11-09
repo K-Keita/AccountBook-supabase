@@ -1,7 +1,8 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
+import { useToggleModal } from "src/hooks/useToggleModal";
 import type { UserData } from "src/interface/type";
 import { client } from "src/libs/supabase";
 
@@ -12,7 +13,7 @@ type Props = {
   getItemList: (year: number, month: number) => void;
 };
 
-type Inputs = {
+type FormValue = {
   categoryName: string;
 };
 
@@ -22,11 +23,12 @@ const year = d.getFullYear();
 const month = d.getMonth() + 1;
 
 export const AddCategory = (props: Props) => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  // const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { isOpen, openModal, closeModal } = useToggleModal();
 
-  const { register, handleSubmit } = useForm<Inputs>();
+  const { register, handleSubmit } = useForm<FormValue>();
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
+  const onSubmit: SubmitHandler<FormValue> = (data) => {
     addCategory(data.categoryName);
   };
 
@@ -54,29 +56,29 @@ export const AddCategory = (props: Props) => {
       }
     }
 
-    setIsOpen(false);
+    closeModal();
     props.getItemList(year, month);
   };
 
-  const handleOpenCategory = () => {
-    setIsOpen(true);
-  };
+  // const handleOpenCategory = () => {
+  //   setIsOpen(true);
+  // };
 
-  const handleCloseCategory = () => {
-    setIsOpen(false);
-  };
+  // const handleCloseCategory = () => {
+  //   setIsOpen(false);
+  // };
 
   return (
     <>
       <div className="flex justify-end px-8">
-        <PrimaryButton text="追加" onClick={handleOpenCategory} />
+        <PrimaryButton text="追加" onClick={openModal} />
       </div>
 
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
           className="overflow-y-auto fixed inset-0 z-50"
-          onClose={handleCloseCategory}
+          onClose={closeModal}
         >
           <div className="px-4 text-center" style={{ fontFamily: "游明朝体" }}>
             <span
@@ -94,7 +96,7 @@ export const AddCategory = (props: Props) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div className="inline-block overflow-hidden p-6 my-6 w-full align-middle bg-gradient-to-r from-purple-200 via-purple-400 to-purple-800 rounded-xl  transition-all transform">
+              <div className="inline-block overflow-hidden p-6 my-6 w-full align-middle bg-gradient-to-r from-purple-200 via-purple-400 to-purple-800 rounded-xl transition-all transform">
                 <Dialog.Title
                   as="h3"
                   className="text-xl font-medium leading-6 text-center text-gray-900"
@@ -125,7 +127,7 @@ export const AddCategory = (props: Props) => {
                     />
                     <PrimaryButton
                       text={"Cancel"}
-                      onClick={handleCloseCategory}
+                      onClick={closeModal}
                     />
                   </div>
                 </form>

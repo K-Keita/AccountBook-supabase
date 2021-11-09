@@ -1,7 +1,8 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useCallback, useState } from "react";
+import { Fragment, useCallback } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
+import { useToggleModal } from "src/hooks/useToggleModal";
 import type { ItemData, UserData } from "src/interface/type";
 import { client } from "src/libs/supabase";
 
@@ -33,7 +34,7 @@ const colors = [
 ];
 
 export const ItemCard = (props: Props) => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { isOpen, openModal, closeModal } = useToggleModal();
 
   const {
     register,
@@ -45,14 +46,6 @@ export const ItemCard = (props: Props) => {
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     handleSave(data.price, data.memo, data.category);
   };
-
-  const openModal = useCallback(() => {
-    setIsOpen(true);
-  }, []);
-
-  const closeModal = useCallback(() => {
-    setIsOpen(false);
-  }, []);
 
   const handleRemove = useCallback(async () => {
     if (!confirm("削除しますか？")) {
@@ -102,10 +95,8 @@ export const ItemCard = (props: Props) => {
 
   const date = `${props.item.buyDate[1]}/${props.item.buyDate[2]}`;
 
-  // const defaultDate = new Date(`${props.item.buyDate[0]}/${props.item.buyDate[1]}/${props.item.buyDate[2]}`)
-
   const color =
-  colors[props.userData.categoryList.indexOf(props.item.categoryID)];
+    colors[props.userData.categoryList.indexOf(props.item.categoryID)];
 
   return (
     <>

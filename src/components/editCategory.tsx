@@ -1,7 +1,8 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useCallback, useState } from "react";
+import { Fragment, useCallback } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
+import { useToggleModal } from "src/hooks/useToggleModal";
 import type { UserData } from "src/interface/type";
 import { client } from "src/libs/supabase";
 
@@ -22,21 +23,13 @@ const year = d.getFullYear();
 const month = d.getMonth() + 1;
 
 export const EditCategory = (props: Props) => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { isOpen, openModal, closeModal } = useToggleModal();
 
   const { register, handleSubmit } = useForm<FormValue>();
 
   const onSubmit: SubmitHandler<FormValue> = (data) => {
     editCategoryName(data.categoryName, props.category);
   };
-
-  const openModal = useCallback(() => {
-    setIsOpen(true);
-  }, []);
-
-  const closeModal = useCallback(() => {
-    setIsOpen(false);
-  }, []);
 
   //アイテムの削除
   const removeItems = useCallback(
