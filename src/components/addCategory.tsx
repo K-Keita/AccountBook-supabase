@@ -10,7 +10,7 @@ import { PrimaryButton } from "./utils/primaryButton";
 
 type Props = {
   userData: UserData;
-  getItemList: (year: number, month: number) => void;
+  getItemList: (id: string, year: number, month: number) => void;
 };
 
 type FormValue = {
@@ -57,7 +57,7 @@ export const AddCategory = (props: Props) => {
     }
 
     closeModal();
-    props.getItemList(year, month);
+    props.getItemList(props.userData.id.toString(), year, month);
   };
 
   // const handleOpenCategory = () => {
@@ -71,7 +71,7 @@ export const AddCategory = (props: Props) => {
   return (
     <>
       <div className="flex justify-end px-8">
-        <PrimaryButton text="追加" onClick={openModal} />
+        <PrimaryButton type="button" text="追加" onClick={openModal} />
       </div>
 
       <Transition appear show={isOpen} as={Fragment}>
@@ -110,23 +110,14 @@ export const AddCategory = (props: Props) => {
                     className="block py-2 px-1 my-5 mx-auto w-11/12 bg-white bg-opacity-50"
                   />
                   <div className="flex justify-around mt-3">
-                    {/* <input
-                      type="submit"
-                      value="Change"
-                      className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer"
-                    />
-                    <input
-                      type="reset"
-                      onClick={handleCloseCategory}
-                      className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer"
-                      value="Cancel"
-                    /> */}
                     <PrimaryButton
                       text={"Change"}
+                      type="submit"
                       onClick={handleSubmit(onSubmit)}
                     />
                     <PrimaryButton
                       text={"Cancel"}
+                      type="reset"
                       onClick={closeModal}
                     />
                   </div>

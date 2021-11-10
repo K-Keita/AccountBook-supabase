@@ -9,7 +9,7 @@ import { client } from "src/libs/supabase";
 import { PrimaryButton } from "./utils/primaryButton";
 
 type Props = {
-  getItemList: (year: number, month: number) => void;
+  getItemList: (id: string, year: number, month: number) => void;
   userData: UserData;
   category: string;
 };
@@ -42,7 +42,7 @@ export const EditCategory = (props: Props) => {
       if (error) {
         alert(error);
       }
-      props.getItemList(year, month);
+      props.getItemList(props.userData.id.toString(), year, month);
       closeModal();
     },
     [props, closeModal]
@@ -76,7 +76,7 @@ export const EditCategory = (props: Props) => {
 
       removeItems(value, props.userData.userID);
 
-      props.getItemList(year, month);
+      props.getItemList(props.userData.id.toString(), year, month);
     }
   };
 
@@ -109,7 +109,7 @@ export const EditCategory = (props: Props) => {
       }
 
       editItems(newValue, prevValue);
-      props.getItemList(year, month);
+      props.getItemList(props.userData.id.toString(), year, month);
       closeModal();
     }
   };
@@ -128,15 +128,16 @@ export const EditCategory = (props: Props) => {
       return false;
     }
 
-    props.getItemList(year, month);
+    props.getItemList(props.userData.id.toString(), year, month);
     closeModal();
   };
 
   return (
     <>
       <div className="flex justify-around">
-        <PrimaryButton text="編集" onClick={openModal} />
+        <PrimaryButton type="button" text="編集" onClick={openModal} />
         <PrimaryButton
+          type="button"
           text="削除"
           onClick={() => {
             removeCategory(props.category);
@@ -194,9 +195,14 @@ export const EditCategory = (props: Props) => {
                     /> */}
                     <PrimaryButton
                       text="Change"
+                      type="submit"
                       onClick={handleSubmit(onSubmit)}
                     />
-                    <PrimaryButton text="Cancel" onClick={closeModal} />
+                    <PrimaryButton
+                      type="reset"
+                      text="Cancel"
+                      onClick={closeModal}
+                    />
                   </div>
                 </form>
               </div>
