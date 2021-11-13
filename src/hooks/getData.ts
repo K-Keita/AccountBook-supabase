@@ -3,9 +3,9 @@ import { client } from "src/libs/supabase";
 // 全てのアイテムの取得
 export const getAllItem = async (userID: string, y: number, m: number) => {
   let { data, error } = await client
-    .from("users")
-    .select("*")
-    .eq("userID", userID);
+  .from("users")
+  .select("*")
+  .eq("userID", userID);
 
   if (!error && data) {
     const userData = data[0];
@@ -18,6 +18,7 @@ export const getAllItem = async (userID: string, y: number, m: number) => {
     const totalPrice = data?.reduce((sum, element) => {
       return sum + element.price;
     }, 0);
+
 
     if (!error && data) {
       return { userData: userData, itemList: data, totalPrice: totalPrice };
