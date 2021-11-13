@@ -1,23 +1,25 @@
-import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useCallback } from "react";
-import type { SubmitHandler } from "react-hook-form";
-import { useForm } from "react-hook-form";
+// import { Dialog, Transition } from "@headlessui/react";
+import { useCallback } from "react";
+// import type { SubmitHandler } from "react-hook-form";
+// import { useForm } from "react-hook-form";
 import { useToggleModal } from "src/hooks/useToggleModal";
 import type { ItemData, UserData } from "src/interface/type";
 import { client } from "src/libs/supabase";
 
+import { EditDialog } from "./editDialog";
+
 type Props = {
   item: ItemData;
   userData: UserData;
-  getItemList: (year: number, month: number) => void;
+  getItemList: (id: string, year: number, month: number) => void;
 };
 
-type FormValues = {
-  price: number;
-  memo: string;
-  category: string;
-  datetime: string;
-};
+// type FormValues = {
+//   price: number;
+//   memo: string;
+//   category: string;
+//   datetime: string;
+// };
 
 const d = new Date();
 const year = d.getFullYear();
@@ -36,16 +38,16 @@ const colors = [
 export const ItemCard = (props: Props) => {
   const { isOpen, openModal, closeModal } = useToggleModal();
 
-  const {
-    register,
-    // control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormValues>();
+  // const {
+  //   register,
+  //   // control,
+  //   handleSubmit,
+  //   formState: { errors },
+  // } = useForm<FormValues>();
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
-    handleSave(data.price, data.memo, data.category);
-  };
+  // const onSubmit: SubmitHandler<FormValues> = (data) => {
+  //   handleSave(data.price, data.memo, data.category);
+  // };
 
   const handleRemove = useCallback(async () => {
     if (!confirm("削除しますか？")) {
@@ -58,13 +60,13 @@ export const ItemCard = (props: Props) => {
     if (error) {
       alert(error);
     }
-    props.getItemList(year, month);
+    props.getItemList(props.userData.id.toString(), year, month);
     closeModal();
   }, [props, closeModal]);
 
   //アイテムのアップデート
   const handleSave = useCallback(
-    async (price, memo, category) => {
+    async (price, memo, category, dateTime) => {
       if (price == "") {
         alert("金額を入力してください");
         return;
@@ -72,6 +74,10 @@ export const ItemCard = (props: Props) => {
 
       if (category == "") {
         alert("カテゴリーを選択してください");
+        return;
+      }
+
+      if (dateTime === "test") {
         return;
       }
 
@@ -87,7 +93,7 @@ export const ItemCard = (props: Props) => {
       if (error) {
         alert(error);
       }
-      props.getItemList(year, month);
+      props.getItemList(props.userData.id.toString(), year, month);
       closeModal();
     },
     [props, closeModal]
@@ -142,7 +148,7 @@ export const ItemCard = (props: Props) => {
         <div className="flex py-1">
           <p className="ml-1 text-sm">{props.item.description}</p>
           <p
-            className="px-1 mr-2 ml-auto w-20 max-h-sm text-sm text-center"
+            className="px-1 ml-auto w-20 max-h-sm text-sm text-center"
             style={{ border: `solid 1px ${color}` }}
           >
             {props.item.categoryID}
@@ -150,6 +156,17 @@ export const ItemCard = (props: Props) => {
         </div>
       </div>
 
+      <EditDialog
+        isOpen={isOpen}
+        title="商品編集"
+        price={props.item.price}
+        memo={props.item.description}
+        closeModal={closeModal}
+        userData={props.userData}
+        getItemList={props.getItemList}
+        handleSave={handleSave}
+      />
+      {/*
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
@@ -189,12 +206,6 @@ export const ItemCard = (props: Props) => {
                     className="col-span-3 p-2 w-full h-10 bg-white rounded hover:border shadow appearance-none"
                   />
                   {errors.price && <span>This field is required</span>}
-                  {/* <DatePicker
-                    name="datetime"
-                    defaultDate={defaultDate}
-                    control={control}
-                    error={errors.datetime?.message}
-                  /> */}
                   <p>Memo</p>
                   <input
                     defaultValue={props.item.description}
@@ -232,7 +243,7 @@ export const ItemCard = (props: Props) => {
             </Transition.Child>
           </div>
         </Dialog>
-      </Transition>
+      </Transition> */}
     </>
   );
 };

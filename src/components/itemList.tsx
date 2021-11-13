@@ -5,7 +5,7 @@ import type { ItemData,UserData } from "src/interface/type";
 type Props = {
   items: ItemData[];
   userData: UserData;
-  getItemList: (year: number, month: number) => void;
+  getItemList: (id: string, year: number, month: number) => void;
 };
 
 export const ItemList = (props: Props) => {
