@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Tab } from "@headlessui/react";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { AddItem } from "src/components/addItem";
 import { ItemList } from "src/components/itemList";
@@ -9,21 +8,11 @@ import { MenuBar } from "src/components/menuBar";
 import { ChangeMonthButton } from "src/components/utils/changeMonthButton";
 import { PriceDisplay } from "src/components/utils/PriceDisplay";
 import { Title } from "src/components/utils/title";
-// import { LinkButton } from "src/components/utils/linkButton";
-// import { getAllItem } from "src/hooks/getData";
-// import { sortData } from "src/hooks/sortData";
 import { useChangeMonth } from "src/hooks/useChangeMonth";
 import { useGetItemList } from "src/hooks/useGetItemList";
 import { useToggleModal } from "src/hooks/useToggleModal";
-// import type { ItemData, UserData } from "src/interface/type";
 import { HomeLayout } from "src/layouts/homeLayout";
-// import { client } from "src/libs/supabase";
-
-// 型の付け方がわからない
-// type Data = {
-//   data: any | null;
-//   error: any;
-// };
+import { client } from "src/libs/supabase";
 
 const week = ["日", "月", "火", "水", "木", "金", "土"];
 
@@ -36,15 +25,8 @@ const classNames = (...classes: string[]) => {
 };
 
 const Home = () => {
-  // const user = client.auth.user();
-  const router = useRouter();
-
+  const user = client.auth.user();
   const [isTop, setIsTop] = useState<boolean>(false);
-  // const [userData, setItemData] = useState<UserData>();
-  // const [itemList, setItemList] = useState<ItemData[]>([]);
-  // const [totalPrice, setTotalPrice] = useState<number>(0);
-  // const [oneDayTotalPrice, setOneDayTotalPrice] = useState<number>(0);
-
   const { year, month, prevMonth, nextMonth } = useChangeMonth();
   const { isOpen, openModal, closeModal } = useToggleModal();
   const { userData, itemList, totalPrice, getItemList } = useGetItemList();
@@ -68,59 +50,11 @@ const Home = () => {
     };
   }, []);
 
-  //ユーザーデータ、アイテムの取得
-  // const getItemList = useCallback(
-  //   async (year: number, month: number) => {
-  //     if (user) {
-  //       const { userData, itemList, totalPrice } = await getAllItem(
-  //         user.id.toString(),
-  //         year,
-  //         month
-  //       );
-  //       if (userData) {
-  //         setItemData(userData);
-  //       } else {
-  //         const { data, error }: Data = await client.from("users").insert([
-  //           {
-  //             userID: user.id,
-  //             targetAmount: 50000,
-  //             categoryList: ["外食", "スーパー", "コンビニ"],
-  //             userName: "",
-  //           },
-  //         ]);
-  //         if (data) {
-  //           setItemData(data);
-  //         }
-
-  //         if (error) {
-  //           throw new Error("");
-  //         }
-  //       }
-  //       if (itemList) {
-  //         setItemList(sortData(itemList));
-  //         setTotalPrice(totalPrice);
-
-  //         if (month === m) {
-  //           const oneDayPrice = itemList.reduce(
-  //             (sum: number, element: { buyDate: string[]; price: number }) => {
-  //               if (element.buyDate[2] === date.toString()) {
-  //                 return sum + element.price;
-  //               }
-  //               return sum + 0;
-  //             },
-  //             0
-  //           );
-  //           setOneDayTotalPrice(oneDayPrice);
-  //         }
-  //       }
-  //     }
-  //   },
-  //   [router]
-  // );
-
   useEffect(() => {
-    getItemList(year, month);
-  }, [getItemList, router, year, month]);
+    if (user) {
+      getItemList(user.id, year, month);
+    }
+  }, [getItemList,user,  year, month]);
 
   useEffect(() => {
     if (process.browser) {
@@ -142,6 +76,7 @@ const Home = () => {
     target ? (target.scrollLeft += 48 * date - 1) : null;
   };
 
+  //本日の合計金額
   const oneDayTotalPrice = itemList.reduce(
     (sum: number, element: { buyDate: string[]; price: number }) => {
       if (element.buyDate[2] === date.toString()) {
@@ -172,7 +107,7 @@ const Home = () => {
   const item = itemList.filter((value) => {
     return value.buyDate[2] === date.toString();
   });
-  const totalItems = item.reduce((sum, element) => {
+  const totalItemsPrice = item.reduce((sum, element) => {
     return sum + element.price;
   }, 0);
 
@@ -187,7 +122,7 @@ const Home = () => {
           <PriceDisplay
             totalPrice={totalPrice}
             targetAmount={userData.targetAmount}
-            totalItemsPrice={totalItems}
+            totalItemsPrice={totalItemsPrice}
           />
           <button
             onClick={openModal}
@@ -296,7 +231,7 @@ const Home = () => {
             const item = itemList.filter((value) => {
               return value.buyDate[2] === category.toString();
             });
-            const totalItems = item.reduce((sum, element) => {
+            const totalItemsPrice = item.reduce((sum, element) => {
               return sum + element.price;
             }, 0);
             return (
@@ -314,7 +249,7 @@ const Home = () => {
                         ¥
                         {category.toString() === "全て"
                           ? totalPrice.toLocaleString()
-                          : totalItems.toLocaleString()}
+                          : totalItemsPrice.toLocaleString()}
                       </span>
                     </div>
                   ) : (
@@ -322,7 +257,7 @@ const Home = () => {
                       total: ¥
                       {category.toString() === "全て"
                         ? totalPrice.toLocaleString()
-                        : totalItems.toLocaleString()}
+                        : totalItemsPrice.toLocaleString()}
                     </div>
                   )}
                   <ItemList

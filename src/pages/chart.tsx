@@ -1,53 +1,21 @@
-import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { Graph } from "src/components/Graph";
 import { ChangeMonthButton } from "src/components/utils/changeMonthButton";
-// import { getAllItem } from "src/hooks/getData";
-// import { sortData } from "src/hooks/sortData";
 import { useChangeMonth } from "src/hooks/useChangeMonth";
 import { useGetItemList } from "src/hooks/useGetItemList";
-// import type { ItemData, UserData } from "src/interface/type";
 import { SecondLayout } from "src/layouts/secondLayout";
-// import { client } from "src/libs/supabase";
+import { client } from "src/libs/supabase";
 
 const Chart = () => {
-  // const user = client.auth.user();
-  const router = useRouter();
-
-    const { userData, itemList, totalPrice, getItemList } = useGetItemList();
-  // const [itemList, setItemList] = useState<ItemData[]>([]);
-  // const [userData, setItemData] = useState<UserData>();
-  // const [totalPrice, setTotalPrice] = useState<number>();
-  // const [categoryList, setCategoryList] = useState<string[]>([]);
-
+  const user = client.auth.user();
   const { year, month, prevMonth, nextMonth } = useChangeMonth();
-
-  //IDと同じカテゴリーの商品を取得
-  // const getItemList = useCallback(
-  //   async (year, month) => {
-  //     if (user) {
-  //       const { userData, itemList, totalPrice } = await getAllItem(
-  //         user.id.toString(),
-  //         year,
-  //         month
-  //       );
-  //       if (userData) {
-  //         setItemData(userData);
-  //         // setCategoryList(userData.categoryList);
-  //       }
-
-  //       if (itemList) {
-  //         setItemList(sortData(itemList));
-  //         setTotalPrice(totalPrice);
-  //       }
-  //     }
-  //   },
-  //   [user]
-  // );
+  const { userData, itemList, totalPrice, getItemList } = useGetItemList();
 
   useEffect(() => {
-    getItemList(year, month);
-  }, [getItemList, router, month, year]);
+    if (user) {
+      getItemList(user.id, year, month);
+    }
+  }, [getItemList, user, month, year]);
 
   //カテゴリーごとの合計金額
   const priceArr = userData?.categoryList.map((category) => {
