@@ -78,16 +78,20 @@ const Category = () => {
   return userData ? (
     <>
       <h2 className="py-3 px-4 text-4xl font-bold">Category</h2>
-      <div className="bg-blue-300 bg-opacity-30 m-3 rounded-lg">
+      <div className="m-3 bg-blue-300 bg-opacity-30 rounded-md shadow-2xl animate-tilt-in-right-1">
         {userData.categoryList.map((category, index) => {
           return (
             <div
-              className="p-2 border-b last:border-b-0 flex justify-between"
+              className="flex justify-between p-2 border-b last:border-b-0"
               key={category}
             >
               <p>
-              <span style={{borderColor: colors[index]}} className="w-3 h-3 border-2 rounded-full mr-2 inline-block"></span>
-                {category}</p>
+                <span
+                  style={{ borderColor: colors[index] }}
+                  className="inline-block mr-2 w-3 h-3 rounded-full border-2"
+                ></span>
+                {category}
+              </p>
               <EditCategory
                 category={category}
                 getItemList={getItemList}
@@ -98,12 +102,7 @@ const Category = () => {
         })}
       </div>
       <AddCategory userData={userData} getItemList={getItemList} />
-      <Tab.Group
-        defaultIndex={0}
-        // onChange={(value) => {
-        //   setValue(["全て", ...userData.categoryList][value]);
-        // }}
-      >
+      <Tab.Group defaultIndex={0}>
         <div className="pb-16 h-screen">
           <h2 className="p-4 text-4xl font-bold">History</h2>
           <Tab.List
@@ -119,7 +118,7 @@ const Category = () => {
                   <Tab
                     key={category}
                     className={isTop ? classes : classes2}
-                    style={{ border: `solid 1px ${colors[index]}` }}
+                    style={index === 0 ? {border: "solid 1px #fff"} : { border: `solid 1px ${colors[index-1]}` }}
                   >
                     {category}
                   </Tab>
@@ -148,6 +147,21 @@ const Category = () => {
                   )}
                 >
                   <div className="flex justify-between">
+                      {isTop ? (
+                        <div
+                          className={`animate-slide-in-bck-center text-lg py-2 my-2 px-6 font-semibold border-r w-1/2`}
+                        >
+                          <p>{value}</p>
+                          <p>
+                            total:¥
+                            {index === 0
+                              ? totalPrice?.toLocaleString()
+                              : categoryTotalPrice?.toLocaleString()}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="w-1/2"></div>
+                      )}
                     <div className="my-auto mx-auto">
                       <ChangeMonthButton
                         prevMonth={prevMonth}
@@ -155,21 +169,6 @@ const Category = () => {
                         month={month}
                       />
                     </div>
-                    {isTop ? (
-                      <div
-                        className={`animate-slide-in-bck-center text-lg py-2 my-2 px-4 font-semibold border-l w-1/2`}
-                      >
-                        <p>{value}</p>
-                        <p>
-                          total:¥
-                          {index === 0
-                            ? totalPrice?.toLocaleString()
-                            : categoryTotalPrice?.toLocaleString()}
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="w-1/2"></div>
-                    )}
                   </div>
                   <ItemList
                     items={index === 0 ? itemList : categoryItemList}
