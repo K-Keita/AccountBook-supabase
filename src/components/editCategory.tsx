@@ -49,87 +49,93 @@ export const EditCategory = (props: Props) => {
   );
 
   //カテゴリーの削除
-  const removeCategory = async (value: string) => {
-    if (
-      !confirm(
-        "削除しますが、よろしいですか？ *このカテゴリーに属している商品も削除されます。"
-      )
-    ) {
-      return false;
-    }
-    if (props.userData) {
-      const arr = props.userData.categoryList;
-
-      const newArr = arr.filter((v: any) => {
-        return v !== value;
-      });
-
-      const { error } = await client.from("users").upsert({
-        id: props.userData.id,
-        userID: props.userData.userID,
-        categoryList: newArr,
-      });
-
-      if (error) {
-        alert(error);
-      }
-
-      removeItems(value, props.userData.userID);
-
-      props.getItemList(props.userData.id.toString(), year, month);
-    }
-  };
-
-  //カテゴリー名の変更
-  const editCategoryName = async (newValue: string, prevValue: string) => {
-    if (newValue === prevValue) {
-      return false;
-    }
-    if (props.userData) {
-      const list = props.userData.categoryList;
-      if (list.indexOf(newValue) !== -1) {
-        alert("すでに同じカテゴリー名があります");
+  const removeCategory = useCallback(
+    async (value: string) => {
+      if (
+        !confirm(
+          "削除しますが、よろしいですか？ *このカテゴリーに属している商品も削除されます。"
+        )
+      ) {
         return false;
       }
+      if (props.userData) {
+        const arr = props.userData.categoryList;
 
-      const arr = props.userData.categoryList;
-      const num = arr.indexOf(prevValue);
+        const newArr = arr.filter((v: any) => {
+          return v !== value;
+        });
 
-      arr.splice(num, 1, newValue);
+        const { error } = await client.from("users").upsert({
+          id: props.userData.id,
+          userID: props.userData.userID,
+          categoryList: newArr,
+        });
 
-      const { error } = await client.from("users").upsert({
-        id: props.userData.id,
-        userID: props.userData.userID,
-        categoryList: arr,
-      });
+        if (error) {
+          alert(error);
+        }
 
-      if (error) {
-        alert(error);
-        return false;
+        removeItems(value, props.userData.userID);
       }
-
-      editItems(newValue, prevValue);
-    }
-  };
+    },
+    [props, removeItems]
+  );
 
   //アイテムのカテゴリー名の変更
-  const editItems = async (newValue: string, prevValue: string) => {
-    const { error } = await client
-      .from("purchasedItem")
-      .update({
-        categoryID: newValue,
-      })
-      .match({ categoryID: prevValue, userID: props.userData.userID });
+  const editItems = useCallback(
+    async (newValue: string, prevValue: string) => {
+      const { error } = await client
+        .from("purchasedItem")
+        .update({
+          categoryID: newValue,
+        })
+        .match({ categoryID: prevValue, userID: props.userData.userID });
 
-    if (error) {
-      alert(error);
-      return false;
-    }
+      if (error) {
+        alert(error);
+        return false;
+      }
 
+      props.getItemList(props.userData.userID.toString(), year, month);
+      closeModal();
+    },
+    [props, closeModal]
+  );
 
-    props.getItemList(props.userData.userID.toString(), year, month);
-    closeModal();
-  };
+  //カテゴリー名の変更
+  const editCategoryName = useCallback(
+    async (newValue: string, prevValue: string) => {
+      if (newValue === prevValue) {
+        return false;
+      }
+      if (props.userData) {
+        const list = props.userData.categoryList;
+        if (list.indexOf(newValue) !== -1) {
+          alert("すでに同じカテゴリー名があります");
+          return false;
+        }
+
+        const arr = props.userData.categoryList;
+        const num = arr.indexOf(prevValue);
+
+        arr.splice(num, 1, newValue);
+
+        const { error } = await client.from("users").upsert({
+          id: props.userData.id,
+          userID: props.userData.userID,
+          categoryList: arr,
+        });
+
+        if (error) {
+          alert(error);
+          return false;
+        }
+
+        editItems(newValue, prevValue);
+      }
+    },
+    [props, editItems]
+  );
 
   return (
     <>
@@ -137,7 +143,7 @@ export const EditCategory = (props: Props) => {
         <button className="px-2 border-r" onClick={openModal}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 text-blue-400"
+            className="w-6 h-6 text-blue-400"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -158,7 +164,7 @@ export const EditCategory = (props: Props) => {
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 text-red-400"
+            className="w-6 h-6 text-red-400"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -210,17 +216,6 @@ export const EditCategory = (props: Props) => {
                     className="col-span-3 p-2 w-full h-10 bg-white rounded hover:border shadow appearance-none"
                   />
                   <div className="flex justify-around mt-3">
-                    {/* <input
-                      type="submit"
-                      value="Change"
-                      className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer"
-                    />
-                    <input
-                      type="reset"
-                      onClick={closeModal}
-                      className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer"
-                      value="Cancel"
-                    /> */}
                     <PrimaryButton
                       text="Change"
                       type="submit"

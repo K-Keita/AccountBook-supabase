@@ -16,7 +16,7 @@ type Props = {
   memo?: string;
   userData: UserData;
   closeModal: () => void;
-  getItemList?: (year: number, month: number) => void;
+  getItemList?: (id: string, year: number, month: number) => void;
   handleSave: (
     price: number,
     memo: string,
