@@ -143,7 +143,7 @@ export const EditCategory = (props: Props) => {
         <button className="px-2 border-r" onClick={openModal}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="w-6 h-6 text-blue-400"
+            className="w-6 h-6 text-blue-400 hover:text-blue-500 hover:animate-jello-horizontal"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -164,7 +164,7 @@ export const EditCategory = (props: Props) => {
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="w-6 h-6 text-red-400"
+            className="w-6 h-6 text-red-400 hover:text-red-500 hover:animate-jello-horizontal"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -185,7 +185,10 @@ export const EditCategory = (props: Props) => {
           className="overflow-y-auto fixed inset-0 z-50"
           onClose={closeModal}
         >
-          <div className="px-4 text-center border-2">
+          <div
+            className="px-4 text-center border-2"
+            style={{ fontFamily: "游明朝体" }}
+          >
             <span
               className="inline-block h-screen align-middle"
               aria-hidden="true"
@@ -201,30 +204,45 @@ export const EditCategory = (props: Props) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div className="inline-block overflow-hidden p-6 my-6 w-full align-middle bg-gray-50 rounded-xl border border-gray-300 transition-all transform">
+              <div className="inline-block overflow-hidden p-6 my-6 w-full align-middle bg-blue-700 rounded-xl border border-gray-300 transition-all transform">
                 <Dialog.Title
                   as="h3"
-                  className="text-xl font-medium leading-6 text-center text-gray-900"
+                  className="text-xl font-medium leading-6 text-center text-white"
                 >
-                  CategoryName
+                  カテゴリー名
                 </Dialog.Title>
+                <button
+                  onClick={closeModal}
+                  type="reset"
+                  className="absolute top-3 right-3 p-1 text-white hover:text-flower rounded-full"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-8 h-8"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.6}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
                 <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
                   <input
                     defaultValue={props.category}
                     autoFocus
                     {...register("categoryName")}
-                    className="col-span-3 p-2 w-full h-10 bg-white rounded hover:border shadow appearance-none"
+                    className="col-span-3 p-2 w-full h-10 text-white bg-white bg-opacity-30 rounded hover:border shadow appearance-none"
                   />
                   <div className="flex justify-around mt-3">
                     <PrimaryButton
-                      text="Change"
+                      text="変更"
                       type="submit"
                       onClick={handleSubmit(onSubmit)}
-                    />
-                    <PrimaryButton
-                      type="reset"
-                      text="Cancel"
-                      onClick={closeModal}
                     />
                   </div>
                 </form>

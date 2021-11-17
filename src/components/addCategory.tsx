@@ -108,29 +108,44 @@ export const AddCategory = (props: Props) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div className="inline-block overflow-hidden p-6 my-6 w-full align-middle bg-gradient-to-r from-purple-200 via-purple-400 to-purple-800 rounded-xl transition-all transform">
+              <div className="inline-block overflow-hidden p-6 my-6 w-full align-middle bg-blue-800 rounded-xl transition-all transform">
                 <Dialog.Title
                   as="h3"
-                  className="text-xl font-medium leading-6 text-center text-gray-900"
+                  className="text-xl font-medium leading-6 text-center text-white"
                 >
-                  CategoryName
+                  カテゴリー名
                 </Dialog.Title>
+                <button
+                  onClick={closeModal}
+                  type="reset"
+                  className="absolute top-3 right-3 p-1 text-white hover:text-flower rounded-full"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-8 h-8"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.6}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
                 <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
                   <input
                     autoFocus
                     {...register("categoryName")}
-                    className="block py-2 px-1 my-5 mx-auto w-11/12 bg-white bg-opacity-50"
+                    className="block py-2 px-1 my-5 mx-auto w-11/12 bg-white bg-opacity-40"
                   />
                   <div className="flex justify-around mt-3">
                     <PrimaryButton
-                      text={"Change"}
+                      text="追加"
                       type="submit"
                       onClick={handleSubmit(onSubmit)}
-                    />
-                    <PrimaryButton
-                      text={"Cancel"}
-                      type="reset"
-                      onClick={closeModal}
                     />
                   </div>
                 </form>
