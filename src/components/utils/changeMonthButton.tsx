@@ -10,7 +10,7 @@ export const ChangeMonthButton = (props: Props) => {
       <button onClick={props.prevMonth}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="w-6 h-6"
+          className="w-6 h-6 hover:text-flower"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -27,7 +27,7 @@ export const ChangeMonthButton = (props: Props) => {
       <button onClick={props.nextMonth}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="w-6 h-6"
+          className="w-6 h-6 hover:text-flower"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
