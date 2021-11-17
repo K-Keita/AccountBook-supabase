@@ -2,12 +2,11 @@ type Props<T> = {
   totalPrice: T;
   targetAmount: T;
   totalItemsPrice: T;
-  // nowAverage: T;
 };
 
 export const PriceDisplay = (props: Props<number>) => {
   return (
-    <div className="flex py-3 px-4">
+    <section className="flex py-3 px-4">
       <div className="py-1 mx-2 w-1/2 rounded-sm border-r">
         <p className="px-3 text-sm">Total</p>
         <h3 className="text-2xl tracking-wide text-center">
@@ -26,6 +25,6 @@ export const PriceDisplay = (props: Props<number>) => {
           {props.totalItemsPrice.toLocaleString()}
         </h3>
       </div>
-    </div>
+    </section>
   );
 };

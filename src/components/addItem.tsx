@@ -1,20 +1,15 @@
 import "react-datepicker/dist/react-datepicker.css";
 
-// import { Dialog, Transition } from "@headlessui/react";
 import { useCallback } from "react";
-// import type { SubmitHandler } from "react-hook-form";
-// import { useForm } from "react-hook-form";
-// import { DatePicker } from "src/components/utils/datePicker";
 import type { UserData } from "src/interface/type";
 import { client } from "src/libs/supabase";
 
-// import { PrimaryButton } from "./utils/primaryButton";
 import { EditDialog } from "./editDialog";
 
 type Props = {
   isOpen: boolean;
-  closeModal: () => void;
   userData: UserData;
+  closeModal: () => void;
   getItemList?: (id: string, year: number, month: number) => void;
 };
 const d = new Date();
@@ -24,25 +19,7 @@ const month = d.getMonth() + 1;
 const day = d.getDate();
 const hours = d.getHours();
 
-// type FormValues = {
-//   price: number;
-//   memo: string;
-//   category: string;
-//   dateTime: string;
-// };
-
 export const AddItem = (props: Props) => {
-  // const {
-  //   register,
-  //   control,
-  //   handleSubmit,
-  //   formState: { errors },
-  // } = useForm<FormValues>();
-
-  // const onSubmit: SubmitHandler<FormValues> = (data) => {
-  //   addItem(data.price, data.memo, data.category, data.dateTime);
-  // };
-
   //商品の追加
   const addItem = useCallback(
     async (price, memo, category, dateTime) => {
@@ -92,7 +69,7 @@ export const AddItem = (props: Props) => {
         alert(error);
       } else {
         if (data) {
-          props.getItemList ? props.getItemList(props.userData.id.toString(), year, month) : null;
+          props.getItemList ? props.getItemList(props.userData.userID.toString(), year, month) : null;
           props.closeModal();
         }
       }

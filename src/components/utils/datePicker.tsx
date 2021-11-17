@@ -14,15 +14,6 @@ type Props<T> = {
 const Today = new Date();
 
 export const DatePicker = <T,>(props: Props<T>) => {
-    // const MyContainer = (props) => {
-    //   return (
-    //     <div className="bg-blue-500 p-2">
-    //       <CalendarContainer className={props.className}>
-    //         <div style={{ position: "relative" }}>{props.children}</div>
-    //       </CalendarContainer>
-    //     </div>
-    //   );
-    // };
 
   return (
     <>
@@ -39,7 +30,6 @@ export const DatePicker = <T,>(props: Props<T>) => {
                 timeIntervals={props.timeIntervals}
                 selected={!value ? props.defaultDate : (value as Date)}
                 maxDate={Today}
-                // calendarContainer={MyContainer}
               />
             );
           }}
