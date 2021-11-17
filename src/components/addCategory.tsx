@@ -18,12 +18,10 @@ type FormValue = {
 };
 
 const d = new Date();
-
 const year = d.getFullYear();
 const month = d.getMonth() + 1;
 
 export const AddCategory = (props: Props) => {
-  // const [isOpen, setIsOpen] = useState<boolean>(false);
   const { isOpen, openModal, closeModal } = useToggleModal();
 
   const { register, handleSubmit } = useForm<FormValue>();
@@ -57,21 +55,35 @@ export const AddCategory = (props: Props) => {
     }
 
     closeModal();
-    props.getItemList(props.userData.id.toString(), year, month);
+    props.getItemList(props.userData.userID.toString(), year, month);
   };
-
-  // const handleOpenCategory = () => {
-  //   setIsOpen(true);
-  // };
-
-  // const handleCloseCategory = () => {
-  //   setIsOpen(false);
-  // };
 
   return (
     <>
       <div className="flex justify-end px-8">
-        <PrimaryButton type="button" text="追加" onClick={openModal} />
+        <PrimaryButton
+          type="button"
+          text={
+            <div className="flex">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="mt-1 mr-1 w-3 h-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              <p>追加</p>
+            </div>
+          }
+          onClick={openModal}
+        />
       </div>
 
       <Transition appear show={isOpen} as={Fragment}>
