@@ -9,7 +9,7 @@ type Props = {
 export const LinkButton = (props: Props) => {
   return (
     <Link href={props.href} passHref>
-      <div className="cursor-pointer">
+      <div className="group cursor-pointer">
         {props.icon}
         <p className="text-sm text-center">{props.text}</p>
       </div>
