@@ -17,7 +17,7 @@ export const DatePicker = <T,>(props: Props<T>) => {
 
   return (
     <>
-      <div className="block p-1 text-blue-500 ">
+      <div className="block p-1 text-white">
         <Controller
           control={props.control}
           name={props.name}
@@ -26,7 +26,7 @@ export const DatePicker = <T,>(props: Props<T>) => {
               <ReactDatePicker
                 dateFormat="yyyy.MM/dd"
                 onChange={onChange}
-                className="px-1 w-28 text-center cursor-pointer"
+                className="px-1 w-28 text-center bg-white bg-opacity-0 cursor-pointer"
                 timeIntervals={props.timeIntervals}
                 selected={!value ? props.defaultDate : (value as Date)}
                 maxDate={Today}
