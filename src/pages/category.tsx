@@ -1,6 +1,5 @@
 import { Tab } from "@headlessui/react";
 import { useEffect, useState } from "react";
-// import { useInView } from "react-intersection-observer";
 import { AddCategory } from "src/components/addCategory";
 import { EditCategory } from "src/components/editCategory";
 import { ItemList } from "src/components/itemList";
@@ -10,6 +9,7 @@ import { useGetItemList } from "src/hooks/useGetItemList";
 import { SecondLayout } from "src/layouts/secondLayout";
 import { client } from "src/libs/supabase";
 import { colors } from "src/utils";
+// import { MenuBar } from "src/components/menuBar";
 
 const classNames = (...classes: string[]) => {
   return classes.filter(Boolean).join(" ");
@@ -56,7 +56,7 @@ const Category = () => {
 
   useEffect(() => {
     const scrollAction = () => {
-      if (window.scrollY > 30) {
+      if (window.scrollY > 280) {
         setIsTop(true);
       } else {
         setIsTop(false);
@@ -72,81 +72,87 @@ const Category = () => {
       window.removeEventListener("scroll", scrollAction);
     };
   }, []);
-  // const [value, setValue] = useState<string>("全て");
-  // console.log(value);
 
   return userData ? (
-    <>
-      <h2 className="py-3 px-4 text-4xl font-bold">Category</h2>
-      <div className="m-3 bg-blue-300 bg-opacity-30 rounded-md shadow-2xl animate-tilt-in-right-1">
-        {userData.categoryList.map((category, index) => {
-          return (
-            <div
-              className="flex justify-between p-2 border-b last:border-b-0"
-              key={category}
-            >
-              <p>
-                <span
-                  style={{ borderColor: colors[index] }}
-                  className="inline-block mr-2 w-3 h-3 rounded-full border-2"
-                ></span>
-                {category}
-              </p>
-              <EditCategory
-                category={category}
-                getItemList={getItemList}
-                userData={userData}
-              />
-            </div>
-          );
-        })}
-      </div>
-      <AddCategory userData={userData} getItemList={getItemList} />
-      <Tab.Group defaultIndex={0}>
-        <div className="pb-16 h-screen">
-          <h2 className="p-4 text-4xl font-bold">History</h2>
-          <Tab.List
-            className={`${
-              isTop
-                ? "overflow-x-scroll py-1 flex"
-                : "flex-wrap justify-around "
-            } px-2`}
-          >
-            {isTop ? (
-              ["全て", ...userData.categoryList].map((category, index) => {
-                return (
-                  <Tab
-                    key={category}
-                    className={isTop ? classes : classes2}
-                    style={index === 0 ? {border: "solid 1px #fff"} : { border: `solid 1px ${colors[index-1]}` }}
-                  >
-                    {category}
-                  </Tab>
-                );
-              })
-            ) : (
-              <Tab className="hidden"></Tab>
-            )}
-          </Tab.List>
-          {["全て", ...userData.categoryList].map((value, index) => {
-            const categoryItemList = itemList.filter((item) => {
-              return item.categoryID === value;
-            });
-            const categoryTotalPrice = categoryItemList?.reduce(
-              (sum, element) => {
-                return sum + element.price;
-              },
-              0
-            );
+      <>
+        <h2 className="py-3 px-4 text-4xl font-bold">Category</h2>
+        <div className="m-3 shadow-2xl ">
+          {userData.categoryList.map((category, index) => {
             return (
-              <Tab.Panels key={value}>
-                <Tab.Panel
-                  className={classNames(
-                    "rounded-b-xl",
-                    "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60"
-                  )}
-                >
-                  <div className="flex justify-between">
+              <div
+                className={`flex justify-between p-2 my-1 bg-blue-300 bg-opacity-30 rounded-sm border-b last:border-b-0 ${
+                  index % 2 === 1
+                    ? "animate-tilt-in-right-1"
+                    : "animate-tilt-in-left-1"
+                } `}
+                key={category}
+              >
+                <p>
+                  <span
+                    style={{ borderColor: colors[index] }}
+                    className="inline-block mr-2 w-3 h-3 rounded-full border-2"
+                  ></span>
+                  {category}
+                </p>
+                <EditCategory
+                  category={category}
+                  getItemList={getItemList}
+                  userData={userData}
+                />
+              </div>
+            );
+          })}
+        </div>
+        <AddCategory userData={userData} getItemList={getItemList} />
+        <Tab.Group defaultIndex={0}>
+          <div className="pb-16 h-screen">
+            <h2 className="p-4 text-4xl font-bold">History</h2>
+            <Tab.List
+              className={`${
+                isTop
+                  ? "overflow-x-scroll py-1 flex"
+                  : "flex-wrap justify-around "
+              } px-2`}
+            >
+              {isTop ? (
+                ["全て", ...userData.categoryList].map((category, index) => {
+                  return (
+                    <Tab
+                      key={category}
+                      className={isTop ? classes : classes2}
+                      style={
+                        index === 0
+                          ? { border: "solid 1px #fff" }
+                          : { border: `solid 1px ${colors[index - 1]}` }
+                      }
+                    >
+                      {category}
+                    </Tab>
+                  );
+                })
+              ) : (
+                <Tab className="hidden"></Tab>
+              )}
+            </Tab.List>
+            {["全て", ...userData.categoryList].map((value, index) => {
+              const categoryItemList = itemList.filter((item) => {
+                return item.categoryID === value;
+              });
+              const categoryTotalPrice = categoryItemList?.reduce(
+                (sum, element) => {
+                  return sum + element.price;
+                },
+                0
+              );
+              return (
+                <Tab.Panels key={value}>
+                  <Tab.Panel
+                    className={classNames(
+                      "rounded-b-xl",
+                      "focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60"
+                    )}
+                  >
+                    <div className="flex justify-between">
                       {isTop ? (
                         <div
                           className={`animate-slide-in-bck-center text-lg py-2 my-2 px-6 font-semibold border-r w-1/2`}
@@ -162,26 +168,26 @@ const Category = () => {
                       ) : (
                         <div className="w-1/2"></div>
                       )}
-                    <div className="my-auto mx-auto">
-                      <ChangeMonthButton
-                        prevMonth={prevMonth}
-                        nextMonth={nextMonth}
-                        month={month}
-                      />
+                      <div className="my-auto mx-auto">
+                        <ChangeMonthButton
+                          prevMonth={prevMonth}
+                          nextMonth={nextMonth}
+                          month={month}
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <ItemList
-                    items={index === 0 ? itemList : categoryItemList}
-                    userData={userData}
-                    getItemList={getItemList}
-                  />
-                </Tab.Panel>
-              </Tab.Panels>
-            );
-          })}
-        </div>
-      </Tab.Group>
-    </>
+                    <ItemList
+                      items={index === 0 ? itemList : categoryItemList}
+                      userData={userData}
+                      getItemList={getItemList}
+                    />
+                  </Tab.Panel>
+                </Tab.Panels>
+              );
+            })}
+          </div>
+        </Tab.Group>
+      </>
   ) : null;
 };
 
