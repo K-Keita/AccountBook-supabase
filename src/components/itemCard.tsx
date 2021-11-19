@@ -106,7 +106,7 @@ export const ItemCard = (props: Props) => {
 
   return (
     <>
-      <div className="py-1 px-2 my-2 mx-1 text-lg text-white bg-item bg-opacity-60 rounded-xl cursor-pointer">
+      <div className="py-1 px-2 my-2 mx-1 text-lg text-white bg-item bg-opacity-60 rounded-lg cursor-pointer">
         <div className="flex mb-1 border-b">
           <p className="px-2 mr-1 w-20 text-lg font-bold text-left">
             ¥{props.item.price.toLocaleString()}
@@ -115,7 +115,7 @@ export const ItemCard = (props: Props) => {
           <button className="px-2 my-1 border-r border-l" onClick={openModal}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="w-6 h-6 text-blue-400"
+              className="w-6 h-6 text-blue-400 hover:text-blue-500 hover:animate-jello-horizontal"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -131,7 +131,7 @@ export const ItemCard = (props: Props) => {
           <button className="px-2 my-1" onClick={handleRemove}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="w-6 h-6 text-red-400"
+              className="w-6 h-6 text-red-400 hover:text-red-500 hover:animate-jello-horizontal"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
