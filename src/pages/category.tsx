@@ -1,15 +1,27 @@
 import { Tab } from "@headlessui/react";
+import { Title } from "chart.js";
 import { useEffect, useState } from "react";
 import { AddCategory } from "src/components/addCategory";
+import { AddItem } from "src/components/addItem";
 import { EditCategory } from "src/components/editCategory";
 import { ItemList } from "src/components/itemList";
+import { LinkButtonList } from "src/components/LinkButtonList";
 import { ChangeMonthButton } from "src/components/utils/changeMonthButton";
+import { PriceDisplay } from "src/components/utils/PriceDisplay";
+import { Title as TitleArea } from "src/components/utils/title";
 import { useChangeMonth } from "src/hooks/useChangeMonth";
 import { useGetItemList } from "src/hooks/useGetItemList";
+import { useToggleModal } from "src/hooks/useToggleModal";
 import { SecondLayout } from "src/layouts/secondLayout";
 import { client } from "src/libs/supabase";
 import { colors } from "src/utils";
 // import { MenuBar } from "src/components/menuBar";
+
+const week = ["日", "月", "火", "水", "木", "金", "土"];
+
+const d = new Date();
+const m = d.getMonth() + 1;
+const date = d.getDate();
 
 const classNames = (...classes: string[]) => {
   return classes.filter(Boolean).join(" ");
@@ -40,6 +52,7 @@ const Category = () => {
 
   const { year, month, prevMonth, nextMonth } = useChangeMonth();
   const { userData, itemList, totalPrice, getItemList } = useGetItemList();
+  const { isOpen, openModal, closeModal } = useToggleModal();
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
   // const { ref, inView } = useInView({
@@ -73,8 +86,33 @@ const Category = () => {
     };
   }, []);
 
+  //月の日数
+  const count = new Date(year, month, 0).getDate();
+
+  //月の日数の配列
+  const thisMonthDays = [...Array(count)].map((_, i) => {
+    return i + 1;
+  });
+
+  //月の初日の曜日
+  const thisMonthFirstDays = new Date(year, month - 1, 1).getDay();
+
+  //1日の平均金額(今月)
+  const targetAverage = userData ? userData.targetAmount / count : null;
+
+  //1日の平均金額(現在)
+  const nowAverage = totalPrice / d.getDate();
+
+  const item = itemList.filter((value) => {
+    return value.buyDate[2] === date.toString();
+  });
+  const totalItemsPrice = item.reduce((sum, element) => {
+    return sum + element.price;
+  }, 0);
+
   return userData ? (
-      <>
+    <div >
+      <section>
         <h2 className="py-3 px-4 text-4xl font-bold">Category</h2>
         <div className="m-3 shadow-2xl ">
           {userData.categoryList.map((category, index) => {
@@ -104,6 +142,8 @@ const Category = () => {
           })}
         </div>
         <AddCategory userData={userData} getItemList={getItemList} />
+      </section>
+      <section>
         <Tab.Group defaultIndex={0}>
           <div className="pb-16 h-screen">
             <h2 className="p-4 text-4xl font-bold">History</h2>
@@ -187,7 +227,8 @@ const Category = () => {
             })}
           </div>
         </Tab.Group>
-      </>
+      </section>
+    </div>
   ) : null;
 };
 
