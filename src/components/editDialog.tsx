@@ -53,7 +53,7 @@ export const EditDialog = (props: Props) => {
         className="overflow-y-auto fixed inset-0 z-50"
         onClose={props.closeModal}
       >
-        <div className="relative px-3 text-center border-2">
+        <div className="relative px-3 text-center w-96 mx-auto">
           <span
             className="inline-block h-screen align-middle"
             aria-hidden="true"
@@ -71,22 +71,45 @@ export const EditDialog = (props: Props) => {
           >
             <div
               style={{ fontFamily: "游明朝体" }}
-              className="inline-block overflow-hidden p-6 py-10 w-full text-left align-middle bg-gradient-to-r from-indigo-300 to-purple-400 rounded-xl border border-gray-300 shadow-xl transition-all transform"
+              className="inline-block overflow-hidden px-6 pt-10 pb-6 w-full text-left align-middle bg-blue-800 rounded-xl border border-gray-300 shadow-xl transition-all transform"
             >
+              <button
+                onClick={props.closeModal}
+                type="reset"
+                className="absolute top-3 right-3 p-1 text-white hover:text-flower rounded-full"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-8 h-8"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.6}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
               <Dialog.Title
                 as="h3"
-                className="text-xl font-medium leading-6 text-center text-gray-900"
+                className="text-xl font-medium leading-6 text-center text-white"
               >
                 {props.title}
               </Dialog.Title>
-              <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
+              <form
+                className="mt-4 text-white"
+                onSubmit={handleSubmit(onSubmit)}
+              >
                 <p>Price</p>
                 <input
                   defaultValue={props.price}
                   autoFocus
                   type="number"
                   {...register("price", { required: true, min: 0 })}
-                  className="col-span-3 p-1 w-full bg-white rounded hover:border"
+                  className="p-1 mb-3 w-full bg-white bg-opacity-40 rounded hover:border"
                 />
                 {errors.price && (
                   <span className="text-xs text-red-500">必須項目です</span>
@@ -94,7 +117,7 @@ export const EditDialog = (props: Props) => {
                 <p>Category</p>
                 <select
                   {...register("category")}
-                  className="block p-2 mb-3 w-full text-lg"
+                  className="py-2 px-1 mb-3 w-full bg-white bg-opacity-40 rounded hover:border"
                 >
                   {props.userData?.categoryList?.map((value: string) => {
                     return (
@@ -109,7 +132,7 @@ export const EditDialog = (props: Props) => {
                   defaultValue={props.memo}
                   autoFocus
                   {...register("memo")}
-                  className="p-1 mb-3 w-full bg-white rounded hover:border"
+                  className="p-1 mb-3 w-full bg-white bg-opacity-40 rounded hover:border"
                 />
                 <div className="absolute top-0 w-32">
                   <DatePicker
@@ -118,18 +141,32 @@ export const EditDialog = (props: Props) => {
                     error={errors.dateTime?.message}
                   />
                 </div>
+
                 <div className="flex justify-around mt-3">
                   <PrimaryButton
-                    text="Add"
+                    text={
+                      <div className="flex">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="mr-1 w-6 h-6"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                        <p>登録</p>
+                      </div>
+                    }
                     type="submit"
                     onClick={() => {
                       handleSubmit(onSubmit);
                     }}
-                  />
-                  <PrimaryButton
-                    type="reset"
-                    text="Cancel"
-                    onClick={props.closeModal}
                   />
                 </div>
               </form>
