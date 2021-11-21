@@ -4,7 +4,7 @@ import { client } from "src/libs/supabase";
 
 export const Header = () => {
   return (
-    <header className="flex justify-between p-5 h-20">
+    <header className="flex fixed top-0 z-50 justify-between px-5 w-full h-16 bg-gray-400">
       <Link href="/">
         <a className="text-3xl">
           <h2 className="font-bold text-white shadow">-Title-</h2>
