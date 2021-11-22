@@ -112,8 +112,8 @@ const Home = () => {
   }, 0);
 
   return userData ? (
-    <div className="pt-1 min-h-lg text-white">
-      <div className="fixed py-2 w-full h-lg">
+    <main className="pt-1 min-h-lg text-white sm:flex sm:pt-16 sm:h-screen">
+      <section className="fixed py-2 w-full h-lg sm:relative sm:max-w-2xl">
         <h2 className="px-3 text-2xl">TITLE</h2>
         <div className="flex flex-col justify-end h-3lg">
           <div className="py-4 px-8">
@@ -126,11 +126,11 @@ const Home = () => {
           />
           <button
             onClick={openModal}
-            className="flex justify-center py-1 px-2 my-3 mx-auto bg-flower bg-opacity-40 rounded-lg border cursor-pointer"
+            className="flex justify-center py-1 px-1 my-3 mx-auto hover:bg-flower hover:bg-opacity-60 border border-flower shadow-2xl transition duration-300 cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="mr-1 w-8 h-8"
+              className="w-8 h-8"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -142,7 +142,7 @@ const Home = () => {
                 d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
               />
             </svg>
-            <p className="text-lg text-center">register</p>
+            <p className="px-1 text-lg text-center">register</p>
             <AddItem
               isOpen={isOpen}
               closeModal={closeModal}
@@ -152,9 +152,9 @@ const Home = () => {
           </button>
           <LinkButtonList />
         </div>
-      </div>
-      <div className="relative -z-10 h-lg opacity-0" />
-      <div className="relative z-40 pt-8 w-full h-screen bg-home rounded-t-3xl animate-slide-in-bottom md:p-5 md:w-1/2">
+      </section>
+      <div className="relative -z-10 h-lg opacity-0 sm:hidden" />
+      <section className="relative z-40 pt-8 w-full max-w-3xl h-screen bg-home rounded-t-3xl animate-slide-in-bottom sm:h-auto md:p-5">
         <div className="flex px-4">
           <ChangeMonthButton
             prevMonth={prevMonth}
@@ -243,7 +243,7 @@ const Home = () => {
                   )}
                 >
                   {isTop ? (
-                    <div className="table p-3 mx-2 -mt-12 mb-3 w-5/12 text-base border-r animate-slit-in-vertical">
+                    <div className="table p-3 mx-2 -mt-16 mb-3 w-5/12 text-base border-r animate-slit-in-vertical">
                       total:
                       <span className="block text-3xl font-bold text-center">
                         ¥
@@ -269,10 +269,10 @@ const Home = () => {
               </Tab.Panels>
             );
           })}
-          {isTop ? <MenuBar /> : null}
+          {isTop ? <MenuBar page="/" /> : null}
         </Tab.Group>
-      </div>
-    </div>
+      </section>
+    </main>
   ) : null;
 };
 
