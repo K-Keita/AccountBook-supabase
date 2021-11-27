@@ -1,4 +1,4 @@
-import {useCallback,useState} from 'react';
+import {useCallback,useEffect,useState} from 'react';
 
 const d = new Date();
 const y = d.getFullYear();
@@ -8,17 +8,28 @@ export const useChangeMonth = () => {
   const [year, setYear] = useState<number>(y);
   const [month, setMonth] = useState<number>(m);
 
+  useEffect(() => {
+    setMonth(m);
+    setYear(y);
+  }, [])
+
   //前の月へ
   const prevMonth = useCallback(() => {
     if (month === 1) {
       setYear((year) => {
-        return year - 1;
+        // if (year) {
+
+          return year - 1;
+        // }
       });
       setMonth(12);
       return;
     }
     setMonth((month) => {
-      return month - 1;
+      // if (month) {
+
+        return month - 1;
+      // }
     });
   }, [month]);
 
@@ -28,14 +39,20 @@ export const useChangeMonth = () => {
       return false;
     } else if (month === 12) {
       setYear((year) => {
-        return year - 1;
+        // if (year){
+
+          return year - 1;
+        // }
       });
       setMonth(1);
       return;
     }
 
     setMonth((month) => {
-      return month + 1;
+      // if (month) {
+
+        return month + 1;
+      // }
     });
   }, [month, year]);
 
