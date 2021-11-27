@@ -112,8 +112,8 @@ const Home = () => {
   }, 0);
 
   return userData ? (
-    <main className="pt-1 min-h-lg text-white sm:flex sm:pt-16 sm:h-screen">
-      <section className="fixed py-2 w-full h-lg sm:relative sm:max-w-2xl">
+    <main className="pt-1 min-h-lg text-white sm:h-screen">
+      <section className="fixed py-2 w-full h-lg sm:hidden sm:relative sm:max-w-2xl">
         <h2 className="px-3 text-2xl">TITLE</h2>
         <div className="flex flex-col justify-end h-3lg">
           <div className="py-4 px-8">
@@ -154,7 +154,7 @@ const Home = () => {
         </div>
       </section>
       <div className="relative -z-10 h-lg opacity-0 sm:hidden" />
-      <section className="relative z-40 pt-8 w-full max-w-3xl h-screen bg-home rounded-t-3xl animate-slide-in-bottom sm:h-auto md:p-5">
+      <section className="relative z-40 pt-8 w-full max-w-3xl h-screen bg-home rounded-t-3xl animate-slide-in-bottom sm:min-h-screen sm:h-auto md:p-5">
         <div className="flex px-4">
           <ChangeMonthButton
             prevMonth={prevMonth}

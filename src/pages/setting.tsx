@@ -72,7 +72,7 @@ const Setting = () => {
   return (
     <>
       <h2 className="p-4 text-4xl font-bold">Setting</h2>
-      <div className="flex py-2 my-5 mx-auto w-11/12 border-b">
+      <section className="flex py-2 my-5 mx-auto w-11/12 border-b">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="mx-2 w-6 h-6"
@@ -104,8 +104,8 @@ const Setting = () => {
             } inline-block w-4 h-4 transform bg-white rounded-full`}
           />
         </Switch>
-      </div>
-      <div className="py-2 my-5 mx-auto w-11/12 border-b">
+      </section>
+      <section className="py-2 my-5 mx-auto w-11/12 border-b">
         <div className="flex">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -182,8 +182,8 @@ const Setting = () => {
             />
           </form>
         ) : null}
-      </div>
-      <div className="flex py-2 my-5 mx-auto w-11/12 border-b ">
+      </section>
+      <section className="flex py-2 my-5 mx-auto w-11/12 border-b ">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="mx-2 w-6 h-6"
@@ -214,7 +214,7 @@ const Setting = () => {
             d="M9 5l7 7-7 7"
           />
         </svg>
-      </div>
+      </section>
     </>
   );
 };
