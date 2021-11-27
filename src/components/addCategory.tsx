@@ -67,7 +67,7 @@ export const AddCategory = (props: Props) => {
             <div className="flex">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="mt-1 mr-1 w-3 h-3"
+                className="mt-1 mr-1 w-4 h-4"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -75,7 +75,7 @@ export const AddCategory = (props: Props) => {
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth={2}
+                  strokeWidth={1.6}
                   d="M12 4v16m8-8H4"
                 />
               </svg>

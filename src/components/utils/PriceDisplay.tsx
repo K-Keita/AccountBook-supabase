@@ -6,7 +6,7 @@ type Props<T> = {
 
 export const PriceDisplay = (props: Props<number>) => {
   return (
-    <section className="flex py-3 px-4">
+    <section className="flex py-3 px-4 sm:min-w-3xl">
       <div className="py-1 mx-2 w-1/2 rounded-sm border-r">
         <p className="px-3 text-sm">Total</p>
         <h3 className="text-2xl tracking-wide text-center">

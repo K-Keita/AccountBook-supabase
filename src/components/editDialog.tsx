@@ -53,7 +53,7 @@ export const EditDialog = (props: Props) => {
         className="overflow-y-auto fixed inset-0 z-50"
         onClose={props.closeModal}
       >
-        <div className="relative px-3 text-center w-96 mx-auto">
+        <div className="relative px-3 mx-auto w-96 text-center">
           <span
             className="inline-block h-screen align-middle"
             aria-hidden="true"
@@ -141,7 +141,6 @@ export const EditDialog = (props: Props) => {
                     error={errors.dateTime?.message}
                   />
                 </div>
-
                 <div className="flex justify-around mt-3">
                   <PrimaryButton
                     text={
