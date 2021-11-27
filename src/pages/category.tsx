@@ -52,14 +52,7 @@ const Category = () => {
 
   const { year, month, prevMonth, nextMonth } = useChangeMonth();
   const { userData, itemList, totalPrice, getItemList } = useGetItemList();
-  const { isOpen, openModal, closeModal } = useToggleModal();
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  // const { ref, inView } = useInView({
-  //   // オプション
-  //   rootMargin: "300px", // ref要素が現れてから50px過ぎたら
-  //   triggerOnce: false, // 最初の一度だけ実行
-  // });
 
   useEffect(() => {
     if (user) {
@@ -67,9 +60,10 @@ const Category = () => {
     }
   }, [getItemList, user, month, year]);
 
+
   useEffect(() => {
     const scrollAction = () => {
-      if (window.scrollY > 280) {
+      if (window.scrollY > 200) {
         setIsTop(true);
       } else {
         setIsTop(false);
@@ -86,32 +80,12 @@ const Category = () => {
     };
   }, []);
 
-  //月の日数
-  const count = new Date(year, month, 0).getDate();
+  console.log(isTop)
 
-  //月の日数の配列
-  const thisMonthDays = [...Array(count)].map((_, i) => {
-    return i + 1;
-  });
 
-  //月の初日の曜日
-  const thisMonthFirstDays = new Date(year, month - 1, 1).getDay();
-
-  //1日の平均金額(今月)
-  const targetAverage = userData ? userData.targetAmount / count : null;
-
-  //1日の平均金額(現在)
-  const nowAverage = totalPrice / d.getDate();
-
-  const item = itemList.filter((value) => {
-    return value.buyDate[2] === date.toString();
-  });
-  const totalItemsPrice = item.reduce((sum, element) => {
-    return sum + element.price;
-  }, 0);
 
   return userData ? (
-    <div >
+    <>
       <section>
         <h2 className="py-3 px-4 text-4xl font-bold">Category</h2>
         <div className="m-3 shadow-2xl ">
@@ -228,7 +202,7 @@ const Category = () => {
           </div>
         </Tab.Group>
       </section>
-    </div>
+      </>
   ) : null;
 };
 
