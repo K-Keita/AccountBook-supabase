@@ -1,8 +1,6 @@
 import { Tab } from "@headlessui/react";
-import { Title } from "chart.js";
 import { useEffect, useState } from "react";
 import { AddCategory } from "src/components/addCategory";
-import { AddItem } from "src/components/addItem";
 import { EditCategory } from "src/components/editCategory";
 import { ItemList } from "src/components/itemList";
 import { LinkButtonList } from "src/components/LinkButtonList";
@@ -11,16 +9,11 @@ import { PriceDisplay } from "src/components/utils/PriceDisplay";
 import { Title as TitleArea } from "src/components/utils/title";
 import { useChangeMonth } from "src/hooks/useChangeMonth";
 import { useGetItemList } from "src/hooks/useGetItemList";
-import { useToggleModal } from "src/hooks/useToggleModal";
 import { SecondLayout } from "src/layouts/secondLayout";
 import { client } from "src/libs/supabase";
 import { colors } from "src/utils";
-// import { MenuBar } from "src/components/menuBar";
-
-const week = ["日", "月", "火", "水", "木", "金", "土"];
 
 const d = new Date();
-const m = d.getMonth() + 1;
 const date = d.getDate();
 
 const classNames = (...classes: string[]) => {
@@ -53,13 +46,11 @@ const Category = () => {
   const { year, month, prevMonth, nextMonth } = useChangeMonth();
   const { userData, itemList, totalPrice, getItemList } = useGetItemList();
 
-
   useEffect(() => {
     if (user) {
       getItemList(user.id, year, month);
     }
   }, [getItemList, user, month, year]);
-
 
   useEffect(() => {
     const scrollAction = () => {
@@ -80,13 +71,30 @@ const Category = () => {
     };
   }, []);
 
-  console.log(isTop)
-
-
+  const item = itemList.filter((value) => {
+    return value.buyDate[2] === date.toString();
+  });
+  const totalItemsPrice = item.reduce((sum, element) => {
+    return sum + element.price;
+  }, 0);
 
   return userData ? (
-    <>
-      <section>
+    <div className="sm:flex">
+      <section className="hidden fixed py-2 w-full h-lg sm:block sm:relative sm:max-w-2xl">
+        <h2 className="px-3 text-2xl">TITLE</h2>
+        <div className="flex flex-col h-3lg">
+          <div className="py-4 px-8">
+            <TitleArea />
+          </div>
+          <PriceDisplay
+            totalPrice={totalPrice}
+            targetAmount={userData.targetAmount}
+            totalItemsPrice={totalItemsPrice}
+          />
+          <LinkButtonList />
+        </div>
+      </section>
+      <section className="sm:w-1/3">
         <h2 className="py-3 px-4 text-4xl font-bold">Category</h2>
         <div className="m-3 shadow-2xl ">
           {userData.categoryList.map((category, index) => {
@@ -117,7 +125,7 @@ const Category = () => {
         </div>
         <AddCategory userData={userData} getItemList={getItemList} />
       </section>
-      <section>
+      <section className="sm:w-1/3">
         <Tab.Group defaultIndex={0}>
           <div className="pb-16 h-screen">
             <h2 className="p-4 text-4xl font-bold">History</h2>
@@ -202,7 +210,7 @@ const Category = () => {
           </div>
         </Tab.Group>
       </section>
-      </>
+    </div>
   ) : null;
 };
 
