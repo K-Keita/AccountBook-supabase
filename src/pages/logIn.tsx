@@ -33,6 +33,14 @@ const LogIn = () => {
   }, []);
 
   const signInWithEmail = async (email: string, password: string) => {
+    if (email === "") {
+      alert("メールアドレスを入力して下さい");
+      return false;
+    }
+    if (password === "") {
+      alert("パスワードを入力して下さい");
+      return false;
+    }
     const { user, error } = await client.auth.signIn({
       email: email,
       password: password,

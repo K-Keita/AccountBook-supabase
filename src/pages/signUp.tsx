@@ -77,7 +77,7 @@ const SignUp = () => {
       <div className="px-8 pt-28 pb-5">
         <Title />
       </div>
-      <GoogleButton text="Googleで登録" onClick={signUpWithGoogle} />
+      <GoogleButton text="Googleでログイン" onClick={signUpWithGoogle} />
       <div className="flex mt-8 opacity-80">
         <div className="mx-auto mb-3 w-3/12 border-b" />
         <p>または</p>
