@@ -1,20 +1,15 @@
 import { Tab } from "@headlessui/react";
 import { useEffect, useState } from "react";
-import { AddCategory } from "src/components/addCategory";
-import { EditCategory } from "src/components/editCategory";
 import { ItemList } from "src/components/itemList";
-import { LinkButtonList } from "src/components/LinkButtonList";
+import { CategoryContainer } from "src/components/sectionContainer/CategoryContaiiner";
+import { PcMenuContainer } from "src/components/sectionContainer/pcMenuContainer";
 import { ChangeMonthButton } from "src/components/utils/changeMonthButton";
-import { PriceDisplay } from "src/components/utils/PriceDisplay";
-import { Title as TitleArea } from "src/components/utils/title";
 import { useChangeMonth } from "src/hooks/useChangeMonth";
 import { useGetItemList } from "src/hooks/useGetItemList";
 import { SecondLayout } from "src/layouts/secondLayout";
 import { client } from "src/libs/supabase";
 import { colors } from "src/utils";
 
-const d = new Date();
-const date = d.getDate();
 
 const classNames = (...classes: string[]) => {
   return classes.filter(Boolean).join(" ");
@@ -42,7 +37,6 @@ const classes2 = ({ selected }: any) => {
 const Category = () => {
   const user = client.auth.user();
   const [isTop, setIsTop] = useState<boolean>(false);
-
   const { year, month, prevMonth, nextMonth } = useChangeMonth();
   const { userData, itemList, totalPrice, getItemList } = useGetItemList();
 
@@ -71,61 +65,15 @@ const Category = () => {
     };
   }, []);
 
-  const item = itemList.filter((value) => {
-    return value.buyDate[2] === date.toString();
-  });
-  const totalItemsPrice = item.reduce((sum, element) => {
-    return sum + element.price;
-  }, 0);
-
   return userData ? (
     <div className="sm:flex">
-      <section className="hidden fixed py-2 w-full h-lg sm:block sm:relative sm:max-w-2xl">
-        <h2 className="px-3 text-2xl">TITLE</h2>
-        <div className="flex flex-col h-3lg">
-          <div className="py-4 px-8">
-            <TitleArea />
-          </div>
-          <PriceDisplay
-            totalPrice={totalPrice}
-            targetAmount={userData.targetAmount}
-            totalItemsPrice={totalItemsPrice}
-          />
-          <LinkButtonList />
-        </div>
-      </section>
-      <section className="sm:w-1/3">
-        <h2 className="py-3 px-4 text-4xl font-bold">Category</h2>
-        <div className="m-3 shadow-2xl ">
-          {userData.categoryList.map((category, index) => {
-            return (
-              <div
-                className={`flex justify-between p-2 my-1 bg-blue-300 bg-opacity-30 rounded-sm border-b last:border-b-0 ${
-                  index % 2 === 1
-                    ? "animate-tilt-in-right-1"
-                    : "animate-tilt-in-left-1"
-                } `}
-                key={category}
-              >
-                <p>
-                  <span
-                    style={{ borderColor: colors[index] }}
-                    className="inline-block mr-2 w-3 h-3 rounded-full border-2"
-                  ></span>
-                  {category}
-                </p>
-                <EditCategory
-                  category={category}
-                  getItemList={getItemList}
-                  userData={userData}
-                />
-              </div>
-            );
-          })}
-        </div>
-        <AddCategory userData={userData} getItemList={getItemList} />
-      </section>
-      <section className="sm:w-1/3">
+      <PcMenuContainer
+        totalPrice={totalPrice}
+        targetAmount={userData.targetAmount}
+        itemList={itemList}
+      />
+      <CategoryContainer userData={userData} getItemList={getItemList}/>
+      <section className="border-white sm:w-1/3 sm:h-screen sm:border-l">
         <Tab.Group defaultIndex={0}>
           <div className="pb-16 h-screen">
             <h2 className="p-4 text-4xl font-bold">History</h2>
