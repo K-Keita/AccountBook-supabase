@@ -10,11 +10,12 @@ type Props = {
 };
 
 export const ChartContainer = (props: Props) => {
+
   return (
-    <section className="border-white sm:w-1/3 sm:h-screen sm:border-l">
+    <section className="border-white sm:h-screen sm:border-l">
       <div className="flex justify-between my-3">
         <h2 className="px-4 text-4xl font-bold">Chart</h2>
-        <div className="px-8 mt-5">
+        <div className="px-8 mt-5 sm:mt-0">
           <ChangeMonthButton
             prevMonth={props.prevMonth}
             nextMonth={props.nextMonth}

@@ -39,7 +39,7 @@ export const ItemForm = () => {
   }, [getItemList, user, month, year]);
 
   return (
-    <section className="py-2 mx-auto w-80">
+    <section className="hidden py-2 mx-auto w-80 sm:block">
       <div
         style={{ fontFamily: "游明朝体" }}
         className="inline-block overflow-hidden py-3 px-6 w-full text-left align-middle rounded-xl transition-all transform"

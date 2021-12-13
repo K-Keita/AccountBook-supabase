@@ -153,7 +153,7 @@ export const MenuBar = (props: Props) => {
 
 
   return (
-    <div className="flex fixed bottom-0 left-0 z-50 justify-around py-1 w-full bg-gradient-to-r from-blue-900 via-purple-900 to-pink-800">
+    <div className="flex fixed bottom-0 left-0 z-50 justify-around py-1 w-full bg-gradient-to-r from-blue-900 via-purple-900 to-pink-800 sm:hidden">
       {menu.map((value) => {
         return (
           <LinkButton

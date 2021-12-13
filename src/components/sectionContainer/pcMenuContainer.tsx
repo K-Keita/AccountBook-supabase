@@ -3,6 +3,8 @@ import { PriceDisplay } from "src/components/utils/PriceDisplay";
 import { Title as TitleArea } from "src/components/utils/title";
 import type { ItemData } from "src/interface/type";
 
+import { LinkBar } from "../utils/LinkBar";
+
 const d = new Date();
 const date = d.getDate();
 
