@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { ByCategoryContainer } from "src/components/sectionContainer/byCategoryContainer";
-import { ChartContainer } from "src/components/sectionContainer/ChartContainer";
+import { ChartContainer } from "src/components/sectionContainer/chartContainer";
 import { PcMenuContainer } from "src/components/sectionContainer/pcMenuContainer";
 import { useChangeMonth } from "src/hooks/useChangeMonth";
 import { useGetItemList } from "src/hooks/useGetItemList";

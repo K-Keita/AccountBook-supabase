@@ -1,7 +1,7 @@
 import { Tab } from "@headlessui/react";
 import { useEffect, useState } from "react";
 import { ItemList } from "src/components/itemList";
-import { CategoryContainer } from "src/components/sectionContainer/CategoryContaiiner";
+import { CategoryContainer } from "src/components/sectionContainer/categoryContaiiner";
 import { PcMenuContainer } from "src/components/sectionContainer/pcMenuContainer";
 import { ChangeMonthButton } from "src/components/utils/changeMonthButton";
 import { useChangeMonth } from "src/hooks/useChangeMonth";
