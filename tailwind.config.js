@@ -6,6 +6,7 @@ module.exports = {
     minHeight: {
       sm: "300px",
       lg: "90vh",
+      "3lg": "380px",
       screen: "100vh",
     },
     maxHeight: {
@@ -23,7 +24,7 @@ module.exports = {
     maxWidth: {
       lg: "110px",
       xl: "320px",
-      "2xl": "400px",
+      "2xl": "330px",
       "3xl": "550px",
       "4xl": "600px",
       "6xl": "950px",
@@ -274,6 +275,7 @@ module.exports = {
         "3lg": "60vh",
         "4lg": "30vh",
         "5lg": "90vh",
+        "6lg": "80vh",
       },
       width: {
         almostFull: "98%",
