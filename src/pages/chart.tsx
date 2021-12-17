@@ -1,7 +1,9 @@
 import { useEffect } from "react";
+import { Graph } from "src/components/Graph";
 import { ByCategoryContainer } from "src/components/sectionContainer/byCategoryContainer";
 import { ChartContainer } from "src/components/sectionContainer/chartContainer";
 import { PcMenuContainer } from "src/components/sectionContainer/pcMenuContainer";
+import { ChangeMonthButton } from "src/components/utils/changeMonthButton";
 import { useChangeMonth } from "src/hooks/useChangeMonth";
 import { useGetItemList } from "src/hooks/useGetItemList";
 import { SecondLayout } from "src/layouts/secondLayout";
@@ -29,17 +31,29 @@ const Chart = () => {
     return totalPrice;
   });
 
-
   return userData ? (
-    <div className="sm:flex sm:overflow-y-scroll">
+    <main className="grid-cols-3 sm:grid sm:overflow-y-scroll">
       <PcMenuContainer
         totalPrice={totalPrice}
         targetAmount={userData.targetAmount}
         itemList={itemList}
       />
-      <ChartContainer prevMonth={prevMonth} nextMonth={nextMonth} month={month} priceArr={priceArr} categoryList={userData.categoryList} />
-      <ByCategoryContainer itemList={itemList} totalPrice={totalPrice} categoryList={userData.categoryList}/>
-    </div>
+      <ChartContainer
+        changeMonthButton={
+          <ChangeMonthButton
+            month={month}
+            prevMonth={prevMonth}
+            nextMonth={nextMonth}
+          />
+        }
+        graph={<Graph arr={priceArr} labels={userData.categoryList} />}
+      />
+      <ByCategoryContainer
+        itemList={itemList}
+        totalPrice={totalPrice}
+        categoryList={userData.categoryList}
+      />
+    </main>
   ) : null;
 };
 
