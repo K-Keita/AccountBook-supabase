@@ -29,6 +29,7 @@ export const ItemForm = () => {
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     // AddItem(data.price, data.memo, data.category, data.dateTime);
+    AddItem(data.price, data.memo, data.category, data.dateTime);
     reset();
   };
 
@@ -42,7 +43,7 @@ export const ItemForm = () => {
     <section className="hidden py-2 mx-auto w-80 sm:block">
       <div
         style={{ fontFamily: "游明朝体" }}
-        className="inline-block overflow-hidden py-3 px-6 w-full text-left align-middle rounded-xl transition-all transform"
+        className="inline-block overflow-hidden px-4 w-full text-left align-middle rounded-xl transition-all transform"
       >
         <h3 className="text-2xl font-semibold leading-6 text-white">
           商品追加

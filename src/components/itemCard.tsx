@@ -14,13 +14,6 @@ type Props = {
   getItemList: (id: string, year: number, month: number) => void;
 };
 
-// type FormValues = {
-//   price: number;
-//   memo: string;
-//   category: string;
-//   datetime: string;
-// };
-
 const d = new Date();
 const year = d.getFullYear();
 const month = d.getMonth() + 1;
@@ -37,17 +30,6 @@ const colors = [
 
 export const ItemCard = (props: Props) => {
   const { isOpen, openModal, closeModal } = useToggleModal();
-
-  // const {
-  //   register,
-  //   // control,
-  //   handleSubmit,
-  //   formState: { errors },
-  // } = useForm<FormValues>();
-
-  // const onSubmit: SubmitHandler<FormValues> = (data) => {
-  //   handleSave(data.price, data.memo, data.category);
-  // };
 
   const handleRemove = useCallback(async () => {
     if (!confirm("削除しますか？")) {
@@ -166,84 +148,6 @@ export const ItemCard = (props: Props) => {
         getItemList={props.getItemList}
         handleSave={handleSave}
       />
-      {/*
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog
-          as="div"
-          className="overflow-y-auto fixed inset-0 z-40"
-          onClose={closeModal}
-        >
-          <div className="px-4 text-center border-2">
-            <span
-              className="inline-block h-screen align-middle"
-              aria-hidden="true"
-            >
-              &#8203;
-            </span>
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
-            >
-              <div className="inline-block overflow-hidden p-6 my-8 w-full text-left align-middle bg-gray-50 rounded-xl border border-gray-300 shadow-xl transition-all transform">
-                <Dialog.Title
-                  as="h3"
-                  className="text-2xl font-medium leading-6 text-center text-gray-900"
-                >
-                  編集
-                </Dialog.Title>
-                <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
-                  <p>Price</p>
-                  <input
-                    defaultValue={props.item.price}
-                    autoFocus
-                    type="number"
-                    {...register("price", { required: true, min: 0 })}
-                    className="col-span-3 p-2 w-full h-10 bg-white rounded hover:border shadow appearance-none"
-                  />
-                  {errors.price && <span>This field is required</span>}
-                  <p>Memo</p>
-                  <input
-                    defaultValue={props.item.description}
-                    autoFocus
-                    {...register("memo")}
-                    className="col-span-3 p-2 w-full h-10 bg-white rounded hover:border shadow appearance-none"
-                  />
-                  <select
-                    {...register("category")}
-                    defaultValue={props.item.categoryID}
-                  >
-                    {props.userData?.categoryList?.map((value: string) => {
-                      return (
-                        <option value={value} key={value}>
-                          {value}
-                        </option>
-                      );
-                    })}
-                  </select>
-                  <div className="flex justify-around mt-3">
-                    <input
-                      type="submit"
-                      value="save"
-                      className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer"
-                    />
-                    <input
-                      type="reset"
-                      onClick={closeModal}
-                      className="table p-1 mx-4 text-sm border border-green-400 cursor-pointer"
-                      value="Cancel"
-                    />
-                  </div>
-                </form>
-              </div>
-            </Transition.Child>
-          </div>
-        </Dialog>
-      </Transition> */}
     </>
   );
 };
