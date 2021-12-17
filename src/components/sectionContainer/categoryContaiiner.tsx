@@ -7,11 +7,13 @@ import { EditCategory } from "../editCategory";
 type Props = {
   userData: UserData;
   getItemList: (id: string, year: number, month: number) => Promise<void>;
+  // editCategory: JSX.Element;
+  addCategory: JSX.Element;
 }
 
 export const CategoryContainer = (props: Props) => {
   return (
-    <section className="sm:w-1/3 sm:h-screen sm:border-l sm:border-white">
+    <section className="sm:pt-16 sm:h-screen sm:border-l sm:border-white">
       <h2 className="py-3 px-4 text-4xl font-bold">Category</h2>
       <div className="m-3 shadow-2xl ">
         {props.userData.categoryList.map((category, index) => {

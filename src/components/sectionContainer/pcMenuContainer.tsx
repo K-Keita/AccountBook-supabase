@@ -3,7 +3,7 @@ import { PriceDisplay } from "src/components/utils/PriceDisplay";
 import { Title as TitleArea } from "src/components/utils/title";
 import type { ItemData } from "src/interface/type";
 
-import { LinkBar } from "../utils/LinkBar";
+// import { LinkBar } from "../utils/LinkBar";
 
 const d = new Date();
 const date = d.getDate();
@@ -23,9 +23,9 @@ export const PcMenuContainer = (props: Props) => {
     }, 0);
 
   return (
-    <section className="hidden fixed py-2 w-full sm:block sm:relative sm:max-w-2xl sm:h-screen">
+    <section className="hidden fixed py-2 w-full sm:block sm:relative sm:pt-16 sm:h-screen sm:border-r">
       <h2 className="px-3 text-2xl">TITLE</h2>
-      <div className="flex flex-col h-3lg">
+      <div className="flex flex-col justify-around h-[70vh]">
         <div className="py-4 px-8">
           <TitleArea />
         </div>
