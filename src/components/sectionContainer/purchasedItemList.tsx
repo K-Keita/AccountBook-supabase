@@ -3,11 +3,12 @@ import { Tab } from "@headlessui/react";
 import { useEffect, useState } from "react";
 import { ItemList } from "src/components/itemList";
 import { MenuBar } from "src/components/menuBar";
-import { ChangeMonthButton } from "src/components/utils/changeMonthButton";
-import { useChangeMonth } from "src/hooks/useChangeMonth";
 import type { ItemData, UserData } from "src/interface/type";
 
 type Props = {
+  changeMonthButton: JSX.Element;
+  year: number;
+  month: number;
   userData: UserData;
   itemList: ItemData[];
   totalPrice: number;
@@ -28,10 +29,6 @@ export const PurchasedItemList = (props: Props) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [isTop, setIsTop] = useState<boolean>(false);
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { year, month, prevMonth, nextMonth } = useChangeMonth();
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     const scrollAction = () => {
       if (window.scrollY > 100) {
@@ -83,7 +80,7 @@ export const PurchasedItemList = (props: Props) => {
   );
 
   //月の日数
-  const count = new Date(year, month, 0).getDate();
+  const count = new Date(props.year, props.month, 0).getDate();
 
   //月の日数の配列
   const thisMonthDays = [...Array(count)].map((_, i) => {
@@ -91,7 +88,7 @@ export const PurchasedItemList = (props: Props) => {
   });
 
   //月の初日の曜日
-  const thisMonthFirstDays = new Date(year, month - 1, 1).getDay();
+  const thisMonthFirstDays = new Date(props.year, props.month - 1, 1).getDay();
 
   //1日の平均金額(今月)
   const targetAverage = props.userData
@@ -102,13 +99,9 @@ export const PurchasedItemList = (props: Props) => {
   const nowAverage = props.totalPrice / d.getDate();
 
   return (
-    <section className="relative z-40 pt-8 w-full max-w-[450px] h-screen bg-home rounded-t-3xl animate-slide-in-bottom sm:h-auto sm:bg-opacity-0 sm:rounded-none sm:border-r sm:border-l md:p-5">
+    <section className="relative z-40 pt-8 w-full h-screen bg-home rounded-t-3xl animate-slide-in-bottom sm:px-2 sm:pt-16 sm:h-screen sm:bg-opacity-0 sm:rounded-none sm:border-r sm:border-l">
       <div className="flex px-4">
-        <ChangeMonthButton
-          prevMonth={prevMonth}
-          nextMonth={nextMonth}
-          month={month}
-        />
+        {props.changeMonthButton}
         <div className="mx-4 ml-auto text-sm border-white">
           <p>
             使用金額(月)：
@@ -128,7 +121,7 @@ export const PurchasedItemList = (props: Props) => {
           className="flex overflow-x-scroll flex-nowrap p-3 mx-auto space-x-2 w-11/12 border-b"
         >
           {thisMonthDays.map((value, index) => {
-            const isSelectDate = value > date && month === m;
+            const isSelectDate = value > date && props.month === m;
             const day = week[(index + thisMonthFirstDays) % 7];
             return (
               <Tab
@@ -165,7 +158,7 @@ export const PurchasedItemList = (props: Props) => {
         >
           <p className="text-sm">今日の金額：</p>
           <p className="mb-2 text-right">
-            ¥ {month === m ? oneDayTotalPrice.toLocaleString() : null}
+            ¥ {props.month === m ? oneDayTotalPrice.toLocaleString() : null}
           </p>
           <p className="text-sm">1日の平均金額：</p>
           <p className="text-right ">
