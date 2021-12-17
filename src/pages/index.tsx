@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from "react";
 import { ItemForm } from "src/components/ItemForm";
-import { ChartContainer } from "src/components/sectionContainer/chartContainer";
 import { PcMenuContainer } from "src/components/sectionContainer/pcMenuContainer";
 import { PurchasedItemList } from "src/components/sectionContainer/purchasedItemList";
 import { TopTitleContainer } from "src/components/sectionContainer/topTitleContainer";
+import { ChangeMonthButton } from "src/components/utils/changeMonthButton";
 import { useChangeMonth } from "src/hooks/useChangeMonth";
 import { useGetItemList } from "src/hooks/useGetItemList";
 import { HomeLayout } from "src/layouts/homeLayout";
@@ -21,23 +21,11 @@ const Home = () => {
     }
   }, [getItemList, user, year, month]);
 
-  //カテゴリーごとの合計金額
-  const priceArr = userData?.categoryList.map((category) => {
-    const arr = itemList.filter((value) => {
-      return value.categoryID === category;
-    });
-    const totalPrice = arr.reduce((sum, element) => {
-      return sum + element.price;
-    }, 0);
-    return totalPrice;
-  });
-
   return userData ? (
     <main
-      className="w-full min-h-lg text-white bg-gradient-to-b from-blue-800 via-purple-900 to-danger sm:flex sm:bg-none"
+      className="grid-cols-3 w-full min-h-lg text-white bg-gradient-to-b from-blue-800 via-purple-900 to-danger sm:grid sm:bg-none"
       style={{ fontFamily: "游明朝体" }}
     >
-      <div className="hidden h-10 sm:block" />
       <PcMenuContainer
         totalPrice={totalPrice}
         targetAmount={userData.targetAmount}
@@ -50,20 +38,22 @@ const Home = () => {
         getItemList={getItemList}
       />
       <PurchasedItemList
+        changeMonthButton={
+          <ChangeMonthButton
+            month={month}
+            prevMonth={prevMonth}
+            nextMonth={nextMonth}
+          />
+        }
+        year={year}
+        month={month}
         userData={userData}
         itemList={itemList}
         totalPrice={totalPrice}
         getItemList={getItemList}
       />
-      <div>
+      <div className="hidden pt-16 sm:block">
         <ItemForm />
-        <ChartContainer
-          prevMonth={prevMonth}
-          nextMonth={nextMonth}
-          month={month}
-          priceArr={priceArr}
-          categoryList={userData.categoryList}
-        />
       </div>
     </main>
   ) : null;
