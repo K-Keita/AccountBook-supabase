@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from "react";
-import { ItemForm } from "src/components/ItemForm";
+import { ItemFormContainer } from "src/components/sectionContainer/itemFormContainer";
 import { PcMenuContainer } from "src/components/sectionContainer/pcMenuContainer";
 import { PurchasedItemList } from "src/components/sectionContainer/purchasedItemList";
 import { TopTitleContainer } from "src/components/sectionContainer/topTitleContainer";
@@ -19,7 +19,8 @@ const Home = () => {
     if (user) {
       getItemList(user.id, year, month);
     }
-  }, [getItemList, user, year, month]);
+  }, [getItemList, user, month, year]);
+
 
   return userData ? (
     <main
@@ -53,7 +54,7 @@ const Home = () => {
         getItemList={getItemList}
       />
       <div className="hidden pt-16 sm:block">
-        <ItemForm />
+        <ItemFormContainer userData={userData} getItemList={getItemList} />
       </div>
     </main>
   ) : null;

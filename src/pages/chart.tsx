@@ -20,6 +20,7 @@ const Chart = () => {
     }
   }, [getItemList, user, month, year]);
 
+
   //カテゴリーごとの合計金額
   const priceArr = userData?.categoryList.map((category) => {
     const arr = itemList.filter((value) => {
