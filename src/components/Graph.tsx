@@ -142,7 +142,7 @@ export const Graph = (props: Props): JSX.Element => {
 
   return (
     <>
-      <div className="flex justify-around mb-4 sm:mt-3 text-xl sm:text-lg">
+      <div className="flex justify-around mb-4 text-xl sm:mt-3 sm:text-lg">
         <button
           className={`px-2 py-1 ${
             selectChart === "Pie" ? "bg-flower bg-opacity-50" : ""
