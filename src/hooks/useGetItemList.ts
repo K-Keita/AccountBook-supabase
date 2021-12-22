@@ -43,5 +43,6 @@ export const useGetItemList = () => {
         setTotalPrice(totalPrice);
       }
   }, []);
+
   return { userData, itemList, totalPrice, getItemList };
 };
