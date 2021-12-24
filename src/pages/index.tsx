@@ -24,8 +24,7 @@ const Home = () => {
 
   return userData ? (
     <main
-      className="grid-cols-3 w-full min-h-lg text-white bg-gradient-to-b from-blue-800 via-purple-900 to-danger sm:grid sm:bg-none"
-      style={{ fontFamily: "游明朝体" }}
+      className="grid-cols-3 w-full min-h-lg text-white bg-gradient-to-b from-blue-800 via-purple-900 to-danger sm:grid sm:bg-none font-body"
     >
       <PcMenuContainer
         totalPrice={totalPrice}
