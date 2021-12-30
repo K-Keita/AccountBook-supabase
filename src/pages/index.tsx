@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from "react";
-import { ItemFormContainer } from "src/components/sectionContainer/itemFormContainer";
-import { PcMenuContainer } from "src/components/sectionContainer/pcMenuContainer";
+// import { ItemFormContainer } from "src/components/sectionContainer/itemFormContainer";
+// import { PcMenuContainer } from "src/components/sectionContainer/pcMenuContainer";
 import { PurchasedItemList } from "src/components/sectionContainer/purchasedItemList";
 import { TopTitleContainer } from "src/components/sectionContainer/topTitleContainer";
 import { ChangeMonthButton } from "src/components/utils/changeMonthButton";
@@ -24,13 +24,8 @@ const Home = () => {
 
   return userData ? (
     <main
-      className="grid-cols-3 w-full min-h-lg text-white bg-gradient-to-b from-blue-800 via-purple-900 to-danger sm:grid sm:bg-none font-body"
+      className="w-full min-h-lg text-white bg-gradient-to-b from-blue-800 via-purple-900 to-danger font-body"
     >
-      <PcMenuContainer
-        totalPrice={totalPrice}
-        targetAmount={userData.targetAmount}
-        itemList={itemList}
-      />
       <TopTitleContainer
         totalPrice={totalPrice}
         userData={userData}
@@ -52,9 +47,6 @@ const Home = () => {
         totalPrice={totalPrice}
         getItemList={getItemList}
       />
-      <div className="hidden pt-16 sm:block">
-        <ItemFormContainer userData={userData} getItemList={getItemList} />
-      </div>
     </main>
   ) : null;
 };
