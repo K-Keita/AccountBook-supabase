@@ -8,7 +8,7 @@ type Props = {
 
 export const ByCategoryContainer = (props: Props) => {
   return (
-    <section className="border-white sm:pt-16 sm:h-screen sm:border-l">
+    <section className="border-white sm:pt-16">
       <h2 className="px-4 text-4xl font-bold">By Category</h2>
       <p className="p-4 text-lg text-right">
         合計<span>({props.itemList.length})</span>:{""}

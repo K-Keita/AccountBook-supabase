@@ -13,8 +13,8 @@ type Props = {
 
 export const CategoryContainer = (props: Props) => {
   return (
-    <section className="sm:pt-16 sm:h-screen sm:border-l sm:border-white">
-      <h2 className="py-3 px-4 text-4xl font-bold">Category</h2>
+    <section>
+      <h2 className="py-3 px-4 text-4xl font-bold sm:pt-8">Category</h2>
       <div className="m-3 shadow-2xl ">
         {props.userData.categoryList.map((category, index) => {
           return (

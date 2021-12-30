@@ -23,7 +23,7 @@ export const PcMenuContainer = (props: Props) => {
     }, 0);
 
   return (
-    <section className="hidden fixed py-2 w-full sm:block sm:relative sm:pt-16 sm:h-screen sm:border-r">
+    <section className="hidden fixed py-2 w-full sm:pt-16">
       <h2 className="px-3 text-2xl">TITLE</h2>
       <div className="flex flex-col justify-around h-[70vh]">
         <div className="py-4 px-8">

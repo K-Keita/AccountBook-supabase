@@ -60,7 +60,7 @@ export const HistoryContainer = (props: Props) => {
   }, []);
 
   return (
-    <section className="border-white sm:pt-16 sm:h-screen sm:border-l">
+    <section className="border-white sm:pt-16">
       <Tab.Group defaultIndex={0}>
         <div className="pb-16 h-screen">
           <h2 className="p-4 text-4xl font-bold">History</h2>

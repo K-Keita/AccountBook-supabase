@@ -71,7 +71,7 @@ export const EditDialog = (props: Props) => {
           >
             <div
               style={{ fontFamily: "游明朝体" }}
-              className="inline-block overflow-hidden px-6 pt-10 pb-6 w-full text-left align-middle bg-blue-800 rounded-xl border border-gray-300 shadow-xl transition-all transform"
+              className="inline-block overflow-hidden px-6 pt-10 pb-6 w-full text-left align-middle bg-blue-900 rounded-xl border border-gray-300 shadow-xl transition-all transform"
             >
               <button
                 onClick={props.closeModal}
