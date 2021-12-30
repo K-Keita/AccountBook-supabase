@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { Graph } from "src/components/Graph";
 import { ByCategoryContainer } from "src/components/sectionContainer/byCategoryContainer";
 import { ChartContainer } from "src/components/sectionContainer/chartContainer";
-import { PcMenuContainer } from "src/components/sectionContainer/pcMenuContainer";
 import { ChangeMonthButton } from "src/components/utils/changeMonthButton";
 import { useChangeMonth } from "src/hooks/useChangeMonth";
 import { useGetItemList } from "src/hooks/useGetItemList";
@@ -33,12 +32,7 @@ const Chart = () => {
   });
 
   return userData ? (
-    <main className="grid-cols-3 sm:grid sm:overflow-y-scroll">
-      <PcMenuContainer
-        totalPrice={totalPrice}
-        targetAmount={userData.targetAmount}
-        itemList={itemList}
-      />
+    <main className="">
       <ChartContainer
         changeMonthButton={
           <ChangeMonthButton
