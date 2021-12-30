@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { AddCategory } from "src/components/addCategory";
 import { CategoryContainer } from "src/components/sectionContainer/categoryContaiiner";
 import { HistoryContainer } from "src/components/sectionContainer/historyContainer";
-import { PcMenuContainer } from "src/components/sectionContainer/pcMenuContainer";
 import { ChangeMonthButton } from "src/components/utils/changeMonthButton";
 import { useChangeMonth } from "src/hooks/useChangeMonth";
 import { useGetItemList } from "src/hooks/useGetItemList";
@@ -21,12 +20,7 @@ const Category = () => {
   }, [getItemList, user, month, year]);
 
   return userData ? (
-    <main className="grid-cols-3 sm:grid">
-      <PcMenuContainer
-        totalPrice={totalPrice}
-        targetAmount={userData.targetAmount}
-        itemList={itemList}
-      />
+    <main>
       <CategoryContainer
         userData={userData}
         getItemList={getItemList}
