@@ -25,8 +25,8 @@ export const TopTitleContainer = (props: Props) => {
   }, 0);
 
   return (
-    <>
-      <section className="fixed py-2 w-full h-lg min-h-3lg sm:hidden sm:relative">
+    <div className="">
+      <section className="fixed py-2 w-full h-lg mx-auto max-w-[800px] min-h-3lg">
         <h2 className="px-3 text-2xl">TITLE</h2>
         <div className="flex flex-col justify-end h-3lg">
           <div className="py-4 px-8">
@@ -66,7 +66,7 @@ export const TopTitleContainer = (props: Props) => {
           <LinkButtonList />
         </div>
       </section>
-      <div className="relative -z-10 h-lg min-h-3lg opacity-0 sm:hidden" />
-    </>
+      <div className="relative -z-10 h-lg min-h-3lg opacity-0" />
+    </div>
   );
 };

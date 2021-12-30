@@ -99,7 +99,7 @@ export const PurchasedItemList = (props: Props) => {
   const nowAverage = props.totalPrice / d.getDate();
 
   return (
-    <section className="relative z-40 pt-8 w-full h-screen bg-home rounded-t-3xl animate-slide-in-bottom sm:px-2 sm:pt-16 sm:h-screen sm:bg-opacity-0 sm:rounded-none sm:border-r sm:border-l">
+    <section className="relative z-40 pt-8 w-full h-screen bg-home rounded-t-3xl animate-slide-in-bottom sm:px-2">
       <div className="flex px-4">
         {props.changeMonthButton}
         <div className="mx-4 ml-auto text-sm border-white">
