@@ -4,9 +4,9 @@ import router from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
-import { LinkButtonList } from "src/components/LinkButtonList";
+// import { LinkButtonList } from "src/components/LinkButtonList";
 // import { PriceDisplay } from "src/components/utils/PriceDisplay";
-import { Title as TitleArea } from "src/components/utils/title";
+// import { Title as TitleArea } from "src/components/utils/title";
 import { getUserData } from "src/hooks/getData";
 import type { UserData } from "src/interface/type";
 import { SecondLayout } from "src/layouts/secondLayout";
@@ -73,18 +73,8 @@ const Setting = () => {
   }, [getUser]);
 
   return (
-    <div className="sm:flex">
-      <section className="hidden fixed py-2 w-full h-lg sm:block sm:relative sm:max-w-2xl">
-        <h2 className="px-3 text-2xl">TITLE</h2>
-        <div className="flex flex-col h-3lg">
-          <div className="py-4 px-8">
-            <TitleArea />
-          </div>
-          <LinkButtonList />
-        </div>
-      </section>
-      <div className="sm:w-1/3">
-        <h2 className="p-4 text-4xl font-bold">Setting</h2>
+      <>
+        <h2 className="p-4 text-4xl font-bold sm:pt-8">Setting</h2>
         <section className="flex py-2 my-5 mx-auto w-11/12 border-b">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -228,8 +218,7 @@ const Setting = () => {
             />
           </svg>
         </section>
-      </div>
-    </div>
+      </>
   );
 };
 
