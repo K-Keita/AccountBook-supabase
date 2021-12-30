@@ -9,8 +9,8 @@ export const SecondLayout = (page: ReactNode) => {
   return (
     <div className="text-white bg-gray-600 font-body">
       <Header />
-      <main className="justify-center mx-auto bg-blue-800 sm:flex">
-        <div className="overflow-hidden relative z-40 w-full min-h-screen bg-home rounded-t-3xl animate-slide-in-bottom sm:mx-auto sm:max-w-[1100px] sm:h-screen sm:rounded-none sm:border-r sm:border-l sm:animate-none">
+      <main className="mx-auto bg-blue-800">
+        <div className="overflow-hidden relative z-20 sm:pt-12 md:px-16 w-full min-h-screen bg-home rounded-t-3xl animate-slide-in-bottom sm:animate-none mx-auto max-w-[800px]">
           {page}
         </div>
       </main>

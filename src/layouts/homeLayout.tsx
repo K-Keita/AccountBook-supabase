@@ -7,7 +7,7 @@ export const HomeLayout = (page: ReactNode) => {
       className="text-white sm:bg-blue-800 font-body"
     >
       <Header />
-      <main className="mx-auto max-w-[1100px] h-screen sm:bg-home sm:border-r sm:border-l">{page}</main>
+      <main className="mx-auto max-w-[800px]">{page}</main>
     </div>
   );
 };
