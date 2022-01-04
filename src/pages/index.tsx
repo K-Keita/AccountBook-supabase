@@ -24,7 +24,7 @@ const Home = () => {
 
   return userData ? (
     <main
-      className="w-full min-h-lg text-white bg-gradient-to-b from-blue-800 via-purple-900 to-danger font-body"
+      className="w-full min-h-lg font-body text-white bg-gradient-to-b from-blue-800 via-purple-900 to-danger"
     >
       <TopTitleContainer
         totalPrice={totalPrice}

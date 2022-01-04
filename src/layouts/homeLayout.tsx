@@ -4,7 +4,7 @@ import { Header } from "src/layouts/header";
 export const HomeLayout = (page: ReactNode) => {
   return (
     <div
-      className="text-white sm:bg-blue-800 font-body"
+      className="font-body text-white sm:bg-blue-800"
     >
       <Header />
       <main className="mx-auto max-w-[800px]">{page}</main>

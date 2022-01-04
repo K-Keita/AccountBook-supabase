@@ -26,7 +26,7 @@ export const TopTitleContainer = (props: Props) => {
 
   return (
     <div className="">
-      <section className="fixed py-2 w-full h-lg mx-auto max-w-[800px] min-h-3lg">
+      <section className="fixed py-2 mx-auto w-full max-w-[800px] h-lg min-h-3lg">
         <h2 className="px-3 text-2xl">TITLE</h2>
         <div className="flex flex-col justify-end h-3lg">
           <div className="py-4 px-8">

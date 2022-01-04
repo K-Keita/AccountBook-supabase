@@ -7,10 +7,10 @@ export const SecondLayout = (page: ReactNode) => {
   const router = useRouter();
 
   return (
-    <div className="text-white bg-gray-600 font-body">
+    <div className="font-body text-white bg-gray-600">
       <Header />
       <main className="mx-auto bg-blue-800">
-        <div className="overflow-hidden relative z-20 sm:pt-12 md:px-16 w-full min-h-screen bg-home rounded-t-3xl animate-slide-in-bottom sm:animate-none mx-auto max-w-[800px]">
+        <div className="overflow-hidden relative z-20 mx-auto w-full max-w-[800px] min-h-screen bg-home rounded-t-3xl animate-slide-in-bottom sm:pt-12 sm:animate-none md:px-16">
           {page}
         </div>
       </main>
