@@ -9,7 +9,7 @@ export const GoogleButton = (props: Props) => {
   return (
     <button
       onClick={props.onClick}
-      className="flex py-1 px-1 my-6 mx-auto w-9/12 text-center bg-google bg-opacity-50 rounded-sm"
+      className="flex py-1 px-1 my-6 mx-auto w-9/12 text-center bg-google bg-opacity-50 rounded-sm hover:bg-opacity-80"
     >
       <div className="p-1 h-8 bg-white rounded-sm">
         <Image
