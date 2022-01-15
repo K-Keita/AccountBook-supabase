@@ -66,39 +66,41 @@ const SignUp = () => {
       className="h-screen text-white bg-gradient-to-b from-blue-800 via-purple-900 to-danger"
       style={{ fontFamily: "游明朝体" }}
     >
-      <div className="absolute top-0 w-full bg-blue-600 bg-opacity-20">
-        <p className="py-3 text-sm text-center cursor-pointer">
-          <span className="opacity-80">既にアカウントをお持ちの方 </span>
-          <Link href="/logIn" passHref>
-            <span className="hover:underline">ログイン</span>
-          </Link>
-        </p>
-      </div>
-      <div className="px-8 pt-28 pb-5">
-        <Title />
-      </div>
-      <GoogleButton text="Googleでログイン" onClick={signUpWithGoogle} />
-      <div className="flex mt-8 opacity-80">
-        <div className="mx-auto mb-3 w-3/12 border-b" />
-        <p>または</p>
-        <div className="mx-auto mb-3 w-3/12 border-b" />
-      </div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <input
-          autoFocus
-          placeholder="メールアドレス"
-          {...register("email")}
-          className="block py-2 px-1 my-5 mx-auto w-9/12 bg-white bg-opacity-10"
-        />
-        <input
-          placeholder="パスワード"
-          {...register("password")}
-          className="block py-2 px-1 my-5 mx-auto w-9/12 bg-white bg-opacity-10"
-        />
-        <AuthButton text="登録" onClick={handleSubmit(onSubmit)} />
-      </form>
-      <div className="table absolute bottom-1 mx-auto w-full text-xs text-center">
-        &copy;My-house-account
+      <div className="relative mx-auto max-w-4xl h-screen">
+        <div className="absolute top-0 w-full bg-blue-600 bg-opacity-20">
+          <p className="py-3 text-sm text-center cursor-pointer">
+            <span className="opacity-80">既にアカウントをお持ちの方 </span>
+            <Link href="/logIn" passHref>
+              <span className="hover:underline">ログイン</span>
+            </Link>
+          </p>
+        </div>
+        <div className="px-8 pt-28 pb-5">
+          <Title />
+        </div>
+        <GoogleButton text="Googleでログイン" onClick={signUpWithGoogle} />
+        <div className="flex mt-8 opacity-80">
+          <div className="mx-auto mb-3 w-3/12 border-b" />
+          <p>または</p>
+          <div className="mx-auto mb-3 w-3/12 border-b" />
+        </div>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <input
+            autoFocus
+            placeholder="メールアドレス"
+            {...register("email")}
+            className="block py-2 px-1 my-5 mx-auto w-9/12 bg-white bg-opacity-10"
+          />
+          <input
+            placeholder="パスワード"
+            {...register("password")}
+            className="block py-2 px-1 my-5 mx-auto w-9/12 bg-white bg-opacity-10"
+          />
+          <AuthButton text="登録" onClick={handleSubmit(onSubmit)} />
+        </form>
+        <div className="table absolute bottom-1 mx-auto w-full text-xs text-center">
+          &copy;My-house-account
+        </div>
       </div>
     </main>
   );

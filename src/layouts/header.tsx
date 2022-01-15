@@ -1,7 +1,4 @@
-import { Button, IconLogOut } from "@supabase/ui";
 import Link from "next/link";
-// import { LinkButtonList } from "src/components/LinkButtonList";
-// import { MenuBar } from "src/components/menuBar";
 import { client } from "src/libs/supabase";
 
 export const Header = () => {
@@ -13,19 +10,14 @@ export const Header = () => {
             <h2 className="font-bold text-white shadow">-Title-</h2>
           </a>
         </Link>
-        <div className="text-white">
-          <Button
-            size="tiny"
-            type="text"
-            className="bg-white"
-            icon={<IconLogOut />}
-            onClick={() => {
-              return client.auth.signOut();
-            }}
-          >
-            Sign Out
-          </Button>
-        </div>
+        <button
+          className="text-white hover:text-blue-500"
+          onClick={() => {
+            return client.auth.signOut();
+          }}
+        >
+          Sign Out
+        </button>
       </header>
     </>
   );

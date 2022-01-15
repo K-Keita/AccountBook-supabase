@@ -7,7 +7,7 @@ export const HomeLayout = (page: ReactNode) => {
       className="font-body text-white sm:bg-blue-800"
     >
       <Header />
-      <main className="mx-auto max-w-[800px]">{page}</main>
+      <main className="mx-auto max-w-4xl">{page}</main>
     </div>
   );
 };
