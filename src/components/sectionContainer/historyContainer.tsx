@@ -63,7 +63,7 @@ export const HistoryContainer = (props: Props) => {
     <section className="border-white sm:pt-16">
       <Tab.Group defaultIndex={0}>
         <div className="pb-16 h-screen">
-          <h2 className="p-4 text-4xl font-bold">History</h2>
+          <h2 className={`p-4 text-4xl font-bold ${isTop ? "sm:pt-20" : ""}`}>History</h2>
           <Tab.List
             className={`${
               isTop
