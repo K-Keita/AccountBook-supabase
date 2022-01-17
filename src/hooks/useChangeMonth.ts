@@ -40,7 +40,6 @@ export const useChangeMonth = () => {
     } else if (month === 12) {
       setYear((year) => {
         // if (year){
-
           return year - 1;
         // }
       });
@@ -50,7 +49,6 @@ export const useChangeMonth = () => {
 
     setMonth((month) => {
       // if (month) {
-
         return month + 1;
       // }
     });

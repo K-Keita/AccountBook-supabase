@@ -1,12 +1,8 @@
 import { Switch } from "@headlessui/react";
 import router from "next/router";
-// import type { VFC } from "react";
 import { useCallback, useEffect, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
-// import { LinkButtonList } from "src/components/LinkButtonList";
-// import { PriceDisplay } from "src/components/utils/PriceDisplay";
-// import { Title as TitleArea } from "src/components/utils/title";
 import { getUserData } from "src/hooks/getData";
 import type { UserData } from "src/interface/type";
 import { SecondLayout } from "src/layouts/secondLayout";
