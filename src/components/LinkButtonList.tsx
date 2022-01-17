@@ -1,7 +1,5 @@
 import { LinkButton } from "src/components/utils/linkButton";
 
-// import { LinkBar } from "./utils/LinkBar";
-
 export const LinkButtonList = () => {
   return (
       <div className="flex justify-around py-2 my-2">

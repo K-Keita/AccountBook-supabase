@@ -151,7 +151,7 @@ type Props = {
 export const MenuBar = (props: Props) => {
   return (
     <div className="fixed bottom-0 left-0 z-50 w-full">
-      <div className="flex  justify-around py-1 w-full max-w-4xl mx-auto bg-gradient-to-r from-blue-900 via-purple-900 to-pink-800">
+      <div className="flex justify-around py-1 mx-auto w-full max-w-4xl bg-gradient-to-r from-blue-900 via-purple-900 to-pink-800">
         {menu.map((value) => {
           return (
             <LinkButton
