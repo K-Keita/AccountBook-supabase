@@ -104,7 +104,7 @@ const LogIn = () => {
         </p>
         <div className="flex mt-16 opacity-80">
           <div className="mx-auto mb-3 w-3/12 border-b" />
-          <p className="">または</p>
+          <p>または</p>
           <div className="mx-auto mb-3 w-3/12 border-b" />
         </div>
         <GoogleButton text="Googleでログイン" onClick={signInWithGoogle} />
