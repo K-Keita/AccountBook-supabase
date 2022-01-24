@@ -6,5 +6,7 @@
     "supabase",
     "tailwindcss",
     "upsert"
-  ]
+  ],
+  "editor.quickSuggestions": { "strings": true },
+  "editor.codeActionsOnSave": ["source.fixAll.eslint"]
 }
