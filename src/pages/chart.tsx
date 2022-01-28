@@ -32,7 +32,7 @@ const Chart = () => {
   });
 
   return userData ? (
-    <main className="">
+    <>
       <ChartContainer
         changeMonthButton={
           <ChangeMonthButton
@@ -48,7 +48,7 @@ const Chart = () => {
         totalPrice={totalPrice}
         categoryList={userData.categoryList}
       />
-    </main>
+    </>
   ) : null;
 };
 

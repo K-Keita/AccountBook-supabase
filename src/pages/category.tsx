@@ -20,7 +20,7 @@ const Category = () => {
   }, [getItemList, user, month, year]);
 
   return userData ? (
-    <main>
+    <>
       <CategoryContainer
         userData={userData}
         getItemList={getItemList}
@@ -41,7 +41,7 @@ const Category = () => {
           />
         }
       />
-    </main>
+    </>
   ) : null;
 };
 
