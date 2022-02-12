@@ -6,7 +6,6 @@ type Props = {
   arr: number[] | undefined;
 };
 
-// レンダリング
 export const Graph = (props: Props): JSX.Element => {
   const [selectChart, setSelectChart] = useState<"Pie" | "Bar">("Pie");
 

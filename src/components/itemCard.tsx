@@ -1,7 +1,4 @@
-// import { Dialog, Transition } from "@headlessui/react";
 import { useCallback } from "react";
-// import type { SubmitHandler } from "react-hook-form";
-// import { useForm } from "react-hook-form";
 import { useToggleModal } from "src/hooks/useToggleModal";
 import type { ItemData, UserData } from "src/interface/type";
 import { client } from "src/libs/supabase";

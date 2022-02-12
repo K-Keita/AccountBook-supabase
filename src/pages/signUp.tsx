@@ -38,7 +38,7 @@ const SignUp = () => {
         {
           userID: user.id,
           targetAmount: 50000,
-          categoryList: ["外食", "スーパー", "コンビニ"],
+          categoryList: ["外食", "スーパー", "コンビニ", "薬局"],
         },
       ]);
 
